@@ -1,6 +1,4 @@
-import { IMockResponse } from '../mock-fetch-response';
-
-export class GenericOutputResponse implements IMockResponse {
+export class GenericOutputResponse {
 
     successObject = {
         msg: 'OK',
