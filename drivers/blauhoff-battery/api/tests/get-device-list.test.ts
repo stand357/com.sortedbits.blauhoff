@@ -2,6 +2,7 @@ import fetch from 'node-fetch';
 
 import { API } from '../blauhoff';
 import { Logger } from '../log';
+import { deviceList1, deviceList2, deviceList3 } from './helpers/device-lists';
 
 jest.mock('node-fetch');
 const { Response } = jest.requireActual('node-fetch');
@@ -60,6 +61,49 @@ describe('get-device-list', () => {
                 serial: 'SHA602131202215004',
                 model: 'SPHA6.0H-10.24kW',
                 id: '1678686019714682880',
+            },
+        ]);
+    });
+
+    test('Fetching multiple pages of items', async () => {
+        const api = new API(new Logger());
+        api.setAuthenticationInfo('mockedAccessId', 'mockedAccessSecret');
+
+        expect(fetch).toHaveBeenCalledTimes(0);
+
+        (fetch as jest.MockedFunction<typeof fetch>)
+            .mockResolvedValueOnce(new Response(JSON.stringify(deviceList1)))
+            .mockResolvedValueOnce(new Response(JSON.stringify(deviceList2)))
+            .mockResolvedValueOnce(new Response(JSON.stringify(deviceList3)));
+
+        const response = await api.queryDeviceList(2);
+        expect(response).toHaveLength(5);
+
+        expect(response).toStrictEqual([
+            {
+                serial: 'SHA602131202215001',
+                model: 'SPHA6.0H-10.12kW',
+                id: '1',
+            },
+            {
+                serial: 'SHA602131202215002',
+                model: 'SPHA6.0H-10.24kW',
+                id: '2',
+            },
+            {
+                serial: 'SHA602131202215003',
+                model: 'SPHA6.0H-10.16kW',
+                id: '3',
+            },
+            {
+                serial: 'SHA602131202215004',
+                model: 'SPHA6.0H-10.18kW',
+                id: '4',
+            },
+            {
+                serial: 'SHA602131202215005',
+                model: 'SPHA6.0H-10.20kW',
+                id: '5',
             },
         ]);
     });

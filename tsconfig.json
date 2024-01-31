@@ -4,7 +4,4 @@
     "allowJs": true,
     "outDir": ".homeybuild/"
   },
-  "exclude": [
-    "**/*.spec.ts"
-  ]
 }

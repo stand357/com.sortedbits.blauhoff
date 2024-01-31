@@ -1,6 +1,6 @@
 import { BaseResponse } from './base-response';
 
-interface DeviceInformation {
+export interface DeviceInformation {
     deviceSn: string;
     deviceModel: string;
     state: number;

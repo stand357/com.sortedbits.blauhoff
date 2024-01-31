@@ -1,4 +1,4 @@
-export interface ILogger {
+export interface IBaseLogger {
     /**
      * Log a message to the console (stdout)
      * @param {...*} args
@@ -11,7 +11,7 @@ export interface ILogger {
     error(...args: any[]): void;
 }
 
-export class Logger implements ILogger {
+export class Logger implements IBaseLogger {
 
     log(...args: any[]): void {
         // console.log(...args);

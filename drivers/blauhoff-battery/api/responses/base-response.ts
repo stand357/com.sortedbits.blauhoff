@@ -4,7 +4,7 @@ export interface BaseResponse {
     t: number;
 }
 
-export const isResponseOk = (response: BaseResponse | undefined): boolean => {
+export const isValidResponse = (response: BaseResponse | undefined): boolean => {
     if (response === undefined) {
         return false;
     }
