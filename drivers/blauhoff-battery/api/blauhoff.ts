@@ -375,7 +375,7 @@ export class API {
 
     /**
      * Sets the mode6 of the BlauHoff device.
-     * Change only，no discharging
+     * Inverter outputs at specified power
      *
      * @param device - The BlauHoff device to set the mode6 for.
      * @param batPower - Battery power. Positive -> Discharge, Negative -> Charge (0~6000) W
@@ -428,7 +428,7 @@ export class API {
 
     /**
      * Sets the mode7 of the BlauHoff device.
-     * Change only，no discharging
+     * Inverter operates at the specified power
      *
      * @param device - The BlauHoff device to set the mode7 for.
      * @param batPower - Battery power. Positive -> Discharge, Negative -> Charge (0~6000) W
