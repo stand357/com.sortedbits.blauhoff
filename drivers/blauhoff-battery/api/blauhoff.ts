@@ -338,6 +338,21 @@ export class API {
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
     setMode5 = async (device: BlauHoffDevice, maxFeedInLimit: number, batCapMin: number, timeout: number): Promise<boolean> => {
+        if (maxFeedInLimit < 0 || maxFeedInLimit > 100) {
+            this.log.error('maxFeedInLimit must be between 0 and 100');
+            return false;
+        }
+
+        if (batCapMin < 10 || batCapMin > 100) {
+            this.log.error('batCapMin must be between 10 and 100');
+            return false;
+        }
+
+        if (timeout < 0 || timeout > 5000) {
+            this.log.error('timeout must be between 0 and 5000');
+            return false;
+        }
+
         const path = '/v1/hub/device/vpp/mode5';
 
         const params = {
@@ -370,6 +385,26 @@ export class API {
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
     setMode6 = async (device: BlauHoffDevice, batPower: number, batPowerInvLimit: number, batCapMin: number, timeout: number): Promise<boolean> => {
+        if (batPower < 0 || batPower > 6000) {
+            this.log.error('batPower must be between 0 and 6000');
+            return false;
+        }
+
+        if (batPowerInvLimit < 0 || batPowerInvLimit > 6000) {
+            this.log.error('batPowerInvLimit must be between 0 and 6000');
+            return false;
+        }
+
+        if (batCapMin < 10 || batCapMin > 100) {
+            this.log.error('batCapMin must be between 10 and 100');
+            return false;
+        }
+
+        if (timeout < 0 || timeout > 5000) {
+            this.log.error('timeout must be between 0 and 5000');
+            return false;
+        }
+
         const path = '/v1/hub/device/vpp/mode6';
 
         const params = {
