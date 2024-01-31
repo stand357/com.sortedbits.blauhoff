@@ -90,7 +90,7 @@
               "en": "Battery power"
             },
             "placeholder": {
-              "en": "Wattage between -6000 and 0"
+              "en": "Wattage between -6000 and 0W"
             },
             "min": -6000,
             "max": 0
@@ -143,6 +143,226 @@
             },
             "placeholder": {
               "en": "Wattage between 0 and 6000W"
+            },
+            "min": 0,
+            "max": 6000
+          },
+          {
+            "type": "number",
+            "name": "batteryCapMinimum",
+            "title": {
+              "en": "Battery capacity minimum"
+            },
+            "placeholder": {
+              "en": "Percentage between 10 and 100"
+            },
+            "min": 10,
+            "max": 100
+          },
+          {
+            "type": "number",
+            "name": "duration",
+            "title": {
+              "en": "Duration"
+            },
+            "placeholder": {
+              "en": "Time between 0 and 80 minutes"
+            },
+            "min": 0,
+            "max": 80
+          }
+        ]
+      },
+      {
+        "id": "set_mode_4",
+        "title": {
+          "en": "Set mode4"
+        },
+        "titleFormatted": {
+          "en": "Discharge only to the load, avoid charging (mode4) with [[feedInLimit]]% limit, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-battery"
+          },
+          {
+            "type": "number",
+            "name": "feedInLimit",
+            "title": {
+              "en": "Feed in limit"
+            },
+            "placeholder": {
+              "en": "Percentage between 0 and 100"
+            },
+            "min": 0,
+            "max": 100
+          },
+          {
+            "type": "number",
+            "name": "batteryCapMinimum",
+            "title": {
+              "en": "Battery capacity minimum"
+            },
+            "placeholder": {
+              "en": "Percentage between 10 and 100"
+            },
+            "min": 10,
+            "max": 100
+          },
+          {
+            "type": "number",
+            "name": "duration",
+            "title": {
+              "en": "Duration"
+            },
+            "placeholder": {
+              "en": "Time between 0 and 80 minutes"
+            },
+            "min": 0,
+            "max": 80
+          }
+        ]
+      },
+      {
+        "id": "set_mode_5",
+        "title": {
+          "en": "Set mode5"
+        },
+        "titleFormatted": {
+          "en": "Change only，no discharging (mode5) with [[feedInLimit]]% limit, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-battery"
+          },
+          {
+            "type": "number",
+            "name": "feedInLimit",
+            "title": {
+              "en": "Feed in limit"
+            },
+            "placeholder": {
+              "en": "Percentage between 0 and 100"
+            },
+            "min": 0,
+            "max": 100
+          },
+          {
+            "type": "number",
+            "name": "batteryCapMinimum",
+            "title": {
+              "en": "Battery capacity minimum"
+            },
+            "placeholder": {
+              "en": "Percentage between 10 and 100"
+            },
+            "min": 10,
+            "max": 100
+          },
+          {
+            "type": "number",
+            "name": "duration",
+            "title": {
+              "en": "Duration"
+            },
+            "placeholder": {
+              "en": "Time between 0 and 80 minutes"
+            },
+            "min": 0,
+            "max": 80
+          }
+        ]
+      },
+      {
+        "id": "set_mode_6",
+        "title": {
+          "en": "Set mode6"
+        },
+        "titleFormatted": {
+          "en": "Inverter outputs at specified power (mode6) with [[batteryPower]]W, inverter limit at [[inverterLimit]]W, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-battery"
+          },
+          {
+            "type": "number",
+            "name": "batteryPower",
+            "title": {
+              "en": "Battery power"
+            },
+            "placeholder": {
+              "en": "Wattage between 0 and 6000W"
+            },
+            "min": 0,
+            "max": 6000
+          },
+          {
+            "type": "number",
+            "name": "inverterLimit",
+            "title": {
+              "en": "Inverter limit"
+            },
+            "placeholder": {
+              "en": "Wattage between 0 and 6000W"
+            },
+            "min": 0,
+            "max": 6000
+          },
+          {
+            "type": "number",
+            "name": "batteryCapMinimum",
+            "title": {
+              "en": "Battery capacity minimum"
+            },
+            "placeholder": {
+              "en": "Percentage between 10 and 100"
+            },
+            "min": 10,
+            "max": 100
+          },
+          {
+            "type": "number",
+            "name": "duration",
+            "title": {
+              "en": "Duration"
+            },
+            "placeholder": {
+              "en": "Time between 0 and 80 minutes"
+            },
+            "min": 0,
+            "max": 80
+          }
+        ]
+      },
+      {
+        "id": "set_mode_7",
+        "title": {
+          "en": "Set mode7"
+        },
+        "titleFormatted": {
+          "en": "Inverter operates at the specified power (mode7) with [[batteryPower]]W limit, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-battery"
+          },
+          {
+            "type": "number",
+            "name": "batteryPower",
+            "title": {
+              "en": "Battery power"
+            },
+            "placeholder": {
+              "en": "Wattage between -6000 and 0W"
             },
             "min": -6000,
             "max": 0

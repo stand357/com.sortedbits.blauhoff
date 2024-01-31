@@ -17,4 +17,8 @@ The following actions are available in Homey flows:
 - Set self consumption mode (VPP mode1)
 - Set direct charge mode (VPP mode2)
 - Set direct discharge mode (VPP mode3)
+- Charge only，no discharging (VPP mode 4)
+- Discharge only to the load, avoid charging (VPP mode 5)
+- Inverter outputs at specified power (VPP mode 6)
+- Inverter operates at the specified power (VPP mode 7)
 
