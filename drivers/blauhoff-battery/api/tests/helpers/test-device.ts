@@ -1,4 +1,4 @@
-import { BlauHoffDevice } from "../../blauhoff-device";
+import { BlauHoffDevice } from '../../blauhoff-device';
 
 export const testDevice: BlauHoffDevice = {
     id: '1',
