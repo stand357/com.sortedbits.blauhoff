@@ -29,7 +29,11 @@ describe('setMode4', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode4(testDevice, 20, 10, 600);
+        const result = await api.setMode4(testDevice, {
+            maxFeedInLimit: 20,
+            batCapMin: 10,
+            timeout: 600,
+        });
 
         const expectHeaders = {
             Accept: '*/*',
@@ -38,10 +42,10 @@ describe('setMode4', () => {
         };
 
         const expectedParams = JSON.stringify({
-            deviceSn: testDevice.serial,
             maxFeedInLimit: 20,
             batCapMin: 10,
             timeout: 600,
+            deviceSn: testDevice.serial,
         });
 
         expect(fetch).toHaveBeenCalledWith(
@@ -61,7 +65,11 @@ describe('setMode4', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode4(testDevice, 150, 10, 600);
+        const result = await api.setMode4(testDevice, {
+            maxFeedInLimit: 150,
+            batCapMin: 10,
+            timeout: 600,
+        });
 
         expect(result).toStrictEqual(false);
     });
@@ -75,7 +83,11 @@ describe('setMode4', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode4(testDevice, 25, 5, 600);
+        const result = await api.setMode4(testDevice, {
+            maxFeedInLimit: 25,
+            batCapMin: 5,
+            timeout: 600,
+        });
 
         expect(result).toStrictEqual(false);
     });
@@ -89,7 +101,11 @@ describe('setMode4', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode4(testDevice, 25, 10, 6000);
+        const result = await api.setMode4(testDevice, {
+            maxFeedInLimit: 25,
+            batCapMin: 10,
+            timeout: 6000,
+        });
 
         expect(result).toStrictEqual(false);
     });
@@ -103,7 +119,11 @@ describe('setMode4', () => {
             new Response(JSON.stringify(failObject)),
         );
 
-        const result = await api.setMode4(testDevice, 20, 10, 600);
+        const result = await api.setMode4(testDevice, {
+            maxFeedInLimit: 20,
+            batCapMin: 10,
+            timeout: 600,
+        });
 
         expect(result).toStrictEqual(false);
     });

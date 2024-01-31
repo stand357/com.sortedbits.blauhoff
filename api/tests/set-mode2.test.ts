@@ -30,7 +30,11 @@ describe('setMode2', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode2(testDevice, -2000, 10, 600);
+        const result = await api.setMode2(testDevice, {
+            batCapPower: -2000,
+            batCapMin: 10,
+            timeout: 600,
+        });
 
         const expectHeaders = {
             Accept: '*/*',
@@ -39,10 +43,10 @@ describe('setMode2', () => {
         };
 
         const expectedParams = JSON.stringify({
-            deviceSn: testDevice.serial,
-            batPower: -2000,
+            batCapPower: -2000,
             batCapMin: 10,
             timeout: 600,
+            deviceSn: testDevice.serial,
         });
 
         expect(fetch).toHaveBeenCalledWith(
@@ -62,7 +66,11 @@ describe('setMode2', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode2(testDevice, -8000, 10, 600);
+        const result = await api.setMode2(testDevice, {
+            batCapPower: -8000,
+            batCapMin: 10,
+            timeout: 600,
+        });
 
         expect(result).toStrictEqual(false);
     });
@@ -76,7 +84,11 @@ describe('setMode2', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode2(testDevice, -4000, 0, 600);
+        const result = await api.setMode2(testDevice, {
+            batCapPower: -4000,
+            batCapMin: 0,
+            timeout: 600,
+        });
 
         expect(result).toStrictEqual(false);
     });
@@ -90,7 +102,11 @@ describe('setMode2', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode2(testDevice, -4000, 10, 6000);
+        const result = await api.setMode2(testDevice, {
+            batCapPower: -4000,
+            batCapMin: 10,
+            timeout: 6000,
+        });
 
         expect(result).toStrictEqual(false);
     });
@@ -104,7 +120,11 @@ describe('setMode2', () => {
             new Response(JSON.stringify(failObject)),
         );
 
-        const result = await api.setMode2(testDevice, -5000, 10, 600);
+        const result = await api.setMode2(testDevice, {
+            batCapPower: -5000,
+            batCapMin: 10,
+            timeout: 600,
+        });
 
         expect(result).toStrictEqual(false);
     });

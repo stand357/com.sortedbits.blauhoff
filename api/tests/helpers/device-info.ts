@@ -1,6 +1,6 @@
-import { DeviceInfoResponse } from '../../models/responses/device-info-response';
+import { QueryDeviceResponse } from '../../models/responses/query-device.response';
 
-export const deviceInfoResponse: DeviceInfoResponse = {
+export const deviceInfoResponse: QueryDeviceResponse = {
     msg: 'OK',
     code: 200,
     t: 1684756685989,

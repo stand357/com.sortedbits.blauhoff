@@ -1,4 +1,4 @@
-import { BaseResponse } from './base-response';
+import { BaseResponse } from './base.response';
 
 export interface Data {
     columns: string[];
@@ -6,7 +6,7 @@ export interface Data {
     rows: any[][];
 }
 
-export interface DeviceInfoResponse extends BaseResponse {
+export interface QueryDeviceResponse extends BaseResponse {
     success: boolean;
     data: Data;
 

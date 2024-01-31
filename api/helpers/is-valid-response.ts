@@ -1,4 +1,4 @@
-import { BaseResponse } from '../models/responses/base-response';
+import { BaseResponse } from '../models/responses/base.response';
 
 /**
  * Checks if the given response is a valid response.
