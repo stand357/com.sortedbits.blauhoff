@@ -3,11 +3,5 @@
   "compilerOptions": {
     "allowJs": true,
     "outDir": ".homeybuild/",
-    "baseUrl": ".",
-    "paths": {
-      "@api/*": [
-        "api/*"
-      ],
-    }
   },
 }
