@@ -2,12 +2,13 @@ import fetch from 'node-fetch';
 import { BlauHoffDeviceData } from './blauhoff-device-data';
 import { BlauHoffDevice } from './blauhoff-device';
 import { BlauHoffDeviceStatus } from './blauhoff-device-status';
-import { ILogger } from './log';
-import { BaseResponse, isResponseOk } from './responses/base-response';
+import { IBaseLogger } from './log';
+import { BaseResponse, isValidResponse } from './responses/base-response';
 import { GetUserToken } from './responses/get-user-token';
 import { GetDeviceList } from './responses/get-device-list';
 import { GetRatePower, Rates } from './responses/get-rate-power';
 import { BindDevice } from './responses/bind-device';
+import { convertDeviceInformationToBlauhoffDevice } from './helpers/device-information-to-blauhoff-device';
 
 export class API {
 
@@ -16,9 +17,9 @@ export class API {
     private accessSecret: string = 'XXX';
 
     userToken: string = '';
-    log: ILogger;
+    log: IBaseLogger;
 
-    constructor(log: ILogger) {
+    constructor(log: IBaseLogger) {
         this.log = log;
     }
 
@@ -48,20 +49,30 @@ export class API {
      *
      * @returns A promise that resolves to an array of BlauHoffDevice objects.
      */
-    queryDeviceList = async (): Promise<BlauHoffDevice[]> => {
-        // let currentPage = 1;
-        // let devices: BlauHoffDevice[] = [];
+    queryDeviceList = async (pageSize: number = 10): Promise<BlauHoffDevice[]> => {
+        const devices: BlauHoffDevice[] = [];
 
-        const result = await this.queryDeviceListPage(1);
-        /*
-        while (result.length > 0) {
-            devices = devices.concat(result);
-            currentPage++;
-            result = await this.queryDeviceListPage(currentPage);
+        const page1 = await this.queryDeviceListPage(1, pageSize);
+
+        if (!isValidResponse(page1)) {
+            this.log.error('Failed to get device list');
+            return [];
         }
-        */
 
-        return result;
+        page1!.data.data.forEach((item) => {
+            devices.push(convertDeviceInformationToBlauhoffDevice(item));
+        });
+
+        for (let pageNr = 2; pageNr <= page1!.data.totalPages; pageNr++) {
+            const page = await this.queryDeviceListPage(pageNr, 2);
+            if (isValidResponse(page)) {
+                page!.data.data.forEach((item) => {
+                    devices.push(convertDeviceInformationToBlauhoffDevice(item));
+                });
+            }
+        }
+
+        return devices;
     }
 
     /**
@@ -119,7 +130,7 @@ export class API {
 
         const data = await this.performRequest<BindDevice>(path, 'post', params);
 
-        if (!isResponseOk(data)) {
+        if (!isValidResponse(data)) {
             return false;
         }
 
@@ -141,7 +152,7 @@ export class API {
 
         const data = await this.performRequest<GetRatePower>(path, 'get');
 
-        if (!isResponseOk(data)) {
+        if (!isValidResponse(data)) {
             this.log.error('Failed to get rate power');
             return undefined;
         }
@@ -180,7 +191,7 @@ export class API {
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
 
-        if (!isResponseOk(data)) {
+        if (!isValidResponse(data)) {
             this.log.error('Failed to setMode1');
             return false;
         }
@@ -226,7 +237,7 @@ export class API {
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
 
-        if (!isResponseOk(data)) {
+        if (!isValidResponse(data)) {
             this.log.error('Failed to setMode2');
             return false;
         }
@@ -272,7 +283,7 @@ export class API {
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
 
-        if (!isResponseOk(data)) {
+        if (!isValidResponse(data)) {
             this.log.error('Failed to setMode3');
             return false;
         }
@@ -318,7 +329,7 @@ export class API {
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
 
-        if (!isResponseOk(data)) {
+        if (!isValidResponse(data)) {
             this.log.error('Failed to setMode4');
             return false;
         }
@@ -364,7 +375,7 @@ export class API {
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
 
-        if (!isResponseOk(data)) {
+        if (!isValidResponse(data)) {
             this.log.error('Failed to setMode4');
             return false;
         }
@@ -417,7 +428,7 @@ export class API {
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
 
-        if (!isResponseOk(data)) {
+        if (!isValidResponse(data)) {
             this.log.error('Failed to setMode6');
             return false;
         }
@@ -463,7 +474,7 @@ export class API {
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
 
-        if (!isResponseOk(data)) {
+        if (!isValidResponse(data)) {
             this.log.error('Failed to setMode7');
             return false;
         }
@@ -488,7 +499,7 @@ export class API {
 
         const data = await this.performRequest<GetUserToken>(path, 'post', {}, header);
 
-        if (!isResponseOk(data)) {
+        if (!isValidResponse(data)) {
             this.userToken = '';
             return false;
         }
@@ -534,35 +545,17 @@ export class API {
      * @param page - The page number to retrieve.
      * @returns A promise that resolves to an array of BlauHoffDevice objects representing the devices on the page.
      */
-    private queryDeviceListPage = async (page: number): Promise<BlauHoffDevice[]> => {
+    private queryDeviceListPage = async (page: number, pageSize: number): Promise<GetDeviceList | undefined> => {
         const path = '/v1/hub/device/info/list';
 
         const params = {
-            pageSize: 10,
+            pageSize,
             pageNum: page,
         };
 
         const data = await this.performRequest<GetDeviceList>(path, 'post', params);
 
-        this.log.log(`Got device list: ${JSON.stringify(data)}`);
-
-        if (!isResponseOk(data)) {
-            this.log.error('Failed to get devices');
-            return [];
-        }
-
-        const result: BlauHoffDevice[] = data!.data.data.map((item) => {
-            return {
-                id: item.id,
-                serial: item.deviceSn,
-                model: item.deviceModel,
-                // lastStatusUpdate: new Date(),
-            };
-        });
-
-        this.log.log(`Got ${result.length} devices`);
-
-        return result;
+        return data;
     }
 
     /**
