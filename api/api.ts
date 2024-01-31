@@ -10,6 +10,8 @@ import { GetRatePowerResponse, Rates } from './models/responses/get-rate-power-r
 import { BindDeviceResponse } from './models/responses/bind-device-response';
 import { convertDeviceInformationToBlauhoffDevice } from './helpers/device-information-to-blauhoff-device';
 import { isValidResponse } from './helpers/is-valid-response';
+import { DeviceInfoResponse } from './models/responses/device-info-response';
+import { convertDeviceInfoToBlauhoffDeviceStatus } from './helpers/device-info-to-blauhoff-device-status';
 
 export class API {
 
@@ -82,7 +84,7 @@ export class API {
      * @param device - The BlauHoff device for which to retrieve the status.
      * @returns A promise that resolves to an array of BlauHoffDeviceStatus objects representing the device status.
      */
-    queryDevice = async (device: BlauHoffDevice): Promise<BlauHoffDeviceStatus[]> => {
+    queryDevice = async (device: BlauHoffDevice): Promise<BlauHoffDeviceStatus[][]> => {
         const path = '/v1/hub/device/info/query';
 
         // Do we want to store the previous query time?
@@ -102,16 +104,16 @@ export class API {
             start: previousTime,
         };
 
-        const response = await fetch(this.baseUrl + path, {
-            method: 'post',
-            headers: this.authorizationHeader(),
-            body: JSON.stringify(params),
-        });
+        const response = await this.performRequest<DeviceInfoResponse>(path, 'post', params);
 
-        // Parse response
+        if (!isValidResponse(response)) {
+            this.log.error('Failed to get query device');
+            return [];
+        }
 
-        const data = await response.json();
-        return this.getRowFromData(data, 0);
+        const data = convertDeviceInfoToBlauhoffDeviceStatus(this.log, response!);
+
+        return data;
     }
 
     /**
