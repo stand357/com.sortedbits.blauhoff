@@ -29,7 +29,11 @@ describe('setMode5', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode5(testDevice, 20, 10, 600);
+        const result = await api.setMode5(testDevice, {
+            maxFeedInLimit: 20,
+            batCapMin: 10,
+            timeout: 600,
+        });
 
         const expectHeaders = {
             Accept: '*/*',
@@ -38,10 +42,10 @@ describe('setMode5', () => {
         };
 
         const expectedParams = JSON.stringify({
-            deviceSn: testDevice.serial,
             maxFeedInLimit: 20,
             batCapMin: 10,
             timeout: 600,
+            deviceSn: testDevice.serial,
         });
 
         expect(fetch).toHaveBeenCalledWith(
@@ -61,7 +65,11 @@ describe('setMode5', () => {
             new Response(JSON.stringify(failObject)),
         );
 
-        const result = await api.setMode5(testDevice, 20, 10, 600);
+        const result = await api.setMode5(testDevice, {
+            maxFeedInLimit: 20,
+            batCapMin: 10,
+            timeout: 600,
+        });
 
         expect(result).toStrictEqual(false);
     });

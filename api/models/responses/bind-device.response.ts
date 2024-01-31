@@ -1,4 +1,4 @@
-import { BaseResponse } from './base-response';
+import { BaseResponse } from './base.response';
 
 interface Data {
     bindedList: string[];

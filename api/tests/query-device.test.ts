@@ -5,7 +5,7 @@ import { Logger } from '../log';
 import { deviceInfoResponse } from './helpers/device-info';
 import { testDevice } from './helpers/test-device';
 import { BlauHoffDeviceStatus } from '../models/blauhoff-device-status';
-import { DeviceInfoResponse } from '../models/responses/device-info-response';
+import { QueryDeviceResponse } from '../models/responses/query-device.response';
 
 jest.mock('node-fetch');
 const { Response } = jest.requireActual('node-fetch');
@@ -16,7 +16,7 @@ const failObject = {
     t: 1684756685989,
 };
 
-const getObjectsFromRow = (deviceInfo: DeviceInfoResponse, row: number, column: number): BlauHoffDeviceStatus => {
+const getObjectsFromRow = (deviceInfo: QueryDeviceResponse, row: number, column: number): BlauHoffDeviceStatus => {
     const name = deviceInfo.data.columns[column];
     const metadata = deviceInfo.data.metadata[column];
     const value = deviceInfo.data.rows[row][column];
@@ -38,7 +38,13 @@ describe('query-device', () => {
             new Response(JSON.stringify(deviceInfoResponse)),
         );
 
-        const response = await api.queryDevice(testDevice);
+        const currentTime = Date.now() / 1000;
+        const previousTime = currentTime - 1000;
+
+        const response = await api.queryDevice(testDevice, {
+            start: previousTime,
+            end: currentTime,
+        });
 
         expect(response.length).toStrictEqual(deviceInfoResponse.data.rows.length);
 
@@ -59,7 +65,13 @@ describe('query-device', () => {
             new Response(JSON.stringify(failObject)),
         );
 
-        const response = await api.queryDevice(testDevice);
+        const currentTime = Date.now() / 1000;
+        const previousTime = currentTime - 1000;
+
+        const response = await api.queryDevice(testDevice, {
+            start: previousTime,
+            end: currentTime,
+        });
 
         expect(response).toStrictEqual([]);
     });

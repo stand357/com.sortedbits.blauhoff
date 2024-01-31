@@ -1,17 +1,20 @@
 import fetch from 'node-fetch';
-import { BlauHoffDeviceData } from './models/blauhoff-device-data';
 import { BlauHoffDevice } from './models/blauhoff-device';
 import { BlauHoffDeviceStatus } from './models/blauhoff-device-status';
 import { IBaseLogger } from './log';
-import { BaseResponse } from './models/responses/base-response';
+import { BaseResponse } from './models/responses/base.response';
 import { GetUserTokenResponse } from './models/responses/get-user-token-response';
 import { GetDeviceListResponse } from './models/responses/get-device-list-response';
 import { GetRatePowerResponse, Rates } from './models/responses/get-rate-power-response';
-import { BindDeviceResponse } from './models/responses/bind-device-response';
+import { BindDeviceResponse } from './models/responses/bind-device.response';
 import { convertDeviceInformationToBlauhoffDevice } from './helpers/device-information-to-blauhoff-device';
 import { isValidResponse } from './helpers/is-valid-response';
-import { DeviceInfoResponse } from './models/responses/device-info-response';
+import { QueryDeviceResponse } from './models/responses/query-device.response';
 import { convertDeviceInfoToBlauhoffDeviceStatus } from './helpers/device-info-to-blauhoff-device-status';
+import { QueryDeviceOptions } from './models/options/query-device.options';
+import {
+    Mode1, Mode2, Mode3, Mode4, Mode5, Mode6, Mode7,
+} from './models/options/set-mode.options';
 
 export class API {
 
@@ -24,6 +27,13 @@ export class API {
 
     constructor(log: IBaseLogger) {
         this.log = log;
+    }
+
+    getAuthenticationInfo = (): { accessId: string, accessSecret: string } => {
+        return {
+            accessId: this.accessId,
+            accessSecret: this.accessSecret,
+        };
     }
 
     setAuthenticationInfo = (accessId: string, accessSecret: string) => {
@@ -84,27 +94,15 @@ export class API {
      * @param device - The BlauHoff device for which to retrieve the status.
      * @returns A promise that resolves to an array of BlauHoffDeviceStatus objects representing the device status.
      */
-    queryDevice = async (device: BlauHoffDevice): Promise<BlauHoffDeviceStatus[][]> => {
+    queryDevice = async (device: BlauHoffDevice, options: QueryDeviceOptions): Promise<BlauHoffDeviceStatus[][]> => {
         const path = '/v1/hub/device/info/query';
 
-        // Do we want to store the previous query time?
-        // In the example only the last 1000 seconds are used.
-        /*
-        const previousTime = device.lastStatusUpdate.getTime() / 1000;
-        device.lastStatusUpdate = new Date();
-        const currentTime = device.lastStatusUpdate.getTime() / 1000;
-        */
-
-        const currentTime = Date.now() / 1000;
-        const previousTime = currentTime - 1000;
-
         const params = {
+            ...options,
             deviceSn: device.serial,
-            end: currentTime,
-            start: previousTime,
         };
 
-        const response = await this.performRequest<DeviceInfoResponse>(path, 'post', params);
+        const response = await this.performRequest<QueryDeviceResponse>(path, 'post', params);
 
         if (!isValidResponse(response)) {
             this.log.error('Failed to get query device');
@@ -173,7 +171,9 @@ export class API {
      * @param batCapMin - Battery Min Capacity (10 - 100)
      * @returns A promise that resolves to a boolean indicating whether the mode1 was set successfully.
      */
-    setMode1 = async (device: BlauHoffDevice, maxFeedInLimit: number, batCapMin: number): Promise<boolean> => {
+    setMode1 = async (device: BlauHoffDevice, options: Mode1): Promise<boolean> => {
+        const { maxFeedInLimit, batCapMin } = options;
+
         if (maxFeedInLimit < 0 || maxFeedInLimit > 100) {
             this.log.error('maxFeedInLimit must be between 0 and 100');
             return false;
@@ -187,9 +187,8 @@ export class API {
         const path = '/v1/hub/device/vpp/mode1';
 
         const params = {
+            ...options,
             deviceSn: device.serial,
-            maxFeedInLimit,
-            batCapMin,
         };
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
@@ -208,13 +207,15 @@ export class API {
      * Direct charge at specified power level
      *
      * @param device - The BlauHoff device to set the mode2 for.
-     * @param batteryPower - Battery power. Positive -> Discharge, Negative -> Charge(-6000~0) W
+     * @param batCapPower - Battery power. Positive -> Discharge, Negative -> Charge(-6000~0) W
      * @param batCapMin - Battery Min Capacity (10 - 100)
      * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
-    setMode2 = async (device: BlauHoffDevice, batteryPower: number, batCapMin: number, timeout: number): Promise<boolean> => {
-        if (batteryPower < -6000 || batteryPower > 0) {
+    setMode2 = async (device: BlauHoffDevice, options: Mode2): Promise<boolean> => {
+        const { batCapPower, batCapMin, timeout } = options;
+
+        if (batCapPower < -6000 || batCapPower > 0) {
             this.log.error('batteryPower must be between -6000 and 0');
             return false;
         }
@@ -232,10 +233,8 @@ export class API {
         const path = '/v1/hub/device/vpp/mode2';
 
         const params = {
+            ...options,
             deviceSn: device.serial,
-            batPower: batteryPower,
-            batCapMin,
-            timeout,
         };
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
@@ -259,8 +258,10 @@ export class API {
      * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
-    setMode3 = async (device: BlauHoffDevice, batteryPower: number, batCapMin: number, timeout: number): Promise<boolean> => {
-        if (batteryPower < 0 || batteryPower > 6000) {
+    setMode3 = async (device: BlauHoffDevice, options: Mode3): Promise<boolean> => {
+        const { batPower, batCapMin, timeout } = options;
+
+        if (batPower < 0 || batPower > 6000) {
             this.log.error('batteryPower must be between 0 and 6000');
             return false;
         }
@@ -278,10 +279,8 @@ export class API {
         const path = '/v1/hub/device/vpp/mode3';
 
         const params = {
+            ...options,
             deviceSn: device.serial,
-            batPower: batteryPower,
-            batCapMin,
-            timeout,
         };
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
@@ -305,7 +304,9 @@ export class API {
      * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
-    setMode4 = async (device: BlauHoffDevice, maxFeedInLimit: number, batCapMin: number, timeout: number): Promise<boolean> => {
+    setMode4 = async (device: BlauHoffDevice, options: Mode4): Promise<boolean> => {
+        const { maxFeedInLimit, batCapMin, timeout } = options;
+
         if (maxFeedInLimit < 0 || maxFeedInLimit > 100) {
             this.log.error('maxFeedInLimit must be between 0 and 100');
             return false;
@@ -324,10 +325,8 @@ export class API {
         const path = '/v1/hub/device/vpp/mode4';
 
         const params = {
+            ...options,
             deviceSn: device.serial,
-            maxFeedInLimit,
-            batCapMin,
-            timeout,
         };
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
@@ -351,7 +350,9 @@ export class API {
      * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
-    setMode5 = async (device: BlauHoffDevice, maxFeedInLimit: number, batCapMin: number, timeout: number): Promise<boolean> => {
+    setMode5 = async (device: BlauHoffDevice, options: Mode5): Promise<boolean> => {
+        const { maxFeedInLimit, batCapMin, timeout } = options;
+
         if (maxFeedInLimit < 0 || maxFeedInLimit > 100) {
             this.log.error('maxFeedInLimit must be between 0 and 100');
             return false;
@@ -370,10 +371,8 @@ export class API {
         const path = '/v1/hub/device/vpp/mode5';
 
         const params = {
+            ...options,
             deviceSn: device.serial,
-            maxFeedInLimit,
-            batCapMin,
-            timeout,
         };
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
@@ -398,7 +397,11 @@ export class API {
      * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
-    setMode6 = async (device: BlauHoffDevice, batPower: number, batPowerInvLimit: number, batCapMin: number, timeout: number): Promise<boolean> => {
+    setMode6 = async (device: BlauHoffDevice, options: Mode6): Promise<boolean> => {
+        const {
+            batPower, batPowerInvLimit, batCapMin, timeout,
+        } = options;
+
         if (batPower < 0 || batPower > 6000) {
             this.log.error('batPower must be between 0 and 6000');
             return false;
@@ -422,11 +425,8 @@ export class API {
         const path = '/v1/hub/device/vpp/mode6';
 
         const params = {
+            ...options,
             deviceSn: device.serial,
-            batPower,
-            batPowerInvLimit,
-            batCapMin,
-            timeout,
         };
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
@@ -450,9 +450,11 @@ export class API {
      * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
-    setMode7 = async (device: BlauHoffDevice, batPower: number, batCapMin: number, timeout: number): Promise<boolean> => {
-        if (batPower < 0 || batPower > 6000) {
-            this.log.error('batPower must be between 0 and 6000');
+    setMode7 = async (device: BlauHoffDevice, options: Mode7): Promise<boolean> => {
+        const { batPower, batCapMin, timeout } = options;
+
+        if (batPower < -6000 || batPower > 0) {
+            this.log.error('batPower must be between -6000 and 0');
             return false;
         }
 
@@ -469,10 +471,8 @@ export class API {
         const path = '/v1/hub/device/vpp/mode7';
 
         const params = {
+            ...options,
             deviceSn: device.serial,
-            batPower,
-            batCapMin,
-            timeout,
         };
 
         const data = await this.performRequest<BaseResponse>(path, 'post', params);
@@ -509,37 +509,6 @@ export class API {
 
         this.userToken = data!.data;
         return true;
-    }
-
-    /**
-     * Retrieves a row of BlauHoffDeviceStatus objects from the given BlauHoffDeviceData based on the specified rowIndex.
-     * If the rowIndex is out of bounds, an empty array is returned.
-     *
-     * @param data - The BlauHoffDeviceData object containing the columns, metadata, and rows.
-     * @param rowIndex - The index of the row to retrieve.
-     * @returns An array of BlauHoffDeviceStatus objects representing the row data.
-     */
-    private getRowFromData = (data: BlauHoffDeviceData, rowIndex: number): BlauHoffDeviceStatus[] => {
-        const { columns, metadata, rows } = data;
-
-        if (rows.length <= rowIndex) {
-            this.log.error(`Row index ${rowIndex} is out of bounds`);
-            return [];
-        }
-
-        const results: BlauHoffDeviceStatus[] = [];
-
-        for (let index = 0; index < columns.length; index++) {
-            const result: BlauHoffDeviceStatus = {
-                name: columns[index],
-                dataType: metadata[index],
-                value: rows[rowIndex][index],
-            };
-
-            results.push(result);
-        }
-
-        return results;
     }
 
     /**

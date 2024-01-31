@@ -1,6 +1,9 @@
 {
   "name": "com.sortedbits.blauhoff",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=8.3.0"
+  },
   "main": "app.ts",
   "scripts": {
     "build": "tsc",
