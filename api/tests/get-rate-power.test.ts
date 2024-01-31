@@ -1,8 +1,8 @@
 import fetch from 'node-fetch';
 
-import { API } from '../blauhoff';
+import { API } from '../api';
 import { Logger } from '../log';
-import { BlauHoffDevice } from '../blauhoff-device';
+import { BlauHoffDevice } from '../models/blauhoff-device';
 import { testDevice } from './helpers/test-device';
 
 jest.mock('node-fetch');

@@ -1,5 +1,5 @@
 import Homey from 'homey';
-import { API } from './api/blauhoff';
+import { API } from '@api/index';
 
 class BlauhoffBattery extends Homey.Device {
 

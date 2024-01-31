@@ -1,14 +1,15 @@
 import fetch from 'node-fetch';
-import { BlauHoffDeviceData } from './blauhoff-device-data';
-import { BlauHoffDevice } from './blauhoff-device';
-import { BlauHoffDeviceStatus } from './blauhoff-device-status';
+import { BlauHoffDeviceData } from './models/blauhoff-device-data';
+import { BlauHoffDevice } from './models/blauhoff-device';
+import { BlauHoffDeviceStatus } from './models/blauhoff-device-status';
 import { IBaseLogger } from './log';
-import { BaseResponse, isValidResponse } from './responses/base-response';
-import { GetUserToken } from './responses/get-user-token';
-import { GetDeviceList } from './responses/get-device-list';
-import { GetRatePower, Rates } from './responses/get-rate-power';
-import { BindDevice } from './responses/bind-device';
+import { BaseResponse } from './models/responses/base-response';
+import { GetUserTokenResponse } from './models/responses/get-user-token-response';
+import { GetDeviceListResponse } from './models/responses/get-device-list-response';
+import { GetRatePowerResponse, Rates } from './models/responses/get-rate-power-response';
+import { BindDeviceResponse } from './models/responses/bind-device-response';
 import { convertDeviceInformationToBlauhoffDevice } from './helpers/device-information-to-blauhoff-device';
+import { isValidResponse } from './helpers/is-valid-response';
 
 export class API {
 
@@ -128,7 +129,7 @@ export class API {
             ],
         };
 
-        const data = await this.performRequest<BindDevice>(path, 'post', params);
+        const data = await this.performRequest<BindDeviceResponse>(path, 'post', params);
 
         if (!isValidResponse(data)) {
             return false;
@@ -150,7 +151,7 @@ export class API {
     getRatePower = async (device: BlauHoffDevice): Promise<Rates | undefined> => {
         const path = `/v1/hub/device/info?deviceSn=${device.serial}`;
 
-        const data = await this.performRequest<GetRatePower>(path, 'get');
+        const data = await this.performRequest<GetRatePowerResponse>(path, 'get');
 
         if (!isValidResponse(data)) {
             this.log.error('Failed to get rate power');
@@ -497,7 +498,7 @@ export class API {
             'Access-Secret': this.accessSecret,
         };
 
-        const data = await this.performRequest<GetUserToken>(path, 'post', {}, header);
+        const data = await this.performRequest<GetUserTokenResponse>(path, 'post', {}, header);
 
         if (!isValidResponse(data)) {
             this.userToken = '';
@@ -545,7 +546,7 @@ export class API {
      * @param page - The page number to retrieve.
      * @returns A promise that resolves to an array of BlauHoffDevice objects representing the devices on the page.
      */
-    private queryDeviceListPage = async (page: number, pageSize: number): Promise<GetDeviceList | undefined> => {
+    private queryDeviceListPage = async (page: number, pageSize: number): Promise<GetDeviceListResponse | undefined> => {
         const path = '/v1/hub/device/info/list';
 
         const params = {
@@ -553,7 +554,7 @@ export class API {
             pageNum: page,
         };
 
-        const data = await this.performRequest<GetDeviceList>(path, 'post', params);
+        const data = await this.performRequest<GetDeviceListResponse>(path, 'post', params);
 
         return data;
     }
