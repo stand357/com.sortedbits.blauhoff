@@ -19,7 +19,7 @@ const failObject = {
     t: 1684756685989,
 };
 
-describe('setMode1', () => {
+describe('setMode6', () => {
     test('with valid values', async () => {
         const api = new API(new Logger());
         api.userToken = 'user-token';
@@ -29,7 +29,7 @@ describe('setMode1', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode1(testDevice, 20, 10);
+        const result = await api.setMode6(testDevice, 2000, 3500, 10, 600);
 
         const expectHeaders = {
             Accept: '*/*',
@@ -39,44 +39,18 @@ describe('setMode1', () => {
 
         const expectedParams = JSON.stringify({
             deviceSn: testDevice.serial,
-            maxFeedInLimit: 20,
+            batPower: 2000,
+            batPowerInvLimit: 3500,
             batCapMin: 10,
+            timeout: 600,
         });
 
         expect(fetch).toHaveBeenCalledWith(
-            'https://api-vpp-au.weiheng-tech.com/api/vpp/v1/hub/device/vpp/mode1',
+            'https://api-vpp-au.weiheng-tech.com/api/vpp/v1/hub/device/vpp/mode6',
             { body: expectedParams, headers: expectHeaders, method: 'post' },
         );
 
         expect(result).toStrictEqual(true);
-    });
-
-    test('with invalid maxFeedInLimit', async () => {
-        const api = new API(new Logger());
-        api.userToken = 'user-token';
-        expect(fetch).toHaveBeenCalledTimes(0);
-
-        (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
-            new Response(JSON.stringify(successObject)),
-        );
-
-        const result = await api.setMode1(testDevice, 150, 10);
-
-        expect(result).toStrictEqual(false);
-    });
-
-    test('with invalid batCapMin', async () => {
-        const api = new API(new Logger());
-        api.userToken = 'user-token';
-        expect(fetch).toHaveBeenCalledTimes(0);
-
-        (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
-            new Response(JSON.stringify(successObject)),
-        );
-
-        const result = await api.setMode1(testDevice, 25, 5);
-
-        expect(result).toStrictEqual(false);
     });
 
     test('fails', async () => {
@@ -88,7 +62,7 @@ describe('setMode1', () => {
             new Response(JSON.stringify(failObject)),
         );
 
-        const result = await api.setMode1(testDevice, 20, 10);
+        const result = await api.setMode6(testDevice, 2000, 3500, 10, 600);
 
         expect(result).toStrictEqual(false);
     });

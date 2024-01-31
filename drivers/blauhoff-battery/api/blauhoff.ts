@@ -200,6 +200,21 @@ export class API {
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
     setMode2 = async (device: BlauHoffDevice, batteryPower: number, batCapMin: number, timeout: number): Promise<boolean> => {
+        if (batteryPower < -6000 || batteryPower > 0) {
+            this.log.error('batteryPower must be between -6000 and 0');
+            return false;
+        }
+
+        if (batCapMin < 10 || batCapMin > 100) {
+            this.log.error('batCapMin must be between 10 and 100');
+            return false;
+        }
+
+        if (timeout < 0 || timeout > 5000) {
+            this.log.error('timeout must be between 0 and 5000');
+            return false;
+        }
+
         const path = '/v1/hub/device/vpp/mode2';
 
         const params = {
@@ -209,7 +224,13 @@ export class API {
             timeout,
         };
 
-        const data = await this.performRequest(path, 'post', params);
+        const data = await this.performRequest<BaseResponse>(path, 'post', params);
+
+        if (!isResponseOk(data)) {
+            this.log.error('Failed to setMode2');
+            return false;
+        }
+
         this.log.log(`Set mode2: ${data}`);
         return true;
     }
@@ -225,6 +246,21 @@ export class API {
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
     setMode3 = async (device: BlauHoffDevice, batteryPower: number, batCapMin: number, timeout: number): Promise<boolean> => {
+        if (batteryPower < 0 || batteryPower > 6000) {
+            this.log.error('batteryPower must be between 0 and 6000');
+            return false;
+        }
+
+        if (batCapMin < 10 || batCapMin > 100) {
+            this.log.error('batCapMin must be between 10 and 100');
+            return false;
+        }
+
+        if (timeout < 0 || timeout > 5000) {
+            this.log.error('timeout must be between 0 and 5000');
+            return false;
+        }
+
         const path = '/v1/hub/device/vpp/mode3';
 
         const params = {
@@ -234,7 +270,13 @@ export class API {
             timeout,
         };
 
-        const data = await this.performRequest(path, 'post', params);
+        const data = await this.performRequest<BaseResponse>(path, 'post', params);
+
+        if (!isResponseOk(data)) {
+            this.log.error('Failed to setMode3');
+            return false;
+        }
+
         this.log.log(`Set mode3: ${data}`);
         return true;
     }
@@ -250,6 +292,21 @@ export class API {
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
     setMode4 = async (device: BlauHoffDevice, maxFeedInLimit: number, batCapMin: number, timeout: number): Promise<boolean> => {
+        if (maxFeedInLimit < 0 || maxFeedInLimit > 100) {
+            this.log.error('maxFeedInLimit must be between 0 and 100');
+            return false;
+        }
+
+        if (batCapMin < 10 || batCapMin > 100) {
+            this.log.error('batCapMin must be between 10 and 100');
+            return false;
+        }
+
+        if (timeout < 0 || timeout > 5000) {
+            this.log.error('timeout must be between 0 and 5000');
+            return false;
+        }
+
         const path = '/v1/hub/device/vpp/mode4';
 
         const params = {
@@ -259,7 +316,13 @@ export class API {
             timeout,
         };
 
-        const data = await this.performRequest(path, 'post', params);
+        const data = await this.performRequest<BaseResponse>(path, 'post', params);
+
+        if (!isResponseOk(data)) {
+            this.log.error('Failed to setMode4');
+            return false;
+        }
+
         this.log.log(`Set mode4: ${data}`);
         return true;
     }
@@ -284,7 +347,13 @@ export class API {
             timeout,
         };
 
-        const data = await this.performRequest(path, 'post', params);
+        const data = await this.performRequest<BaseResponse>(path, 'post', params);
+
+        if (!isResponseOk(data)) {
+            this.log.error('Failed to setMode4');
+            return false;
+        }
+
         this.log.log(`Set mode5: ${data}`);
         return true;
     }
@@ -311,7 +380,13 @@ export class API {
             timeout,
         };
 
-        const data = await this.performRequest(path, 'post', params);
+        const data = await this.performRequest<BaseResponse>(path, 'post', params);
+
+        if (!isResponseOk(data)) {
+            this.log.error('Failed to setMode6');
+            return false;
+        }
+
         this.log.log(`Set mode6: ${data}`);
         return true;
     }
@@ -327,7 +402,22 @@ export class API {
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
     setMode7 = async (device: BlauHoffDevice, batPower: number, batCapMin: number, timeout: number): Promise<boolean> => {
-        const path = '/v1/hub/device/vpp/mode6';
+        if (batPower < 0 || batPower > 6000) {
+            this.log.error('batPower must be between 0 and 6000');
+            return false;
+        }
+
+        if (batCapMin < 10 || batCapMin > 100) {
+            this.log.error('batCapMin must be between 10 and 100');
+            return false;
+        }
+
+        if (timeout < 0 || timeout > 5000) {
+            this.log.error('timeout must be between 0 and 5000');
+            return false;
+        }
+
+        const path = '/v1/hub/device/vpp/mode7';
 
         const params = {
             deviceSn: device.serial,
@@ -336,7 +426,13 @@ export class API {
             timeout,
         };
 
-        const data = await this.performRequest(path, 'post', params);
+        const data = await this.performRequest<BaseResponse>(path, 'post', params);
+
+        if (!isResponseOk(data)) {
+            this.log.error('Failed to setMode7');
+            return false;
+        }
+
         this.log.log(`Set mode7: ${data}`);
         return true;
     }
