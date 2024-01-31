@@ -2,10 +2,40 @@ import fetch from 'node-fetch';
 
 import { API } from '../blauhoff';
 import { Logger } from '../log';
-import { GetDeviceListResponse } from '../mock/responses/get-device-list';
 
 jest.mock('node-fetch');
 const { Response } = jest.requireActual('node-fetch');
+
+const successObject = {
+    msg: 'OK',
+    code: 200,
+    t: 1684756685989,
+    data: {
+        totalPages: 1,
+        totalCount: 2,
+        data: [
+            {
+                deviceSn: 'SHA602131202215005',
+                deviceModel: 'SPHA6.0H-10.24kW',
+                state: 0,
+                id: '1678686019714682881',
+            },
+            {
+                deviceSn: 'SHA602131202215004',
+                deviceModel: 'SPHA6.0H-10.24kW',
+                state: 0,
+                id: '1678686019714682880',
+            },
+        ],
+    },
+    success: true,
+};
+
+const failObject = {
+    msg: 'ERROR',
+    code: 401,
+    t: 1684756685989,
+};
 
 describe('get-device-list', () => {
     test('Fetch a single page of items', async () => {
@@ -15,9 +45,7 @@ describe('get-device-list', () => {
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
-            new Response(JSON.stringify(
-                new GetDeviceListResponse().successObject,
-            )),
+            new Response(JSON.stringify(successObject)),
         );
 
         const response = await api.queryDeviceList();
@@ -43,9 +71,7 @@ describe('get-device-list', () => {
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
-            new Response(JSON.stringify(
-                new GetDeviceListResponse().failObject,
-            )),
+            new Response(JSON.stringify(failObject)),
         );
 
         const response = await api.queryDeviceList();

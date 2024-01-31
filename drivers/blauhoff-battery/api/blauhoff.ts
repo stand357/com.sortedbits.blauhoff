@@ -6,6 +6,8 @@ import { ILogger } from './log';
 import { BaseResponse, isResponseOk } from './responses/base-response';
 import { GetUserToken } from './responses/get-user-token';
 import { GetDeviceList } from './responses/get-device-list';
+import { GetRatePower, Rates } from './responses/get-rate-power';
+import { BindDevice } from './responses/bind-device';
 
 export class API {
 
@@ -115,11 +117,16 @@ export class API {
             ],
         };
 
-        const data = await this.performRequest(path, 'post', params);
+        const data = await this.performRequest<BindDevice>(path, 'post', params);
 
-        if (!data) {
+        if (!isResponseOk(data)) {
             return false;
         }
+
+        if (data!.data.bindedList.indexOf(serial) === -1) {
+            return false;
+        }
+
         return true;
     }
 
@@ -129,13 +136,18 @@ export class API {
      * @param device - The BlauHoff device to query.
      * @returns A promise that resolves to the rate power of the device.
      */
-    queryRatePower = async (device: BlauHoffDevice): Promise<number> => {
+    getRatePower = async (device: BlauHoffDevice): Promise<Rates | undefined> => {
         const path = `/v1/hub/device/info?deviceSn=${device.serial}`;
 
-        const data = await this.performRequest(path, 'get', {});
+        const data = await this.performRequest<GetRatePower>(path, 'get');
+
+        if (!isResponseOk(data)) {
+            this.log.error('Failed to get rate power');
+            return undefined;
+        }
 
         this.log.log(`Got device info: ${data}`);
-        return 0;
+        return data!.data;
     }
 
     /**
@@ -430,10 +442,10 @@ export class API {
      * @param {Headers} [headers] - The headers to include in the request.
      * @returns {Promise<Type>} - A promise that resolves to the response data.
      */
-    private performRequest = async <Type>(
+    performRequest = async <Type>(
         path: string,
         method: 'get' | 'post',
-        params: any,
+        params: any = {},
         headers?: any,
     ): Promise<Type | undefined> => {
         this.log.log(`Performing request to ${path} with params: ${JSON.stringify(params)}`);

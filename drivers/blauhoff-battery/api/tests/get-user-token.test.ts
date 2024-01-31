@@ -2,10 +2,23 @@ import fetch from 'node-fetch';
 
 import { API } from '../blauhoff';
 import { Logger } from '../log';
-import { GetUserTokenResponse } from '../mock/responses/get-user-token';
 
 jest.mock('node-fetch');
 const { Response } = jest.requireActual('node-fetch');
+
+const successObject = {
+    msg: 'OK',
+    code: 200,
+    t: 1684756685989,
+    data: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9',
+    success: true,
+};
+
+const failObject = {
+    msg: 'ERROR',
+    code: 401,
+    t: 1684756685989,
+};
 
 describe('get-user-token', () => {
     test('headers are successfully set', async () => {
@@ -15,9 +28,7 @@ describe('get-user-token', () => {
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
-            new Response(JSON.stringify(
-                new GetUserTokenResponse().successObject,
-            )),
+            new Response(JSON.stringify(successObject)),
         );
 
         await api.getUserToken();
@@ -42,9 +53,7 @@ describe('get-user-token', () => {
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
-            new Response(JSON.stringify(
-                new GetUserTokenResponse().successObject,
-            )),
+            new Response(JSON.stringify(successObject)),
         );
 
         const result = await api.getUserToken();
@@ -59,9 +68,7 @@ describe('get-user-token', () => {
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
-            new Response(JSON.stringify(
-                new GetUserTokenResponse().failObject,
-            )),
+            new Response(JSON.stringify(failObject)),
         );
 
         const result = await api.getUserToken();
