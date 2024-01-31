@@ -3,6 +3,12 @@ import fetch, { Headers } from 'node-fetch';
 import { BlauHoffDeviceData } from './blauhoff-device-data';
 import { BlauHoffDevice } from './blauhoff-device';
 import { BlauHoffDeviceStatus } from './blauhoff-device-status';
+import { IMockResponse, MockFetchResponse } from './mock/mock-fetch-response';
+import { GetUserTokenResponse } from './mock/responses/get-user-token';
+import { BindDeviceResponse } from './mock/responses/bind-device';
+import { GetDeviceListResponse } from './mock/responses/get-device-list';
+import { GetRatePowerResponse } from './mock/responses/get-rate-power';
+import { GenericOutputResponse } from './mock/responses/generic-output';
 
 export class API {
 
@@ -10,6 +16,7 @@ export class API {
     private accessId: string = 'XXX';
     private accessSecret: string = 'XXX';
 
+    mockResponses: boolean = true;
     userToken: string = '';
     log: SimpleClass;
 
@@ -41,17 +48,19 @@ export class API {
      * @returns A promise that resolves to an array of BlauHoffDevice objects.
      */
     queryDeviceList = async (): Promise<BlauHoffDevice[]> => {
-        let currentPage = 1;
-        let devices: BlauHoffDevice[] = [];
+        // let currentPage = 1;
+        // let devices: BlauHoffDevice[] = [];
 
-        let result = await this.queryDeviceListPage(currentPage);
+        const result = await this.queryDeviceListPage(1);
+        /*
         while (result.length > 0) {
             devices = devices.concat(result);
             currentPage++;
             result = await this.queryDeviceListPage(currentPage);
         }
+        */
 
-        return devices;
+        return result;
     }
 
     /**
@@ -107,20 +116,9 @@ export class API {
             ],
         };
 
-        const response = await fetch(this.baseUrl + path, {
-            method: 'post',
-            headers: this.authorizationHeader(),
-            body: JSON.stringify(params),
-        });
-
-        if (response.status !== 200) {
-            this.log.error(`Failed to bind device: ${response.statusText}`);
-            return false;
-        }
-
-        const json = await response.json();
-        this.log.log(`Bound device ${serial}`, json);
-        return true;
+        const debugSuccess = true;
+        const data = await this.performRequest(path, 'post', params, false, new MockFetchResponse(new BindDeviceResponse(), debugSuccess));
+        return data;
     }
 
     /**
@@ -132,106 +130,215 @@ export class API {
     queryRatePower = async (device: BlauHoffDevice): Promise<number> => {
         const path = `/v1/hub/device/info?deviceSn=${device.serial}`;
 
-        const response = await fetch(this.baseUrl + path, {
-            method: 'get',
-            headers: this.authorizationHeader(),
-        });
+        const debugSuccess = true;
 
-        if (response.status !== 200) {
-            this.log.error(`Failed to get device info: ${response.statusText}`);
-            return 0;
-        }
+        const data = await this.performRequest(path, 'get', {}, {}, new MockFetchResponse(new GetRatePowerResponse(), debugSuccess));
 
-        const data = await response.json();
         this.log.log(`Got device info: ${data}`);
         return 0;
     }
 
     /**
      * Sets the mode1 of the BlauHoff device.
+     * Self-consumption
      *
      * @param device - The BlauHoff device to set the mode1 for.
-     * @param maxFeedInLimit - The maximum feed-in limit.
-     * @param batteryCapMinimum - The minimum battery capacity.
+     * @param maxFeedInLimit - Maximum Percentage of Rated Power Feed to Grid (0 - 100) %
+     * @param batCapMin - Battery Min Capacity (10 - 100)
      * @returns A promise that resolves to a boolean indicating whether the mode1 was set successfully.
      */
-    setMode1 = async (device: BlauHoffDevice, maxFeedInLimit: number, batteryCapMinimum: number): Promise<boolean> => {
+    setMode1 = async (device: BlauHoffDevice, maxFeedInLimit: number, batCapMin: number): Promise<boolean> => {
         const path = '/v1/hub/device/vpp/mode1';
 
         const params = {
             deviceSn: device.serial,
             maxFeedInLimit,
-            batCapMin: batteryCapMinimum,
+            batCapMin,
         };
 
-        const response = await fetch(this.baseUrl + path, {
-            method: 'post',
-            headers: this.authorizationHeader(),
-            body: JSON.stringify(params),
-        });
-
-        if (response.status !== 200) {
-            this.log.error(`Failed to set mode1: ${response.statusText}`);
-            return false;
-        }
-
-        const data = await response.json();
+        const debugSuccess = true;
+        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
         this.log.log(`Set mode1: ${data}`);
         return true;
     }
 
     /**
      * Sets the mode2 of the BlauHoff device.
+     * Direct charge at specified power level
      *
      * @param device - The BlauHoff device to set the mode2 for.
-     * @param batteryPower - The battery power value.
-     * @param timeout - The timeout value.
+     * @param batteryPower - Battery power. Positive -> Discharge, Negative -> Charge(-6000~0) W
+     * @param batCapMin - Battery Min Capacity (10 - 100)
+     * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
-    setMode2 = async (device: BlauHoffDevice, batteryPower: number, timeout: number): Promise<boolean> => {
+    setMode2 = async (device: BlauHoffDevice, batteryPower: number, batCapMin: number, timeout: number): Promise<boolean> => {
         const path = '/v1/hub/device/vpp/mode2';
 
         const params = {
             deviceSn: device.serial,
             batPower: batteryPower,
+            batCapMin,
             timeout,
         };
 
-        const response = await fetch(this.baseUrl + path, {
-            method: 'post',
-            headers: this.authorizationHeader(),
-            body: JSON.stringify(params),
-        });
-
-        if (response.status !== 200) {
-            this.log.error(`Failed to set mode2: ${response.statusText}`);
-            return false;
-        }
-
-        const data = await response.json();
+        const debugSuccess = true;
+        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
         this.log.log(`Set mode2: ${data}`);
         return true;
     }
 
     /**
-     * Queries the BlauHoff devices using the provided access credentials.
+     * Sets the mode3 of the BlauHoff device.
+     * Direct discharge at specified power level
      *
-     * @param log - The logger instance.
-     * @param accessId - The access ID for authentication.
-     * @param accessSecret - The access secret for authentication.
-     * @returns A promise that resolves to an array of BlauHoffDevice objects representing the queried devices.
+     * @param device - The BlauHoff device to set the mode3 for.
+     * @param batteryPower - Battery power. Positive -> Discharge, Negative -> Charge (0~6000) W
+     * @param batCapMin - Battery Min Capacity (10 - 100)
+     * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
+     * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
-    public static queryDevices = async (log: SimpleClass, accessId: string, accessSecret: string): Promise<BlauHoffDevice[]> => {
-        const api = new API(log);
+    setMode3 = async (device: BlauHoffDevice, batteryPower: number, batCapMin: number, timeout: number): Promise<boolean> => {
+        const path = '/v1/hub/device/vpp/mode3';
 
-        const success = await api.updateSettings(accessId, accessSecret);
-        if (!success) {
-            log.error('Failed to update settings');
-            return [];
-        }
+        const params = {
+            deviceSn: device.serial,
+            batPower: batteryPower,
+            batCapMin,
+            timeout,
+        };
 
-        const devices = await api.queryDeviceList();
-        return devices;
+        const debugSuccess = true;
+        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
+        this.log.log(`Set mode3: ${data}`);
+        return true;
+    }
+
+    /**
+     * Sets the mode4 of the BlauHoff device.
+     * Discharge only to the load, avoid charging.
+     *
+     * @param device - The BlauHoff device to set the mode4 for.
+     * @param maxFeedInLimit - Maximum Percentage of Rated Power Feed to Grid (0 - 100) %
+     * @param batCapMin - Battery Min Capacity (10 - 100)
+     * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
+     * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
+     */
+    setMode4 = async (device: BlauHoffDevice, maxFeedInLimit: number, batCapMin: number, timeout: number): Promise<boolean> => {
+        const path = '/v1/hub/device/vpp/mode4';
+
+        const params = {
+            deviceSn: device.serial,
+            maxFeedInLimit,
+            batCapMin,
+            timeout,
+        };
+
+        const debugSuccess = true;
+        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
+        this.log.log(`Set mode4: ${data}`);
+        return true;
+    }
+
+    /**
+     * Sets the mode5 of the BlauHoff device.
+     * Change only，no discharging
+     *
+     * @param device - The BlauHoff device to set the mode5 for.
+     * @param maxFeedInLimit - Maximum Percentage of Rated Power Feed to Grid (0 - 100) %
+     * @param batCapMin - Battery Min Capacity (10 - 100)
+     * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
+     * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
+     */
+    setMode5 = async (device: BlauHoffDevice, maxFeedInLimit: number, batCapMin: number, timeout: number): Promise<boolean> => {
+        const path = '/v1/hub/device/vpp/mode5';
+
+        const params = {
+            deviceSn: device.serial,
+            maxFeedInLimit,
+            batCapMin,
+            timeout,
+        };
+
+        const debugSuccess = true;
+        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
+        this.log.log(`Set mode5: ${data}`);
+        return true;
+    }
+
+    /**
+     * Sets the mode6 of the BlauHoff device.
+     * Change only，no discharging
+     *
+     * @param device - The BlauHoff device to set the mode6 for.
+     * @param batPower - Battery power. Positive -> Discharge, Negative -> Charge (0~6000) W
+     * @param batPowerInvLimit - Battery power ref, limit (0~6000) W
+     * @param batCapMin - Battery Min Capacity (10 - 100)
+     * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
+     * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
+     */
+    setMode6 = async (device: BlauHoffDevice, batPower: number, batPowerInvLimit: number, batCapMin: number, timeout: number): Promise<boolean> => {
+        const path = '/v1/hub/device/vpp/mode6';
+
+        const params = {
+            deviceSn: device.serial,
+            batPower,
+            batPowerInvLimit,
+            batCapMin,
+            timeout,
+        };
+
+        const debugSuccess = true;
+        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
+        this.log.log(`Set mode6: ${data}`);
+        return true;
+    }
+
+    /**
+     * Sets the mode7 of the BlauHoff device.
+     * Change only，no discharging
+     *
+     * @param device - The BlauHoff device to set the mode7 for.
+     * @param batPower - Battery power. Positive -> Discharge, Negative -> Charge (0~6000) W
+     * @param batCapMin - Battery Min Capacity (10 - 100)
+     * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
+     * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
+     */
+    setMode7 = async (device: BlauHoffDevice, batPower: number, batCapMin: number, timeout: number): Promise<boolean> => {
+        const path = '/v1/hub/device/vpp/mode6';
+
+        const params = {
+            deviceSn: device.serial,
+            batPower,
+            batCapMin,
+            timeout,
+        };
+
+        const debugSuccess = true;
+        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
+        this.log.log(`Set mode6: ${data}`);
+        return true;
+    }
+
+    /**
+     * Retrieves the user token from the server.
+     * @returns {Promise<void>} A promise that resolves when the user token is retrieved successfully.
+     */
+    getUserToken = async (): Promise<boolean> => {
+        const path = '/v1/user/token';
+
+        const header = new Headers({
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+            'Access-Id': this.accessId,
+            'Access-Secret': this.accessSecret,
+        });
+
+        const debugSuccess = true;
+        const data = await this.performRequest(path, 'post', {}, {} as any, new MockFetchResponse(new GetUserTokenResponse(), debugSuccess), header);
+
+        this.userToken = data;
+        return true;
     }
 
     /**
@@ -279,56 +386,30 @@ export class API {
             pageNum: page,
         };
 
-        const response = await fetch(this.baseUrl + path, {
-            method: 'post',
-            headers: this.authorizationHeader(),
-            body: JSON.stringify(params),
-        });
+        const debugSuccess = true;
+        const data = await this.performRequest(path, 'post', params, {} as any, new MockFetchResponse(new GetDeviceListResponse(), debugSuccess));
 
-        if (response.status !== 200) {
-            this.log.error(`Failed to get device list: ${response.statusText}`);
+        this.log.log(`Got device list: ${JSON.stringify(data)}`);
+
+        if (data.data.totalCount === 0) {
+            this.log.log('No devices found');
             return [];
         }
 
-        const data = await response.json();
-        this.log.log(`Got device list: ${data}`);
+        const items = data.data.data as any[];
 
-        if (data.totalCount === 0) {
-            return [];
-        }
-
-        // TODO: Parse results
-        return [];
-    }
-
-    /**
-     * Retrieves the user token from the server.
-     * @returns {Promise<void>} A promise that resolves when the user token is retrieved successfully.
-     */
-    private getUserToken = async (): Promise<boolean> => {
-        const path = '/v1/user/token';
-
-        const header = new Headers({
-            'Content-Type': 'application/json',
-            Accept: '*/*',
-            'Access-Id': this.accessId,
-            'Access-Secret': this.accessSecret,
+        const result: BlauHoffDevice[] = items.map((item) => {
+            return {
+                id: item.id,
+                serial: item.deviceSn,
+                model: item.deviceModel,
+                lastStatusUpdate: new Date(),
+            };
         });
 
-        const response = await fetch(this.baseUrl + path, {
-            method: 'GET',
-            headers: header,
-        });
+        this.log.log(`Got ${result.length} devices`);
 
-        if (response.status !== 200) {
-            this.log.error('Failed to get user token:', response.statusText);
-            return false;
-        }
-
-        const data = await response.json();
-        this.log.log(`Got user token: ${data}`);
-        this.userToken = data;
-        return true;
+        return result;
     }
 
     /**
@@ -341,6 +422,46 @@ export class API {
             Accept: '*/*',
             Authorization: this.userToken,
         });
+    }
+
+    /**
+     * Performs a request to the specified path using the specified method.
+     * This can also mock a response, for testing purposes.
+     *
+     * @template Type - The type of the response data.
+     * @param {string} path - The path to send the request to.
+     * @param {'get' | 'post'} method - The HTTP method to use for the request.
+     * @param {any} params - The parameters to include in the request.
+     * @param {Type} errorValue - The value to return in case of an error.
+     * @param {MockFetchResponse<IMockResponse>} mockResponse - The mock response to use for testing purposes.
+     * @param {Headers} [headers] - The headers to include in the request.
+     * @returns {Promise<Type>} - A promise that resolves to the response data.
+     */
+    private performRequest = async <Type>(
+        path: string,
+        method: 'get' | 'post',
+        params: any, errorValue: Type,
+        mockResponse: MockFetchResponse<IMockResponse>,
+        headers?: Headers,
+    ): Promise<Type> => {
+        this.log.log(`Performing request to ${path} with params: ${JSON.stringify(params)}`);
+
+        const response = !this.mockResponses ? await fetch(this.baseUrl + path, {
+            method,
+            headers: headers ?? this.authorizationHeader(),
+            body: JSON.stringify(params),
+        }) : mockResponse;
+
+        this.log.log(`Response from ${path}: ${response}`);
+
+        if (response.status !== 200) {
+            this.log.error(`Failed to get device list: ${response.statusText}`);
+            return errorValue;
+        }
+
+        const data = await response.json();
+
+        return data;
     }
 
 }

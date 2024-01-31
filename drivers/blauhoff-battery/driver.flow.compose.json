@@ -1,0 +1,133 @@
+{
+    "actions": [
+        {
+            "id": "set_mode_1",
+            "title": {
+                "en": "Set mode1"
+            },
+            "titleFormatted": {
+                "en": "Self consumption (mode1) with [[feedInLimit]]% limit, keeping the battery level above [[batteryCapMinimum]]%."
+            },
+            "args": [
+                {
+                    "type": "number",
+                    "name": "feedInLimit",
+                    "title": {
+                        "en": "Feed in limit"
+                    },
+                    "placeholder": {
+                        "en": "Percentage between 0 and 100"
+                    },
+                    "min": 0,
+                    "max": 100
+                },
+                {
+                    "type": "number",
+                    "name": "batteryCapMinimum",
+                    "title": {
+                        "en": "Battery capacity minimum"
+                    },
+                    "placeholder": {
+                        "en": "Percentage between 10 and 100"
+                    },
+                    "min": 10,
+                    "max": 100
+                }
+            ]
+        },
+        {
+            "id": "set_mode_2",
+            "title": {
+                "en": "Set mode2"
+            },
+            "titleFormatted": {
+                "en": "Direct charge (mode2) with [[batteryPower]]W limit, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+            },
+            "args": [
+                {
+                    "type": "number",
+                    "name": "batteryPower",
+                    "title": {
+                        "en": "Battery power"
+                    },
+                    "placeholder": {
+                        "en": "Wattage between -6000 and 0"
+                    },
+                    "min": -6000,
+                    "max": 0
+                },
+                {
+                    "type": "number",
+                    "name": "batteryCapMinimum",
+                    "title": {
+                        "en": "Battery capacity minimum"
+                    },
+                    "placeholder": {
+                        "en": "Percentage between 10 and 100"
+                    },
+                    "min": 10,
+                    "max": 100
+                },
+                {
+                    "type": "number",
+                    "name": "duration",
+                    "title": {
+                        "en": "Duration"
+                    },
+                    "placeholder": {
+                        "en": "Time between 0 and 80 minutes"
+                    },
+                    "min": 0,
+                    "max": 80
+                }
+            ]
+        },
+        {
+            "id": "set_mode_3",
+            "title": {
+                "en": "Set mode3"
+            },
+            "titleFormatted": {
+                "en": "Direct discharge at specified power level (mode3) with [[batteryPower]]W limit, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+            },
+            "args": [
+                {
+                    "type": "number",
+                    "name": "batteryPower",
+                    "title": {
+                        "en": "Battery power"
+                    },
+                    "placeholder": {
+                        "en": "Wattage between 0 and 6000W"
+                    },
+                    "min": -6000,
+                    "max": 0
+                },
+                {
+                    "type": "number",
+                    "name": "batteryCapMinimum",
+                    "title": {
+                        "en": "Battery capacity minimum"
+                    },
+                    "placeholder": {
+                        "en": "Percentage between 10 and 100"
+                    },
+                    "min": 10,
+                    "max": 100
+                },
+                {
+                    "type": "number",
+                    "name": "duration",
+                    "title": {
+                        "en": "Duration"
+                    },
+                    "placeholder": {
+                        "en": "Time between 0 and 80 minutes"
+                    },
+                    "min": 0,
+                    "max": 80
+                }
+            ]
+        }
+    ]
+}

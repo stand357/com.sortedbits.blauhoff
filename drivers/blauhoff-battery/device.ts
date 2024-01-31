@@ -1,6 +1,18 @@
 import Homey from 'homey';
+import { API } from './api/blauhoff';
 
 class BlauhoffBattery extends Homey.Device {
+
+  api: API = new API(this);
+
+  getSettings = (): { accessId: string; accessToken: string; userToken: string } => {
+    const { accessId, accessToken, userToken } = this.getSettings();
+    return {
+      accessId,
+      accessToken,
+      userToken,
+    };
+  }
 
   /**
    * onInit is called when the device is initialized.

@@ -1,3 +1,218 @@
 {
-  "_comment": "This file is generated. Please edit .homeycompose/app.json instead."
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "com.sortedbits.blauhoff",
+  "version": "1.0.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "BlauHoff"
+  },
+  "description": {
+    "en": "Smart battery for everyone",
+    "nl": "Slimme batterij voor iedereen"
+  },
+  "category": [
+    "energy"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Wim Haanstra",
+    "email": "wim@x256.nl"
+  },
+  "flow": {
+    "actions": [
+      {
+        "id": "set_mode_1",
+        "title": {
+          "en": "Set mode1"
+        },
+        "titleFormatted": {
+          "en": "Self consumption (mode1) with [[feedInLimit]]% limit, keeping the battery level above [[batteryCapMinimum]]%."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-battery"
+          },
+          {
+            "type": "number",
+            "name": "feedInLimit",
+            "title": {
+              "en": "Feed in limit"
+            },
+            "placeholder": {
+              "en": "Percentage between 0 and 100"
+            },
+            "min": 0,
+            "max": 100
+          },
+          {
+            "type": "number",
+            "name": "batteryCapMinimum",
+            "title": {
+              "en": "Battery capacity minimum"
+            },
+            "placeholder": {
+              "en": "Percentage between 10 and 100"
+            },
+            "min": 10,
+            "max": 100
+          }
+        ]
+      },
+      {
+        "id": "set_mode_2",
+        "title": {
+          "en": "Set mode2"
+        },
+        "titleFormatted": {
+          "en": "Direct charge (mode2) with [[batteryPower]]W limit, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-battery"
+          },
+          {
+            "type": "number",
+            "name": "batteryPower",
+            "title": {
+              "en": "Battery power"
+            },
+            "placeholder": {
+              "en": "Wattage between -6000 and 0"
+            },
+            "min": -6000,
+            "max": 0
+          },
+          {
+            "type": "number",
+            "name": "batteryCapMinimum",
+            "title": {
+              "en": "Battery capacity minimum"
+            },
+            "placeholder": {
+              "en": "Percentage between 10 and 100"
+            },
+            "min": 10,
+            "max": 100
+          },
+          {
+            "type": "number",
+            "name": "duration",
+            "title": {
+              "en": "Duration"
+            },
+            "placeholder": {
+              "en": "Time between 0 and 80 minutes"
+            },
+            "min": 0,
+            "max": 80
+          }
+        ]
+      },
+      {
+        "id": "set_mode_3",
+        "title": {
+          "en": "Set mode3"
+        },
+        "titleFormatted": {
+          "en": "Direct discharge at specified power level (mode3) with [[batteryPower]]W limit, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-battery"
+          },
+          {
+            "type": "number",
+            "name": "batteryPower",
+            "title": {
+              "en": "Battery power"
+            },
+            "placeholder": {
+              "en": "Wattage between 0 and 6000W"
+            },
+            "min": -6000,
+            "max": 0
+          },
+          {
+            "type": "number",
+            "name": "batteryCapMinimum",
+            "title": {
+              "en": "Battery capacity minimum"
+            },
+            "placeholder": {
+              "en": "Percentage between 10 and 100"
+            },
+            "min": 10,
+            "max": 100
+          },
+          {
+            "type": "number",
+            "name": "duration",
+            "title": {
+              "en": "Duration"
+            },
+            "placeholder": {
+              "en": "Time between 0 and 80 minutes"
+            },
+            "min": 0,
+            "max": 80
+          }
+        ]
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "BlauHoff Battery"
+      },
+      "class": "other",
+      "capabilities": [
+        "measure_battery",
+        "measure_power"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/blauhoff-battery/assets/images/small.png",
+        "large": "/drivers/blauhoff-battery/assets/images/large.png",
+        "xlarge": "/drivers/blauhoff-battery/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "pair"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "blauhoff-battery"
+    }
+  ]
 }
