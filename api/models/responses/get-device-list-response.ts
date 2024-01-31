@@ -13,6 +13,6 @@ interface PagingInformation {
     data: DeviceInformation[];
 }
 
-export interface GetDeviceList extends BaseResponse {
+export interface GetDeviceListResponse extends BaseResponse {
     data: PagingInformation
 }

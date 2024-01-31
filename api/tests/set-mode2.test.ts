@@ -1,6 +1,7 @@
+
 import fetch from 'node-fetch';
 
-import { API } from '../blauhoff';
+import { API } from '../api';
 import { Logger } from '../log';
 import { testDevice } from './helpers/test-device';
 
@@ -19,7 +20,7 @@ const failObject = {
     t: 1684756685989,
 };
 
-describe('setMode1', () => {
+describe('setMode2', () => {
     test('with valid values', async () => {
         const api = new API(new Logger());
         api.userToken = 'user-token';
@@ -29,7 +30,7 @@ describe('setMode1', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode1(testDevice, 20, 10);
+        const result = await api.setMode2(testDevice, -2000, 10, 600);
 
         const expectHeaders = {
             Accept: '*/*',
@@ -39,19 +40,20 @@ describe('setMode1', () => {
 
         const expectedParams = JSON.stringify({
             deviceSn: testDevice.serial,
-            maxFeedInLimit: 20,
+            batPower: -2000,
             batCapMin: 10,
+            timeout: 600,
         });
 
         expect(fetch).toHaveBeenCalledWith(
-            'https://api-vpp-au.weiheng-tech.com/api/vpp/v1/hub/device/vpp/mode1',
+            'https://api-vpp-au.weiheng-tech.com/api/vpp/v1/hub/device/vpp/mode2',
             { body: expectedParams, headers: expectHeaders, method: 'post' },
         );
 
         expect(result).toStrictEqual(true);
     });
 
-    test('with invalid maxFeedInLimit', async () => {
+    test('with invalid batteryPower', async () => {
         const api = new API(new Logger());
         api.userToken = 'user-token';
         expect(fetch).toHaveBeenCalledTimes(0);
@@ -60,7 +62,7 @@ describe('setMode1', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode1(testDevice, 150, 10);
+        const result = await api.setMode2(testDevice, -8000, 10, 600);
 
         expect(result).toStrictEqual(false);
     });
@@ -74,7 +76,21 @@ describe('setMode1', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode1(testDevice, 25, 5);
+        const result = await api.setMode2(testDevice, -4000, 0, 600);
+
+        expect(result).toStrictEqual(false);
+    });
+
+    test('with invalid timeout', async () => {
+        const api = new API(new Logger());
+        api.userToken = 'user-token';
+        expect(fetch).toHaveBeenCalledTimes(0);
+
+        (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
+            new Response(JSON.stringify(successObject)),
+        );
+
+        const result = await api.setMode2(testDevice, -4000, 10, 6000);
 
         expect(result).toStrictEqual(false);
     });
@@ -88,7 +104,7 @@ describe('setMode1', () => {
             new Response(JSON.stringify(failObject)),
         );
 
-        const result = await api.setMode1(testDevice, 20, 10);
+        const result = await api.setMode2(testDevice, -5000, 10, 600);
 
         expect(result).toStrictEqual(false);
     });

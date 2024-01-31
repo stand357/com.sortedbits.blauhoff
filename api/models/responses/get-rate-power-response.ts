@@ -7,6 +7,6 @@ export interface Rates {
     batteryCapacity: number;
 }
 
-export interface GetRatePower extends BaseResponse {
+export interface GetRatePowerResponse extends BaseResponse {
     data: Rates;
 }

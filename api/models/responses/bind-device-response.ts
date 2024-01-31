@@ -6,6 +6,6 @@ interface Data {
     notExistList: string[];
 }
 
-export interface BindDevice extends BaseResponse {
+export interface BindDeviceResponse extends BaseResponse {
     data: Data;
 }

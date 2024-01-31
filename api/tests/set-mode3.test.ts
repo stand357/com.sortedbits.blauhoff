@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-import { API } from '../blauhoff';
+import { API } from '../api';
 import { Logger } from '../log';
 import { testDevice } from './helpers/test-device';
 

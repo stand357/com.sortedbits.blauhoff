@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-import { API } from '../blauhoff';
+import { API } from '../api';
 import { Logger } from '../log';
 import { testDevice } from './helpers/test-device';
 
@@ -19,7 +19,7 @@ const failObject = {
     t: 1684756685989,
 };
 
-describe('setMode5', () => {
+describe('setMode4', () => {
     test('with valid values', async () => {
         const api = new API(new Logger());
         api.userToken = 'user-token';
@@ -29,7 +29,7 @@ describe('setMode5', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode5(testDevice, 20, 10, 600);
+        const result = await api.setMode4(testDevice, 20, 10, 600);
 
         const expectHeaders = {
             Accept: '*/*',
@@ -45,11 +45,53 @@ describe('setMode5', () => {
         });
 
         expect(fetch).toHaveBeenCalledWith(
-            'https://api-vpp-au.weiheng-tech.com/api/vpp/v1/hub/device/vpp/mode5',
+            'https://api-vpp-au.weiheng-tech.com/api/vpp/v1/hub/device/vpp/mode4',
             { body: expectedParams, headers: expectHeaders, method: 'post' },
         );
 
         expect(result).toStrictEqual(true);
+    });
+
+    test('with invalid maxFeedInLimit', async () => {
+        const api = new API(new Logger());
+        api.userToken = 'user-token';
+        expect(fetch).toHaveBeenCalledTimes(0);
+
+        (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
+            new Response(JSON.stringify(successObject)),
+        );
+
+        const result = await api.setMode4(testDevice, 150, 10, 600);
+
+        expect(result).toStrictEqual(false);
+    });
+
+    test('with invalid batCapMin', async () => {
+        const api = new API(new Logger());
+        api.userToken = 'user-token';
+        expect(fetch).toHaveBeenCalledTimes(0);
+
+        (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
+            new Response(JSON.stringify(successObject)),
+        );
+
+        const result = await api.setMode4(testDevice, 25, 5, 600);
+
+        expect(result).toStrictEqual(false);
+    });
+
+    test('with invalid timeout', async () => {
+        const api = new API(new Logger());
+        api.userToken = 'user-token';
+        expect(fetch).toHaveBeenCalledTimes(0);
+
+        (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
+            new Response(JSON.stringify(successObject)),
+        );
+
+        const result = await api.setMode4(testDevice, 25, 10, 6000);
+
+        expect(result).toStrictEqual(false);
     });
 
     test('fails', async () => {
@@ -61,7 +103,7 @@ describe('setMode5', () => {
             new Response(JSON.stringify(failObject)),
         );
 
-        const result = await api.setMode5(testDevice, 20, 10, 600);
+        const result = await api.setMode4(testDevice, 20, 10, 600);
 
         expect(result).toStrictEqual(false);
     });
