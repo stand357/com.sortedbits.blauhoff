@@ -1,7 +1,4 @@
-export interface BaseResponse {
-    code: number;
-    msg: string;
-}
+import { BaseResponse } from '../responses/base-response';
 
 export interface IMockResponse {
     successObject: BaseResponse;

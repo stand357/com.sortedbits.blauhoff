@@ -1,14 +1,10 @@
-import { SimpleClass } from 'homey';
-import fetch, { Headers } from 'node-fetch';
+import fetch from 'node-fetch';
 import { BlauHoffDeviceData } from './blauhoff-device-data';
 import { BlauHoffDevice } from './blauhoff-device';
 import { BlauHoffDeviceStatus } from './blauhoff-device-status';
-import { IMockResponse, MockFetchResponse } from './mock/mock-fetch-response';
-import { GetUserTokenResponse } from './mock/responses/get-user-token';
-import { BindDeviceResponse } from './mock/responses/bind-device';
-import { GetDeviceListResponse } from './mock/responses/get-device-list';
-import { GetRatePowerResponse } from './mock/responses/get-rate-power';
-import { GenericOutputResponse } from './mock/responses/generic-output';
+import { ILogger } from './log';
+import { BaseResponse } from './responses/base-response';
+import { GetUserToken } from './responses/get-user-token';
 
 export class API {
 
@@ -16,12 +12,18 @@ export class API {
     private accessId: string = 'XXX';
     private accessSecret: string = 'XXX';
 
-    mockResponses: boolean = true;
     userToken: string = '';
-    log: SimpleClass;
+    log: ILogger;
 
-    constructor(log: SimpleClass) {
+    constructor(log: ILogger) {
         this.log = log;
+    }
+
+    setAuthenticationInfo = (accessId: string, accessSecret: string) => {
+        this.accessId = accessId;
+        this.accessSecret = accessSecret;
+
+        this.userToken = '';
     }
 
     /**
@@ -34,11 +36,7 @@ export class API {
      * @returns A Promise that resolves when the settings are updated.
      */
     updateSettings = async (accessId: string, accessSecret: string): Promise<boolean> => {
-        this.accessId = accessId;
-        this.accessSecret = accessSecret;
-
-        this.userToken = '';
-
+        this.setAuthenticationInfo(accessId, accessSecret);
         return this.getUserToken();
     }
 
@@ -116,8 +114,7 @@ export class API {
             ],
         };
 
-        const debugSuccess = true;
-        const data = await this.performRequest(path, 'post', params, false, new MockFetchResponse(new BindDeviceResponse(), debugSuccess));
+        const data = await this.performRequest(path, 'post', params, false);
         return data;
     }
 
@@ -130,9 +127,7 @@ export class API {
     queryRatePower = async (device: BlauHoffDevice): Promise<number> => {
         const path = `/v1/hub/device/info?deviceSn=${device.serial}`;
 
-        const debugSuccess = true;
-
-        const data = await this.performRequest(path, 'get', {}, {}, new MockFetchResponse(new GetRatePowerResponse(), debugSuccess));
+        const data = await this.performRequest(path, 'get', {}, {});
 
         this.log.log(`Got device info: ${data}`);
         return 0;
@@ -156,8 +151,7 @@ export class API {
             batCapMin,
         };
 
-        const debugSuccess = true;
-        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
+        const data = await this.performRequest(path, 'post', params, {});
         this.log.log(`Set mode1: ${data}`);
         return true;
     }
@@ -182,8 +176,7 @@ export class API {
             timeout,
         };
 
-        const debugSuccess = true;
-        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
+        const data = await this.performRequest(path, 'post', params, {});
         this.log.log(`Set mode2: ${data}`);
         return true;
     }
@@ -208,8 +201,7 @@ export class API {
             timeout,
         };
 
-        const debugSuccess = true;
-        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
+        const data = await this.performRequest(path, 'post', params, {});
         this.log.log(`Set mode3: ${data}`);
         return true;
     }
@@ -234,8 +226,7 @@ export class API {
             timeout,
         };
 
-        const debugSuccess = true;
-        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
+        const data = await this.performRequest(path, 'post', params, {});
         this.log.log(`Set mode4: ${data}`);
         return true;
     }
@@ -260,8 +251,7 @@ export class API {
             timeout,
         };
 
-        const debugSuccess = true;
-        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
+        const data = await this.performRequest(path, 'post', params, {});
         this.log.log(`Set mode5: ${data}`);
         return true;
     }
@@ -288,8 +278,7 @@ export class API {
             timeout,
         };
 
-        const debugSuccess = true;
-        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
+        const data = await this.performRequest(path, 'post', params, {});
         this.log.log(`Set mode6: ${data}`);
         return true;
     }
@@ -314,9 +303,8 @@ export class API {
             timeout,
         };
 
-        const debugSuccess = true;
-        const data = await this.performRequest(path, 'post', params, {}, new MockFetchResponse(new GenericOutputResponse(), debugSuccess));
-        this.log.log(`Set mode6: ${data}`);
+        const data = await this.performRequest(path, 'post', params, {});
+        this.log.log(`Set mode7: ${data}`);
         return true;
     }
 
@@ -327,17 +315,21 @@ export class API {
     getUserToken = async (): Promise<boolean> => {
         const path = '/v1/user/token';
 
-        const header = new Headers({
+        const header = {
             'Content-Type': 'application/json',
             Accept: '*/*',
             'Access-Id': this.accessId,
             'Access-Secret': this.accessSecret,
-        });
+        };
 
-        const debugSuccess = true;
-        const data = await this.performRequest(path, 'post', {}, {} as any, new MockFetchResponse(new GetUserTokenResponse(), debugSuccess), header);
+        const data = await this.performRequest<GetUserToken>(path, 'post', {}, {} as any, header);
 
-        this.userToken = data;
+        if (!data.data) {
+            this.userToken = '';
+            return false;
+        }
+
+        this.userToken = data.data;
         return true;
     }
 
@@ -386,8 +378,7 @@ export class API {
             pageNum: page,
         };
 
-        const debugSuccess = true;
-        const data = await this.performRequest(path, 'post', params, {} as any, new MockFetchResponse(new GetDeviceListResponse(), debugSuccess));
+        const data = await this.performRequest(path, 'post', params, {} as any);
 
         this.log.log(`Got device list: ${JSON.stringify(data)}`);
 
@@ -417,11 +408,11 @@ export class API {
      * @returns {Headers} The authorization header.
      */
     private authorizationHeader = () => {
-        return new Headers({
+        return {
             'Content-Type': 'application/json',
             Accept: '*/*',
             Authorization: this.userToken,
-        });
+        };
     }
 
     /**
@@ -433,35 +424,39 @@ export class API {
      * @param {'get' | 'post'} method - The HTTP method to use for the request.
      * @param {any} params - The parameters to include in the request.
      * @param {Type} errorValue - The value to return in case of an error.
-     * @param {MockFetchResponse<IMockResponse>} mockResponse - The mock response to use for testing purposes.
      * @param {Headers} [headers] - The headers to include in the request.
      * @returns {Promise<Type>} - A promise that resolves to the response data.
      */
     private performRequest = async <Type>(
         path: string,
         method: 'get' | 'post',
-        params: any, errorValue: Type,
-        mockResponse: MockFetchResponse<IMockResponse>,
-        headers?: Headers,
+        params: any,
+        errorValue: Type,
+        headers?: any,
     ): Promise<Type> => {
         this.log.log(`Performing request to ${path} with params: ${JSON.stringify(params)}`);
+        const header = headers ?? this.authorizationHeader();
 
-        const response = !this.mockResponses ? await fetch(this.baseUrl + path, {
+        const response = await fetch(this.baseUrl + path, {
             method,
-            headers: headers ?? this.authorizationHeader(),
+            headers: header,
             body: JSON.stringify(params),
-        }) : mockResponse;
+        });
 
-        this.log.log(`Response from ${path}: ${response}`);
-
-        if (response.status !== 200) {
-            this.log.error(`Failed to get device list: ${response.statusText}`);
+        if (response === undefined || response.status !== 200) {
+            this.log.error(`Response failed: ${response?.statusText}`);
             return errorValue;
         }
 
-        const data = await response.json();
+        const data = await response.json() as BaseResponse;
 
-        return data;
+        this.log.log(`Response from ${path}:`, JSON.stringify(data));
+
+        if (data.code === undefined || data.code !== 200 || data.msg === undefined || data.msg !== 'OK') {
+            return errorValue;
+        }
+
+        return data as any;
     }
 
 }
