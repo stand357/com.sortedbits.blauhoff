@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import { API } from '../blauhoff';
 import { Logger } from '../log';
 import { BlauHoffDevice } from '../blauhoff-device';
+import { testDevice } from './helpers/test-device';
 
 jest.mock('node-fetch');
 const { Response } = jest.requireActual('node-fetch');
@@ -35,12 +36,6 @@ describe('get-rate-power', () => {
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
             new Response(JSON.stringify(successObject)),
         );
-
-        const testDevice: BlauHoffDevice = {
-            id: '1',
-            serial: 'SHA602131202215005',
-            model: 'SPHA6.0H-10.24kW',
-        };
 
         const response = await api.getRatePower(testDevice);
 

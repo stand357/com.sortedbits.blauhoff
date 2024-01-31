@@ -160,6 +160,16 @@ export class API {
      * @returns A promise that resolves to a boolean indicating whether the mode1 was set successfully.
      */
     setMode1 = async (device: BlauHoffDevice, maxFeedInLimit: number, batCapMin: number): Promise<boolean> => {
+        if (maxFeedInLimit < 0 || maxFeedInLimit > 100) {
+            this.log.error('maxFeedInLimit must be between 0 and 100');
+            return false;
+        }
+
+        if (batCapMin < 10 || batCapMin > 100) {
+            this.log.error('batCapMin must be between 10 and 100');
+            return false;
+        }
+
         const path = '/v1/hub/device/vpp/mode1';
 
         const params = {
@@ -168,7 +178,13 @@ export class API {
             batCapMin,
         };
 
-        const data = await this.performRequest(path, 'post', params);
+        const data = await this.performRequest<BaseResponse>(path, 'post', params);
+
+        if (!isResponseOk(data)) {
+            this.log.error('Failed to setMode1');
+            return false;
+        }
+
         this.log.log(`Set mode1: ${data}`);
         return true;
     }
