@@ -3,8 +3,9 @@ import { BlauHoffDeviceData } from './blauhoff-device-data';
 import { BlauHoffDevice } from './blauhoff-device';
 import { BlauHoffDeviceStatus } from './blauhoff-device-status';
 import { ILogger } from './log';
-import { BaseResponse } from './responses/base-response';
+import { BaseResponse, isResponseOk } from './responses/base-response';
 import { GetUserToken } from './responses/get-user-token';
+import { GetDeviceList } from './responses/get-device-list';
 
 export class API {
 
@@ -114,8 +115,12 @@ export class API {
             ],
         };
 
-        const data = await this.performRequest(path, 'post', params, false);
-        return data;
+        const data = await this.performRequest(path, 'post', params);
+
+        if (!data) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -127,7 +132,7 @@ export class API {
     queryRatePower = async (device: BlauHoffDevice): Promise<number> => {
         const path = `/v1/hub/device/info?deviceSn=${device.serial}`;
 
-        const data = await this.performRequest(path, 'get', {}, {});
+        const data = await this.performRequest(path, 'get', {});
 
         this.log.log(`Got device info: ${data}`);
         return 0;
@@ -151,7 +156,7 @@ export class API {
             batCapMin,
         };
 
-        const data = await this.performRequest(path, 'post', params, {});
+        const data = await this.performRequest(path, 'post', params);
         this.log.log(`Set mode1: ${data}`);
         return true;
     }
@@ -176,7 +181,7 @@ export class API {
             timeout,
         };
 
-        const data = await this.performRequest(path, 'post', params, {});
+        const data = await this.performRequest(path, 'post', params);
         this.log.log(`Set mode2: ${data}`);
         return true;
     }
@@ -201,7 +206,7 @@ export class API {
             timeout,
         };
 
-        const data = await this.performRequest(path, 'post', params, {});
+        const data = await this.performRequest(path, 'post', params);
         this.log.log(`Set mode3: ${data}`);
         return true;
     }
@@ -226,7 +231,7 @@ export class API {
             timeout,
         };
 
-        const data = await this.performRequest(path, 'post', params, {});
+        const data = await this.performRequest(path, 'post', params);
         this.log.log(`Set mode4: ${data}`);
         return true;
     }
@@ -251,7 +256,7 @@ export class API {
             timeout,
         };
 
-        const data = await this.performRequest(path, 'post', params, {});
+        const data = await this.performRequest(path, 'post', params);
         this.log.log(`Set mode5: ${data}`);
         return true;
     }
@@ -278,7 +283,7 @@ export class API {
             timeout,
         };
 
-        const data = await this.performRequest(path, 'post', params, {});
+        const data = await this.performRequest(path, 'post', params);
         this.log.log(`Set mode6: ${data}`);
         return true;
     }
@@ -303,7 +308,7 @@ export class API {
             timeout,
         };
 
-        const data = await this.performRequest(path, 'post', params, {});
+        const data = await this.performRequest(path, 'post', params);
         this.log.log(`Set mode7: ${data}`);
         return true;
     }
@@ -322,14 +327,14 @@ export class API {
             'Access-Secret': this.accessSecret,
         };
 
-        const data = await this.performRequest<GetUserToken>(path, 'post', {}, {} as any, header);
+        const data = await this.performRequest<GetUserToken>(path, 'post', {}, header);
 
-        if (!data.data) {
+        if (!isResponseOk(data)) {
             this.userToken = '';
             return false;
         }
 
-        this.userToken = data.data;
+        this.userToken = data!.data;
         return true;
     }
 
@@ -378,23 +383,21 @@ export class API {
             pageNum: page,
         };
 
-        const data = await this.performRequest(path, 'post', params, {} as any);
+        const data = await this.performRequest<GetDeviceList>(path, 'post', params);
 
         this.log.log(`Got device list: ${JSON.stringify(data)}`);
 
-        if (data.data.totalCount === 0) {
-            this.log.log('No devices found');
+        if (!isResponseOk(data)) {
+            this.log.error('Failed to get devices');
             return [];
         }
 
-        const items = data.data.data as any[];
-
-        const result: BlauHoffDevice[] = items.map((item) => {
+        const result: BlauHoffDevice[] = data!.data.data.map((item) => {
             return {
                 id: item.id,
                 serial: item.deviceSn,
                 model: item.deviceModel,
-                lastStatusUpdate: new Date(),
+                // lastStatusUpdate: new Date(),
             };
         });
 
@@ -431,32 +434,36 @@ export class API {
         path: string,
         method: 'get' | 'post',
         params: any,
-        errorValue: Type,
         headers?: any,
-    ): Promise<Type> => {
+    ): Promise<Type | undefined> => {
         this.log.log(`Performing request to ${path} with params: ${JSON.stringify(params)}`);
         const header = headers ?? this.authorizationHeader();
 
-        const response = await fetch(this.baseUrl + path, {
-            method,
-            headers: header,
-            body: JSON.stringify(params),
-        });
+        try {
+            const response = await fetch(this.baseUrl + path, {
+                method,
+                headers: header,
+                body: JSON.stringify(params),
+            });
 
-        if (response === undefined || response.status !== 200) {
-            this.log.error(`Response failed: ${response?.statusText}`);
-            return errorValue;
+            if (response === undefined || response.status !== 200) {
+                this.log.error(`Response failed: ${response?.statusText}`);
+                return undefined;
+            }
+
+            const data = await response.json() as BaseResponse;
+
+            this.log.log(`Response from ${path}:`, JSON.stringify(data));
+
+            if (data.code === undefined || data.code !== 200 || data.msg === undefined || data.msg !== 'OK') {
+                return undefined;
+            }
+
+            return data as any;
+        } catch (error) {
+            this.log.error(`Error performing request to ${path}: ${error}`);
+            return undefined;
         }
-
-        const data = await response.json() as BaseResponse;
-
-        this.log.log(`Response from ${path}:`, JSON.stringify(data));
-
-        if (data.code === undefined || data.code !== 200 || data.msg === undefined || data.msg !== 'OK') {
-            return errorValue;
-        }
-
-        return data as any;
     }
 
 }
