@@ -2,6 +2,11 @@ import { deviceInfoMapping } from '../drivers/blauhoff-battery/helpers/device-in
 
 const maps = deviceInfoMapping;
 
+const output: { [key: string]: any } = {};
 Object.keys(maps).forEach((key) => {
-    console.log(`"${maps[key].id}",`);
+    const { id, title } = maps[key];
+
+    output[id] = { title };
 });
+
+console.log(JSON.stringify(output, null, 2));

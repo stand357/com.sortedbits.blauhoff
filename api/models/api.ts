@@ -21,5 +21,9 @@ export interface IAPI {
     setMode5(device: BlauHoffDevice, options: Mode5): Promise<boolean>;
     setMode6(device: BlauHoffDevice, options: Mode6): Promise<boolean>;
     setMode7(device: BlauHoffDevice, options: Mode7): Promise<boolean>;
-    getUserToken(): Promise<boolean>;
+
+    setUserToken(userToken: string): void;
+    getUserToken(): string;
+    fetchUserToken(): Promise<boolean>;
+    validateUserToken(): Promise<boolean>;
 }

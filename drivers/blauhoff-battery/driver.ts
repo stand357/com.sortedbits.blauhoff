@@ -1,6 +1,6 @@
 import Homey from 'homey';
 import { PairSession } from 'homey/lib/Driver';
-import { BlauHoffDevice, API } from '../../api';
+import { BlauHoffDevice } from '../../api';
 import { MockApi } from '../../api/mock-api';
 
 interface FormResult {
@@ -34,7 +34,9 @@ class BlauhoffDriver extends Homey.Driver {
     return {
       name: `${device.model} (${device.serial})`,
       data: {
-        id: device.serial,
+        id: device.id,
+        serial: device.serial,
+        model: device.model,
       },
       settings: {
         accessId: this.accessId,

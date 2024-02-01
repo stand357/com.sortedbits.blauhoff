@@ -22,7 +22,7 @@ const failObject = {
 describe('setMode4', () => {
     test('with valid values', async () => {
         const api = new API(new Logger());
-        api.userToken = 'user-token';
+        api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
@@ -58,7 +58,7 @@ describe('setMode4', () => {
 
     test('with invalid maxFeedInLimit', async () => {
         const api = new API(new Logger());
-        api.userToken = 'user-token';
+        api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
@@ -76,7 +76,7 @@ describe('setMode4', () => {
 
     test('with invalid batCapMin', async () => {
         const api = new API(new Logger());
-        api.userToken = 'user-token';
+        api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
@@ -94,7 +94,7 @@ describe('setMode4', () => {
 
     test('with invalid timeout', async () => {
         const api = new API(new Logger());
-        api.userToken = 'user-token';
+        api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
@@ -112,7 +112,7 @@ describe('setMode4', () => {
 
     test('fails', async () => {
         const api = new API(new Logger());
-        api.userToken = 'user-token';
+        api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(

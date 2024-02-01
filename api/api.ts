@@ -17,13 +17,16 @@ import {
 } from './models/options/set-mode.options';
 import { IAPI } from './models/api';
 
+/**
+ * Represents the API class for interacting with the Blauhoff API.
+ */
 export class API implements IAPI {
 
     private baseUrl: string = 'https://api-vpp-au.weiheng-tech.com/api/vpp';
     private accessId: string = 'XXX';
     private accessSecret: string = 'XXX';
 
-    userToken: string = '';
+    private userToken: string = '';
     log: IBaseLogger;
 
     constructor(log: IBaseLogger) {
@@ -44,6 +47,23 @@ export class API implements IAPI {
         this.userToken = '';
     }
 
+    setUserToken = (userToken: string) => {
+        this.userToken = userToken;
+    }
+
+    getUserToken = (): string => {
+        return this.userToken;
+    }
+
+    /**
+     * Validates the user token by querying devices. Dumb way to do it, but it works.
+     * @returns A promise that resolves to a boolean indicating whether the user token is valid.
+     */
+    validateUserToken = async (): Promise<boolean> => {
+        const response = await this.queryDeviceList(10);
+        return (response.length > 0);
+    }
+
     /**
      * Updates the settings for the Blauhoff API.
      *
@@ -55,7 +75,7 @@ export class API implements IAPI {
      */
     updateSettings = async (accessId: string, accessSecret: string): Promise<boolean> => {
         this.setAuthenticationInfo(accessId, accessSecret);
-        return this.getUserToken();
+        return this.fetchUserToken();
     }
 
     /**
@@ -491,7 +511,7 @@ export class API implements IAPI {
      * Retrieves the user token from the server.
      * @returns {Promise<void>} A promise that resolves when the user token is retrieved successfully.
      */
-    getUserToken = async (): Promise<boolean> => {
+    fetchUserToken = async (): Promise<boolean> => {
         const path = '/v1/user/token';
 
         const header = {

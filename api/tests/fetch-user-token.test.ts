@@ -31,7 +31,7 @@ describe('get-user-token', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        await api.getUserToken();
+        await api.fetchUserToken();
 
         const expectedHeaders = {
             'Content-Type': 'application/json',
@@ -56,10 +56,10 @@ describe('get-user-token', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.getUserToken();
+        const result = await api.fetchUserToken();
 
         expect(fetch).toHaveBeenCalledTimes(1);
-        expect(api.userToken).toBe('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9');
+        expect(api.getUserToken()).toBe('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9');
         expect(result).toBe(true);
     });
 
@@ -71,10 +71,10 @@ describe('get-user-token', () => {
             new Response(JSON.stringify(failObject)),
         );
 
-        const result = await api.getUserToken();
+        const result = await api.fetchUserToken();
 
         expect(fetch).toHaveBeenCalledTimes(1);
-        expect(api.userToken).toBe('');
+        expect(api.getUserToken()).toBe('');
         expect(result).toBe(false);
     });
 });

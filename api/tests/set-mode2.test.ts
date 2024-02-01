@@ -1,4 +1,3 @@
-
 import fetch from 'node-fetch';
 
 import { API } from '../api';
@@ -23,7 +22,7 @@ const failObject = {
 describe('setMode2', () => {
     test('with valid values', async () => {
         const api = new API(new Logger());
-        api.userToken = 'user-token';
+        api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
@@ -59,7 +58,7 @@ describe('setMode2', () => {
 
     test('with invalid batteryPower', async () => {
         const api = new API(new Logger());
-        api.userToken = 'user-token';
+        api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
@@ -77,7 +76,7 @@ describe('setMode2', () => {
 
     test('with invalid batCapMin', async () => {
         const api = new API(new Logger());
-        api.userToken = 'user-token';
+        api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
@@ -95,7 +94,7 @@ describe('setMode2', () => {
 
     test('with invalid timeout', async () => {
         const api = new API(new Logger());
-        api.userToken = 'user-token';
+        api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
@@ -113,7 +112,7 @@ describe('setMode2', () => {
 
     test('fails', async () => {
         const api = new API(new Logger());
-        api.userToken = 'user-token';
+        api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(

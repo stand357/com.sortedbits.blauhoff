@@ -97,7 +97,7 @@ describe('perform-request', () => {
 
     test('GET request with params and undefined header', async () => {
         const api = new API(new Logger());
-        api.userToken = 'user-token';
+        api.setUserToken('user-token');
 
         expect(fetch).toHaveBeenCalledTimes(0);
 

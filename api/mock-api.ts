@@ -36,9 +36,21 @@ export class MockApi implements IAPI {
         this.userToken = '';
     }
 
+    setUserToken = (userToken: string) => {
+        this.userToken = userToken;
+    }
+
+    getUserToken = (): string => {
+        return this.userToken;
+    }
+
+    validateUserToken = async (): Promise<boolean> => {
+        return true;
+    }
+
     updateSettings = async (accessId: string, accessSecret: string): Promise<boolean> => {
         this.setAuthenticationInfo(accessId, accessSecret);
-        return this.getUserToken();
+        return this.fetchUserToken();
     }
 
     queryDeviceList = async (pageSize: number = 10): Promise<BlauHoffDevice[]> => {
@@ -102,7 +114,7 @@ export class MockApi implements IAPI {
         return true;
     }
 
-    getUserToken = async (): Promise<boolean> => {
+    fetchUserToken = async (): Promise<boolean> => {
         this.userToken = 'XXX';
         return true;
     }
