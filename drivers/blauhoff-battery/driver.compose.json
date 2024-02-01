@@ -38,7 +38,7 @@
     "measure_voltage.battery",
     "measure_current.battery",
     "measure_power.battery",
-    "status_code.bat_soc",
+    "measure_battery",
     "status_code.bat_soh",
     "measure_voltage.battery_high",
     "measure_voltage.battery_low",

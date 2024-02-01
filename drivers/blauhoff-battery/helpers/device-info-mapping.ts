@@ -166,7 +166,7 @@ export const deviceInfoMapping: { [key: string]: CapabilityDefinition } = {
     }, // W
     bat_soc: {
         title: { en: 'Battery SOC' },
-        id: 'status_code.bat_soc',
+        id: 'measure_battery',
     }, // 1
     bat_soh: {
         title: { en: 'Battery SOH' },
