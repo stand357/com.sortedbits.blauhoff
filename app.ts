@@ -1,6 +1,7 @@
 'use strict';
 
 import Homey from 'homey';
+import './api/helpers/number';
 
 class MyApp extends Homey.App {
 
