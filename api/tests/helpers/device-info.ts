@@ -220,7 +220,7 @@ export const deviceInfoResponse: QueryDeviceResponse = {
                 319.2,
                 0,
                 0,
-                85,
+                22,
                 100,
                 3.328,
                 1,

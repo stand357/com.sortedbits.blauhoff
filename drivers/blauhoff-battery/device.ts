@@ -135,7 +135,11 @@ class BlauhoffBattery extends Homey.Device {
       end: 1,
     });
 
-    await this.setCapabilities(status[0]);
+    const row = this.device.serial === 'SHA602131202215005' ? 0 : 1;
+
+    this.log('parsing row', row);
+
+    await this.setCapabilities(status[row]);
   }
 
 }
