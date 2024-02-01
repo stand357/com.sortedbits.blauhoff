@@ -1,6 +1,6 @@
 import { convertDeviceInfoToBlauhoffDeviceStatus } from './helpers/device-info-to-blauhoff-device-status';
 import { IBaseLogger } from './log';
-import { IAPI } from './models/api';
+import { IAPI } from './models/iapi';
 import { BlauHoffDevice } from './models/blauhoff-device';
 import { BlauHoffDeviceStatus } from './models/blauhoff-device-status';
 import { QueryDeviceOptions } from './models/options/query-device.options';

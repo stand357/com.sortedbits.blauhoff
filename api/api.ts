@@ -15,7 +15,7 @@ import { QueryDeviceOptions } from './models/options/query-device.options';
 import {
     Mode1, Mode2, Mode3, Mode4, Mode5, Mode6, Mode7,
 } from './models/options/set-mode.options';
-import { IAPI } from './models/api';
+import { IAPI } from './models/iapi';
 
 /**
  * Represents the API class for interacting with the Blauhoff API.
@@ -33,6 +33,10 @@ export class API implements IAPI {
         this.log = log;
     }
 
+    /**
+     * Retrieves the authentication information.
+     * @returns An object containing the access ID and access secret.
+     */
     getAuthenticationInfo = (): { accessId: string, accessSecret: string } => {
         return {
             accessId: this.accessId,
@@ -40,6 +44,11 @@ export class API implements IAPI {
         };
     }
 
+    /**
+     * Sets the authentication information for the API.
+     * @param accessId - The access ID.
+     * @param accessSecret - The access secret.
+     */
     setAuthenticationInfo = (accessId: string, accessSecret: string) => {
         this.accessId = accessId;
         this.accessSecret = accessSecret;
@@ -47,10 +56,20 @@ export class API implements IAPI {
         this.userToken = '';
     }
 
+    /**
+     * Sets the user token.
+     *
+     * @param userToken - The user token to set.
+     */
     setUserToken = (userToken: string) => {
         this.userToken = userToken;
     }
 
+    /**
+     * Retrieves the user token.
+     *
+     * @returns {string} The user token.
+     */
     getUserToken = (): string => {
         return this.userToken;
     }
@@ -184,12 +203,10 @@ export class API implements IAPI {
     }
 
     /**
-     * Sets the mode1 of the BlauHoff device.
-     * Self-consumption
+     * Sets the mode1 for a BlauHoffDevice.
      *
-     * @param device - The BlauHoff device to set the mode1 for.
-     * @param maxFeedInLimit - Maximum Percentage of Rated Power Feed to Grid (0 - 100) %
-     * @param batCapMin - Battery Min Capacity (10 - 100)
+     * @param device - The BlauHoffDevice to set the mode1 for.
+     * @param options - The options for setting the mode1.
      * @returns A promise that resolves to a boolean indicating whether the mode1 was set successfully.
      */
     setMode1 = async (device: BlauHoffDevice, options: Mode1): Promise<boolean> => {
@@ -228,9 +245,7 @@ export class API implements IAPI {
      * Direct charge at specified power level
      *
      * @param device - The BlauHoff device to set the mode2 for.
-     * @param batCapPower - Battery power. Positive -> Discharge, Negative -> Charge(-6000~0) W
-     * @param batCapMin - Battery Min Capacity (10 - 100)
-     * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
+     * @param options - The options for setting the mode2.
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
     setMode2 = async (device: BlauHoffDevice, options: Mode2): Promise<boolean> => {
@@ -274,10 +289,8 @@ export class API implements IAPI {
      * Direct discharge at specified power level
      *
      * @param device - The BlauHoff device to set the mode3 for.
-     * @param batteryPower - Battery power. Positive -> Discharge, Negative -> Charge (0~6000) W
-     * @param batCapMin - Battery Min Capacity (10 - 100)
-     * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
-     * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
+     * @param options - The options for setting the mode3.
+     * @returns A promise that resolves to a boolean indicating whether the mode3 was set successfully.
      */
     setMode3 = async (device: BlauHoffDevice, options: Mode3): Promise<boolean> => {
         const { batPower, batCapMin, timeout } = options;
@@ -320,10 +333,8 @@ export class API implements IAPI {
      * Discharge only to the load, avoid charging.
      *
      * @param device - The BlauHoff device to set the mode4 for.
-     * @param maxFeedInLimit - Maximum Percentage of Rated Power Feed to Grid (0 - 100) %
-     * @param batCapMin - Battery Min Capacity (10 - 100)
-     * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
-     * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
+     * @param options - The options for setting the mode4.
+     * @returns A promise that resolves to a boolean indicating whether the mode4 was set successfully.
      */
     setMode4 = async (device: BlauHoffDevice, options: Mode4): Promise<boolean> => {
         const { maxFeedInLimit, batCapMin, timeout } = options;
@@ -366,10 +377,8 @@ export class API implements IAPI {
      * Change only，no discharging
      *
      * @param device - The BlauHoff device to set the mode5 for.
-     * @param maxFeedInLimit - Maximum Percentage of Rated Power Feed to Grid (0 - 100) %
-     * @param batCapMin - Battery Min Capacity (10 - 100)
-     * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
-     * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
+     * @param options - The options for setting the mode5.
+     * @returns A promise that resolves to a boolean indicating whether the mode5 was set successfully.
      */
     setMode5 = async (device: BlauHoffDevice, options: Mode5): Promise<boolean> => {
         const { maxFeedInLimit, batCapMin, timeout } = options;
@@ -412,11 +421,8 @@ export class API implements IAPI {
      * Inverter outputs at specified power
      *
      * @param device - The BlauHoff device to set the mode6 for.
-     * @param batPower - Battery power. Positive -> Discharge, Negative -> Charge (0~6000) W
-     * @param batPowerInvLimit - Battery power ref, limit (0~6000) W
-     * @param batCapMin - Battery Min Capacity (10 - 100)
-     * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
-     * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
+     * @param options - The options for setting the mode6.
+     * @returns A promise that resolves to a boolean indicating whether the mode6 was set successfully.
      */
     setMode6 = async (device: BlauHoffDevice, options: Mode6): Promise<boolean> => {
         const {
@@ -466,10 +472,8 @@ export class API implements IAPI {
      * Inverter operates at the specified power
      *
      * @param device - The BlauHoff device to set the mode7 for.
-     * @param batPower - Battery power. Positive -> Discharge, Negative -> Charge (0~6000) W
-     * @param batCapMin - Battery Min Capacity (10 - 100)
-     * @param timeout - The configuration will reset after a specified number of seconds(0~5000)s
-     * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
+     * @param options - The options for setting the mode7.
+     * @returns A promise that resolves to a boolean indicating whether the mode7 was set successfully.
      */
     setMode7 = async (device: BlauHoffDevice, options: Mode7): Promise<boolean> => {
         const { batPower, batCapMin, timeout } = options;

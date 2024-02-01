@@ -8,6 +8,5 @@ export interface Data {
 
 export interface QueryDeviceResponse extends BaseResponse {
     success: boolean;
-    data: Data;
-
+    data: Data
 }
