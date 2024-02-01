@@ -1,16 +1,40 @@
 import Homey from 'homey';
-import { API } from '../../api';
+import { MockApi } from '../../api/mock-api';
+import { IAPI } from '../../api/models/api';
+import { BlauHoffDevice } from '../../api';
+import { BlauHoffDeviceStatus } from '../../api/models/blauhoff-device-status';
+import { deviceInfoMapping } from './helpers/device-info-mapping';
 
 class BlauhoffBattery extends Homey.Device {
 
-  api: API = new API(this);
+  api: IAPI = new MockApi(this);
+  device: BlauHoffDevice | undefined;
 
-  getSettings = (): { accessId: string; accessToken: string; userToken: string } => {
-    const { accessId, accessToken, userToken } = this.getSettings();
+  fetchUserToken = async (accessId: string, accessSecret: string): Promise<boolean> => {
+    const result = await this.api.updateSettings(accessId, accessSecret);
+
+    if (!result) {
+      this.error('Failed to get user token, please check your credentials');
+    } else {
+      const token = this.api.getUserToken();
+      await this.setSettings({
+        userToken: token,
+      });
+    }
+
+    return result;
+  }
+
+  deviceFromData = async (): Promise<BlauHoffDevice | undefined> => {
+    const { id, serial, model } = this.getData();
+    if (!id || !serial || !model) {
+      return undefined;
+    }
+
     return {
-      accessId,
-      accessToken,
-      userToken,
+      id,
+      serial,
+      model,
     };
   }
 
@@ -19,6 +43,24 @@ class BlauhoffBattery extends Homey.Device {
    */
   async onInit() {
     this.log('BlauhoffBattery has been initialized');
+
+    const { accessId, accessSecret, userToken } = this.getSettings();
+
+    if (!userToken) {
+      await this.fetchUserToken(accessId, accessSecret);
+    } else {
+      this.api.setUserToken(userToken);
+
+      const success = await this.api.validateUserToken();
+
+      if (!success) {
+        await this.fetchUserToken(accessId, accessSecret);
+      }
+    }
+
+    this.device = await this.deviceFromData();
+
+    await this.getDeviceStatus();
   }
 
   /**
@@ -41,7 +83,9 @@ class BlauhoffBattery extends Homey.Device {
     newSettings,
     changedKeys,
   }: {
-    oldSettings: { [key: string]: boolean | string | number | undefined | null };
+    oldSettings: {
+      [key: string]: boolean | string | number | undefined | null
+    };
     newSettings: { [key: string]: boolean | string | number | undefined | null };
     changedKeys: string[];
   }): Promise<string | void> {
@@ -62,6 +106,36 @@ class BlauhoffBattery extends Homey.Device {
    */
   async onDeleted() {
     this.log('BlauhoffBattery has been deleted');
+  }
+
+  setCapabilities = async (info: BlauHoffDeviceStatus[]) => {
+    for (const capability of info) {
+      const mapping = deviceInfoMapping[capability.name];
+
+      if (mapping) {
+        const { value } = capability;
+        const { id, valueMultiplier } = mapping;
+
+        if (valueMultiplier) {
+          await this.setCapabilityValue(id, Number(value) * valueMultiplier);
+        } else {
+          await this.setCapabilityValue(id, value);
+        }
+      }
+    }
+  }
+
+  getDeviceStatus = async () => {
+    if (!this.device) {
+      return;
+    }
+
+    const status = await this.api.queryDevice(this.device, {
+      start: 0,
+      end: 1,
+    });
+
+    await this.setCapabilities(status[0]);
   }
 
 }

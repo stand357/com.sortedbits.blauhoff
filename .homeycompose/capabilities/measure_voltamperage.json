@@ -1,0 +1,17 @@
+{
+    "type": "number",
+    "title": {
+        "en": "Voltamperage",
+        "nl": "Voltamperage"
+    },
+    "getable": true,
+    "setable": false,
+    "uiComponent": "sensor",
+    "uiQuickAction": true,
+    "units": {
+        "en": "VA"
+    },
+    "decimals": 2,
+    "insights": true,
+    "icon": "/assets/capabilities/bolt-sharp-light.svg"
+}

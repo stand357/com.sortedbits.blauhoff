@@ -29,7 +29,7 @@ const failObject = {
 describe('get-rate-power', () => {
     test('Succesfully get rate powers', async () => {
         const api = new API(new Logger());
-        api.userToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9';
+        api.setUserToken('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9');
 
         expect(fetch).toHaveBeenCalledTimes(0);
 
@@ -55,7 +55,7 @@ describe('get-rate-power', () => {
 
     test('failed get rate powers', async () => {
         const api = new API(new Logger());
-        api.userToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9';
+        api.setUserToken('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9');
 
         expect(fetch).toHaveBeenCalledTimes(0);
 

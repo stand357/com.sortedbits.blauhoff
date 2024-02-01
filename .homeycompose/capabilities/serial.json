@@ -1,0 +1,14 @@
+{
+    "type": "string",
+    "title": {
+        "en": "Serial number",
+        "nl": "Serienummer"
+    },
+    "getable": true,
+    "setable": false,
+    "uiComponent": "sensor",
+    "uiQuickAction": true,
+    "decimals": 1,
+    "insights": false,
+    "icon": "/assets/capabilities/barcode-sharp-light.svg"
+}

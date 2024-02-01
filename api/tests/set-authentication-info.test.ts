@@ -4,7 +4,7 @@ import { Logger } from '../log';
 describe('set-authentication-info', () => {
     test('update', async () => {
         const api = new API(new Logger());
-        api.userToken = 'test';
+        api.setUserToken('test');
 
         api.setAuthenticationInfo('access-id', 'access-secret');
 
@@ -12,7 +12,7 @@ describe('set-authentication-info', () => {
 
         expect(info.accessId).toStrictEqual('access-id');
         expect(info.accessSecret).toStrictEqual('access-secret');
-        expect(api.userToken).toStrictEqual('');
+        expect(api.getUserToken()).toStrictEqual('');
     });
 
     afterEach(() => {
