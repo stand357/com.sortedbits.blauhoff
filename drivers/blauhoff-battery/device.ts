@@ -1,16 +1,21 @@
 import Homey from 'homey';
 import { MockApi } from '../../api/mock-api';
-import { IAPI } from '../../api/models/api';
+import { IAPI } from '../../api/models/iapi';
 import { BlauHoffDevice } from '../../api';
 import { BlauHoffDeviceStatus } from '../../api/models/blauhoff-device-status';
 import { deviceInfoMapping } from './helpers/device-info-mapping';
-import { Mode1, Mode2 } from '../../api/models/options/set-mode.options';
 
 class BlauhoffBattery extends Homey.Device {
 
   api: IAPI = new MockApi(this);
   device: BlauHoffDevice | undefined;
 
+  /**
+   * Fetches the user token using the provided access ID and access secret.
+   * @param accessId The access ID.
+   * @param accessSecret The access secret.
+   * @returns A promise that resolves to a boolean indicating whether the user token was successfully fetched.
+   */
   fetchUserToken = async (accessId: string, accessSecret: string): Promise<boolean> => {
     const result = await this.api.updateSettings(accessId, accessSecret);
 
@@ -26,6 +31,10 @@ class BlauhoffBattery extends Homey.Device {
     return result;
   }
 
+  /**
+   * Retrieves the device information from the data and returns a BlauHoffDevice object.
+   * @returns A promise that resolves to a BlauHoffDevice object if the required data is available, otherwise undefined.
+   */
   deviceFromData = async (): Promise<BlauHoffDevice | undefined> => {
     const { id, serial, model } = this.getData();
     if (!id || !serial || !model) {
@@ -117,6 +126,10 @@ class BlauhoffBattery extends Homey.Device {
     this.log('BlauhoffBattery has been deleted');
   }
 
+  /**
+   * Sets the capabilities of the BlauHoff device based on the provided information.
+   * @param info An array of BlauHoffDeviceStatus objects representing the capabilities and their values.
+   */
   setCapabilities = async (info: BlauHoffDeviceStatus[]) => {
     for (const capability of info) {
       const mapping = deviceInfoMapping[capability.name];
@@ -134,14 +147,21 @@ class BlauhoffBattery extends Homey.Device {
     }
   }
 
+  /**
+   * Retrieves the status of the device.
+   * @returns {Promise<void>} A promise that resolves when the device status is retrieved and processed.
+   */
   getDeviceStatus = async () => {
     if (!this.device) {
       return;
     }
 
+    const end = Date.now() / 1000;
+    const start = end - 60;
+
     const status = await this.api.queryDevice(this.device, {
-      start: 0,
-      end: 1,
+      start,
+      end,
     });
 
     const row = this.device.serial === 'SHA602131202215005' ? 0 : 1;
@@ -151,6 +171,11 @@ class BlauhoffBattery extends Homey.Device {
     await this.setCapabilities(status[row]);
   }
 
+  /**
+   * Registers a mode listener for the specified method and ID.
+   * @param method The method to be executed when the action card is run.
+   * @param id The ID of the action card.
+   */
   private registerModeListener = (method: (device: BlauHoffDevice, args: any) => Promise<boolean>, id: string) => {
     const card = this.homey.flow.getActionCard(id);
 
