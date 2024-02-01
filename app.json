@@ -35,7 +35,7 @@
           "en": "Set mode1"
         },
         "titleFormatted": {
-          "en": "Self consumption (mode1) with [[feedInLimit]]% limit, keeping the battery level above [[batteryCapMinimum]]%."
+          "en": "Self consumption (mode1) with [[maxFeedInLimit]]% limit, keeping the battery level above [[batCapMin]]%."
         },
         "args": [
           {
@@ -45,7 +45,7 @@
           },
           {
             "type": "number",
-            "name": "feedInLimit",
+            "name": "maxFeedInLimit",
             "title": {
               "en": "Feed in limit"
             },
@@ -57,7 +57,7 @@
           },
           {
             "type": "number",
-            "name": "batteryCapMinimum",
+            "name": "batCapMin",
             "title": {
               "en": "Battery capacity minimum"
             },
@@ -75,7 +75,7 @@
           "en": "Set mode2"
         },
         "titleFormatted": {
-          "en": "Direct charge (mode2) with [[batteryPower]]W limit, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+          "en": "Direct charge (mode2) with [[batCapPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
         },
         "args": [
           {
@@ -85,7 +85,7 @@
           },
           {
             "type": "number",
-            "name": "batteryPower",
+            "name": "batCapPower",
             "title": {
               "en": "Battery power"
             },
@@ -97,7 +97,7 @@
           },
           {
             "type": "number",
-            "name": "batteryCapMinimum",
+            "name": "batCapMin",
             "title": {
               "en": "Battery capacity minimum"
             },
@@ -109,7 +109,7 @@
           },
           {
             "type": "number",
-            "name": "duration",
+            "name": "timeout",
             "title": {
               "en": "Duration"
             },
@@ -127,7 +127,7 @@
           "en": "Set mode3"
         },
         "titleFormatted": {
-          "en": "Direct discharge at specified power level (mode3) with [[batteryPower]]W limit, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+          "en": "Direct discharge at specified power level (mode3) with [[batPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
         },
         "args": [
           {
@@ -137,7 +137,7 @@
           },
           {
             "type": "number",
-            "name": "batteryPower",
+            "name": "batPower",
             "title": {
               "en": "Battery power"
             },
@@ -149,7 +149,7 @@
           },
           {
             "type": "number",
-            "name": "batteryCapMinimum",
+            "name": "batCapMin",
             "title": {
               "en": "Battery capacity minimum"
             },
@@ -161,7 +161,7 @@
           },
           {
             "type": "number",
-            "name": "duration",
+            "name": "timeout",
             "title": {
               "en": "Duration"
             },
@@ -179,7 +179,7 @@
           "en": "Set mode4"
         },
         "titleFormatted": {
-          "en": "Discharge only to the load, avoid charging (mode4) with [[feedInLimit]]% limit, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+          "en": "Discharge only to the load, avoid charging (mode4) with [[maxFeedInLimit]]% limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
         },
         "args": [
           {
@@ -189,7 +189,7 @@
           },
           {
             "type": "number",
-            "name": "feedInLimit",
+            "name": "maxFeedInLimit",
             "title": {
               "en": "Feed in limit"
             },
@@ -201,7 +201,7 @@
           },
           {
             "type": "number",
-            "name": "batteryCapMinimum",
+            "name": "batCapMin",
             "title": {
               "en": "Battery capacity minimum"
             },
@@ -213,7 +213,7 @@
           },
           {
             "type": "number",
-            "name": "duration",
+            "name": "timeout",
             "title": {
               "en": "Duration"
             },
@@ -231,7 +231,7 @@
           "en": "Set mode5"
         },
         "titleFormatted": {
-          "en": "Change only，no discharging (mode5) with [[feedInLimit]]% limit, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+          "en": "Change only，no discharging (mode5) with [[maxFeedInLimit]]% limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
         },
         "args": [
           {
@@ -241,7 +241,7 @@
           },
           {
             "type": "number",
-            "name": "feedInLimit",
+            "name": "maxFeedInLimit",
             "title": {
               "en": "Feed in limit"
             },
@@ -253,7 +253,7 @@
           },
           {
             "type": "number",
-            "name": "batteryCapMinimum",
+            "name": "batCapMin",
             "title": {
               "en": "Battery capacity minimum"
             },
@@ -265,7 +265,7 @@
           },
           {
             "type": "number",
-            "name": "duration",
+            "name": "timeout",
             "title": {
               "en": "Duration"
             },
@@ -283,7 +283,7 @@
           "en": "Set mode6"
         },
         "titleFormatted": {
-          "en": "Inverter outputs at specified power (mode6) with [[batteryPower]]W, inverter limit at [[inverterLimit]]W, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+          "en": "Inverter outputs at specified power (mode6) with [[batPower]]W, inverter limit at [[batPowerInvLimit]]W, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
         },
         "args": [
           {
@@ -293,7 +293,7 @@
           },
           {
             "type": "number",
-            "name": "batteryPower",
+            "name": "batPower",
             "title": {
               "en": "Battery power"
             },
@@ -305,7 +305,7 @@
           },
           {
             "type": "number",
-            "name": "inverterLimit",
+            "name": "batPowerInvLimit",
             "title": {
               "en": "Inverter limit"
             },
@@ -317,7 +317,7 @@
           },
           {
             "type": "number",
-            "name": "batteryCapMinimum",
+            "name": "batCapMin",
             "title": {
               "en": "Battery capacity minimum"
             },
@@ -329,7 +329,7 @@
           },
           {
             "type": "number",
-            "name": "duration",
+            "name": "timeout",
             "title": {
               "en": "Duration"
             },
@@ -347,7 +347,7 @@
           "en": "Set mode7"
         },
         "titleFormatted": {
-          "en": "Inverter operates at the specified power (mode7) with [[batteryPower]]W limit, keeping the battery level above [[batteryCapMinimum]]%, for [[duration]] minutes."
+          "en": "Inverter operates at the specified power (mode7) with [[batPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
         },
         "args": [
           {
@@ -357,7 +357,7 @@
           },
           {
             "type": "number",
-            "name": "batteryPower",
+            "name": "batPower",
             "title": {
               "en": "Battery power"
             },
@@ -369,7 +369,7 @@
           },
           {
             "type": "number",
-            "name": "batteryCapMinimum",
+            "name": "batCapMin",
             "title": {
               "en": "Battery capacity minimum"
             },
@@ -381,7 +381,7 @@
           },
           {
             "type": "number",
-            "name": "duration",
+            "name": "timeout",
             "title": {
               "en": "Duration"
             },
