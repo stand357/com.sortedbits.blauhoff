@@ -4,6 +4,7 @@ import { IAPI } from '../../api/models/api';
 import { BlauHoffDevice } from '../../api';
 import { BlauHoffDeviceStatus } from '../../api/models/blauhoff-device-status';
 import { deviceInfoMapping } from './helpers/device-info-mapping';
+import { Mode1, Mode2 } from '../../api/models/options/set-mode.options';
 
 class BlauhoffBattery extends Homey.Device {
 
@@ -59,6 +60,14 @@ class BlauhoffBattery extends Homey.Device {
     }
 
     this.device = await this.deviceFromData();
+
+    this.registerModeListener(this.api.setMode1, 'set_mode_1');
+    this.registerModeListener(this.api.setMode2, 'set_mode_2');
+    this.registerModeListener(this.api.setMode3, 'set_mode_3');
+    this.registerModeListener(this.api.setMode4, 'set_mode_4');
+    this.registerModeListener(this.api.setMode5, 'set_mode_5');
+    this.registerModeListener(this.api.setMode6, 'set_mode_6');
+    this.registerModeListener(this.api.setMode7, 'set_mode_7');
 
     await this.getDeviceStatus();
   }
@@ -141,6 +150,23 @@ class BlauhoffBattery extends Homey.Device {
 
     await this.setCapabilities(status[row]);
   }
+
+  private registerModeListener = (method: (device: BlauHoffDevice, args: any) => Promise<boolean>, id: string) => {
+    const card = this.homey.flow.getActionCard(id);
+
+    card.registerRunListener(async (args) => {
+      if (!this.device) {
+        return false;
+      }
+
+      delete args.device;
+
+      this.log(`Triggering '${id}' with ${JSON.stringify(args)}`);
+
+      const result = await method(this.device, args);
+      return result;
+    });
+  };
 
 }
 
