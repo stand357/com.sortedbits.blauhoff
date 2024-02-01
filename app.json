@@ -708,7 +708,48 @@
           "template": "add_devices"
         }
       ],
-      "id": "blauhoff-battery"
+      "id": "blauhoff-battery",
+      "settings": [
+        {
+          "id": "accessId",
+          "type": "text",
+          "label": {
+            "en": "Access ID"
+          },
+          "value": "",
+          "hint": {
+            "en": "The Access ID generated during setup",
+            "nl": "Het Access ID dat gegenereerd is tijdens de setup"
+          }
+        },
+        {
+          "id": "accessSecret",
+          "type": "password",
+          "label": {
+            "en": "Access Secret"
+          },
+          "value": "",
+          "hint": {
+            "en": "The Access Secret generated during setup",
+            "nl": "Het Access Secret dat gegenereerd is tijdens de setup"
+          }
+        },
+        {
+          "id": "refreshInterval",
+          "type": "number",
+          "label": {
+            "en": "Update interval",
+            "nl": "Update interval"
+          },
+          "min": 10,
+          "value": 60,
+          "max": 120,
+          "hint": {
+            "en": "Time in seconds used to query device details",
+            "nl": "Tijd in seconden om de apparaat details op te halen"
+          }
+        }
+      ]
     }
   ],
   "capabilities": {

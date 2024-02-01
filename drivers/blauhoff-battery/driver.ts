@@ -31,7 +31,7 @@ class BlauhoffDriver extends Homey.Driver {
   }
 
   createDeviceSettings = (device: BlauHoffDevice): any => {
-    return {
+    const result = {
       name: `${device.model} (${device.serial})`,
       data: {
         id: device.id,
@@ -42,8 +42,13 @@ class BlauhoffDriver extends Homey.Driver {
         accessId: this.accessId,
         accessSecret: this.accessSecret,
         userToken: this.userToken,
+        refreshInterval: 60,
       },
     };
+
+    this.log('createDeviceSettings', result);
+
+    return result;
   }
 
   onPair = async (session: PairSession) => {
@@ -73,6 +78,8 @@ class BlauhoffDriver extends Homey.Driver {
           }
 
           this.userToken = api.userToken;
+          this.accessId = accessId;
+          this.accessSecret = accessSecret;
 
           if (serial) {
             const bindResult = await api.bindDevice(serial);

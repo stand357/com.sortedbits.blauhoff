@@ -9,6 +9,7 @@ class BlauhoffBattery extends Homey.Device {
 
   api: IAPI = new MockApi(this);
   device: BlauHoffDevice | undefined;
+  stop: boolean = false;
 
   /**
    * Fetches the user token using the provided access ID and access secret.
@@ -107,7 +108,15 @@ class BlauhoffBattery extends Homey.Device {
     newSettings: { [key: string]: boolean | string | number | undefined | null };
     changedKeys: string[];
   }): Promise<string | void> {
-    this.log('BlauhoffBattery settings where changed');
+    this.log('BlauhoffBattery settings where changed', newSettings.accessId, newSettings.accessSecret);
+
+    if (changedKeys.includes('accessId') || changedKeys.includes('accessSecret')) {
+      // this.api.setAuthenticationInfo(newSettings.accessId as string ?? '', newSettings.accessSecret as string ?? '');
+      const result = await this.api.updateSettings(newSettings.accessId as string ?? '', newSettings.accessSecret as string ?? '');
+      if (!result) {
+        return 'Invalid credentials';
+      }
+    }
   }
 
   /**
@@ -169,6 +178,11 @@ class BlauhoffBattery extends Homey.Device {
     this.log('parsing row', row);
 
     await this.setCapabilities(status[row]);
+
+    if (!this.stop) {
+      const { refreshInterval } = this.getSettings();
+      await this.homey.setTimeout(this.getDeviceStatus.bind(this), refreshInterval * 1000);
+    }
   }
 
   /**
