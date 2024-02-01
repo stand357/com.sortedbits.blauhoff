@@ -1,6 +1,7 @@
 import Homey from 'homey';
 import { PairSession } from 'homey/lib/Driver';
 import { BlauHoffDevice, API } from '../../api';
+import { MockApi } from '../../api/mock-api';
 
 interface FormResult {
   success: boolean;
@@ -58,7 +59,7 @@ class BlauhoffDriver extends Homey.Driver {
         try {
           const { accessId, accessSecret, serial } = data;
 
-          const api = new API(this);
+          const api = new MockApi(this);
 
           const success = await api.updateSettings(accessId, accessSecret);
 
