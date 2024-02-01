@@ -16,6 +16,7 @@ import {
     Mode1, Mode2, Mode3, Mode4, Mode5, Mode6, Mode7,
 } from './models/options/set-mode.options';
 import { IAPI } from './models/iapi';
+import { isNotInRange } from './helpers/number';
 
 /**
  * Represents the API class for interacting with the Blauhoff API.
@@ -212,12 +213,12 @@ export class API implements IAPI {
     setMode1 = async (device: BlauHoffDevice, options: Mode1): Promise<boolean> => {
         const { maxFeedInLimit, batCapMin } = options;
 
-        if (maxFeedInLimit < 0 || maxFeedInLimit > 100) {
+        if (isNotInRange(maxFeedInLimit, 0, 100)) {
             this.log.error('maxFeedInLimit must be between 0 and 100');
             return false;
         }
 
-        if (batCapMin < 10 || batCapMin > 100) {
+        if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
             return false;
         }
@@ -251,17 +252,18 @@ export class API implements IAPI {
     setMode2 = async (device: BlauHoffDevice, options: Mode2): Promise<boolean> => {
         const { batCapPower, batCapMin, timeout } = options;
 
-        if (batCapPower < -6000 || batCapPower > 0) {
+        this.log.log('Setting mode2', options);
+        if (isNotInRange(batCapPower, -6000, 0)) {
             this.log.error('batteryPower must be between -6000 and 0');
             return false;
         }
 
-        if (batCapMin < 10 || batCapMin > 100) {
+        if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
             return false;
         }
 
-        if (timeout < 0 || timeout > 5000) {
+        if (isNotInRange(timeout, 0, 5000)) {
             this.log.error('timeout must be between 0 and 5000');
             return false;
         }
@@ -295,17 +297,17 @@ export class API implements IAPI {
     setMode3 = async (device: BlauHoffDevice, options: Mode3): Promise<boolean> => {
         const { batPower, batCapMin, timeout } = options;
 
-        if (batPower < 0 || batPower > 6000) {
+        if (isNotInRange(batPower, 0, 6000)) {
             this.log.error('batteryPower must be between 0 and 6000');
             return false;
         }
 
-        if (batCapMin < 10 || batCapMin > 100) {
+        if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
             return false;
         }
 
-        if (timeout < 0 || timeout > 5000) {
+        if (isNotInRange(timeout, 0, 5000)) {
             this.log.error('timeout must be between 0 and 5000');
             return false;
         }
@@ -339,17 +341,17 @@ export class API implements IAPI {
     setMode4 = async (device: BlauHoffDevice, options: Mode4): Promise<boolean> => {
         const { maxFeedInLimit, batCapMin, timeout } = options;
 
-        if (maxFeedInLimit < 0 || maxFeedInLimit > 100) {
+        if (isNotInRange(maxFeedInLimit, 0, 100)) {
             this.log.error('maxFeedInLimit must be between 0 and 100');
             return false;
         }
 
-        if (batCapMin < 10 || batCapMin > 100) {
+        if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
             return false;
         }
 
-        if (timeout < 0 || timeout > 5000) {
+        if (isNotInRange(timeout, 0, 5000)) {
             this.log.error('timeout must be between 0 and 5000');
             return false;
         }
@@ -383,17 +385,17 @@ export class API implements IAPI {
     setMode5 = async (device: BlauHoffDevice, options: Mode5): Promise<boolean> => {
         const { maxFeedInLimit, batCapMin, timeout } = options;
 
-        if (maxFeedInLimit < 0 || maxFeedInLimit > 100) {
+        if (isNotInRange(maxFeedInLimit, 0, 100)) {
             this.log.error('maxFeedInLimit must be between 0 and 100');
             return false;
         }
 
-        if (batCapMin < 10 || batCapMin > 100) {
+        if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
             return false;
         }
 
-        if (timeout < 0 || timeout > 5000) {
+        if (isNotInRange(timeout, 0, 5000)) {
             this.log.error('timeout must be between 0 and 5000');
             return false;
         }
@@ -429,22 +431,22 @@ export class API implements IAPI {
             batPower, batPowerInvLimit, batCapMin, timeout,
         } = options;
 
-        if (batPower < 0 || batPower > 6000) {
+        if (isNotInRange(batPower, 0, 6000)) {
             this.log.error('batPower must be between 0 and 6000');
             return false;
         }
 
-        if (batPowerInvLimit < 0 || batPowerInvLimit > 6000) {
+        if (isNotInRange(batPowerInvLimit, 0, 6000)) {
             this.log.error('batPowerInvLimit must be between 0 and 6000');
             return false;
         }
 
-        if (batCapMin < 10 || batCapMin > 100) {
+        if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
             return false;
         }
 
-        if (timeout < 0 || timeout > 5000) {
+        if (isNotInRange(timeout, 0, 5000)) {
             this.log.error('timeout must be between 0 and 5000');
             return false;
         }
@@ -478,17 +480,17 @@ export class API implements IAPI {
     setMode7 = async (device: BlauHoffDevice, options: Mode7): Promise<boolean> => {
         const { batPower, batCapMin, timeout } = options;
 
-        if (batPower < -6000 || batPower > 0) {
+        if (isNotInRange(batPower, -6000, 0)) {
             this.log.error('batPower must be between -6000 and 0');
             return false;
         }
 
-        if (batCapMin < 10 || batCapMin > 100) {
+        if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
             return false;
         }
 
-        if (timeout < 0 || timeout > 5000) {
+        if (isNotInRange(timeout, 0, 5000)) {
             this.log.error('timeout must be between 0 and 5000');
             return false;
         }
