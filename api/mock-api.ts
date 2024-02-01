@@ -57,12 +57,12 @@ export class MockApi implements IAPI {
         return [
             {
                 serial: 'SHA602131202215005',
-                model: 'SPHA6.0H-10.24kW',
+                model: 'Home 5K/5kWh 1 Fase',
                 id: '1678686019714682881',
             },
             {
                 serial: 'SHA602131202215004',
-                model: 'SPHA6.0H-10.24kW',
+                model: 'Home 10K/20kWh 3 Fase',
                 id: '1678686019714682880',
             },
         ];
@@ -115,8 +115,8 @@ export class MockApi implements IAPI {
     }
 
     fetchUserToken = async (): Promise<boolean> => {
-        this.userToken = 'XXX';
-        return true;
+        this.userToken = Date.now().toString();
+        return this.accessId === 'test-id';
     }
 
 }
