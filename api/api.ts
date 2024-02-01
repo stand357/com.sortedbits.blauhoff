@@ -15,8 +15,9 @@ import { QueryDeviceOptions } from './models/options/query-device.options';
 import {
     Mode1, Mode2, Mode3, Mode4, Mode5, Mode6, Mode7,
 } from './models/options/set-mode.options';
+import { IAPI } from './models/api';
 
-export class API {
+export class API implements IAPI {
 
     private baseUrl: string = 'https://api-vpp-au.weiheng-tech.com/api/vpp';
     private accessId: string = 'XXX';
@@ -77,7 +78,7 @@ export class API {
         });
 
         for (let pageNr = 2; pageNr <= page1!.data.totalPages; pageNr++) {
-            const page = await this.queryDeviceListPage(pageNr, 2);
+            const page = await this.queryDeviceListPage(pageNr, pageSize);
             if (isValidResponse(page)) {
                 page!.data.data.forEach((item) => {
                     devices.push(convertDeviceInformationToBlauhoffDevice(item));
