@@ -32,6 +32,15 @@ class BlauhoffBattery extends Homey.Device {
     return result;
   }
 
+  syncUserToken = async () => {
+    const { userToken } = this.getSettings();
+    if (this.api.getUserToken() !== userToken) {
+      await this.setSettings({
+        userToken: this.api.getUserToken(),
+      });
+    }
+  }
+
   /**
    * Retrieves the device information from the data and returns a BlauHoffDevice object.
    * @returns A promise that resolves to a BlauHoffDevice object if the required data is available, otherwise undefined.
@@ -97,6 +106,7 @@ class BlauhoffBattery extends Homey.Device {
    * @param {string[]} event.changedKeys An array of keys changed since the previous version
    * @returns {Promise<string|void>} return a custom message that will be displayed
    */
+  // eslint-disable-next-line consistent-return
   async onSettings({
     oldSettings,
     newSettings,
@@ -111,7 +121,6 @@ class BlauhoffBattery extends Homey.Device {
     this.log('BlauhoffBattery settings where changed', newSettings.accessId, newSettings.accessSecret);
 
     if (changedKeys.includes('accessId') || changedKeys.includes('accessSecret')) {
-      // this.api.setAuthenticationInfo(newSettings.accessId as string ?? '', newSettings.accessSecret as string ?? '');
       const result = await this.api.updateSettings(newSettings.accessId as string ?? '', newSettings.accessSecret as string ?? '');
       if (!result) {
         return 'Invalid credentials';
@@ -132,6 +141,7 @@ class BlauhoffBattery extends Homey.Device {
    * onDeleted is called when the user deleted the device.
    */
   async onDeleted() {
+    this.stop = true;
     this.log('BlauhoffBattery has been deleted');
   }
 
@@ -165,6 +175,8 @@ class BlauhoffBattery extends Homey.Device {
       return;
     }
 
+    await this.syncUserToken();
+
     const end = Date.now() / 1000;
     const start = end - 60;
 
@@ -197,6 +209,8 @@ class BlauhoffBattery extends Homey.Device {
       if (!this.device) {
         return false;
       }
+
+      await this.syncUserToken();
 
       delete args.device;
 
