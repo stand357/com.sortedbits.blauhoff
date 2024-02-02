@@ -61,57 +61,102 @@ class BlauhoffDriver extends Homey.Driver {
     });
 
     session.setHandler('form_complete', async (data: FormData): Promise<FormResult> => {
-      this.log('form_complete', data);
-      if (data.accessId && data.accessSecret) {
-        try {
-          const { accessId, accessSecret, serial } = data;
+      return this.pairFormComplete(data, session);
+    });
+  }
 
-          const api = new MockApi(this);
+  onRepair = async (session: PairSession, device: Homey.Device) => {
+    session.setHandler('register_serial_complete', async (data: FormData): Promise<FormResult> => {
+      return this.registerSerialFormComplete(data, session);
+    });
+  }
 
-          const success = await api.updateSettings(accessId, accessSecret);
+  pairFormComplete = async (data: FormData, session: PairSession): Promise<FormResult> => {
+    this.log('form_complete', data);
+    if (data.accessId && data.accessSecret) {
+      try {
+        const { accessId, accessSecret, serial } = data;
 
-          if (!success) {
-            return {
-              success: false,
-              message: 'Invalid credentials',
-            };
-          }
+        const api = new MockApi(this);
 
-          this.userToken = api.userToken;
-          this.accessId = accessId;
-          this.accessSecret = accessSecret;
+        const success = await api.updateSettings(accessId, accessSecret);
 
-          if (serial) {
-            const bindResult = await api.bindDevice(serial);
-            if (!bindResult) {
-              return {
-                success: false,
-                message: 'Could not bind device',
-              };
-            }
-          }
-
-          this.devices = await api.queryDeviceList();
-
-          await session.nextView();
-
-          return {
-            success: true,
-            devices: this.devices,
-          };
-        } catch (error) {
+        if (!success) {
           return {
             success: false,
-            message: error,
+            message: 'Invalid credentials',
           };
         }
-      } else {
+
+        this.userToken = api.userToken;
+        this.accessId = accessId;
+        this.accessSecret = accessSecret;
+
+        if (serial) {
+          const bindResult = await api.bindDevice(serial);
+          if (!bindResult) {
+            return {
+              success: false,
+              message: 'Could not bind device',
+            };
+          }
+        }
+
+        this.devices = await api.queryDeviceList();
+
+        await session.nextView();
+
+        return {
+          success: true,
+          devices: this.devices,
+        };
+      } catch (error) {
         return {
           success: false,
-          message: 'No host provided',
+          message: error,
         };
       }
-    });
+    } else {
+      return {
+        success: false,
+        message: 'No Access ID or Access Secret provided',
+      };
+    }
+  }
+
+  registerSerialFormComplete = async (data: FormData, session: PairSession): Promise<FormResult> => {
+    this.log('register_serial_complete', data);
+    const { serial } = data;
+    if (serial) {
+      try {
+        const api = new MockApi(this);
+
+        const bindResult = await api.bindDevice(serial);
+        if (!bindResult) {
+          return {
+            success: false,
+            message: 'Could not bind device',
+          };
+        }
+
+        this.devices = await api.queryDeviceList();
+
+        return {
+          success: true,
+          devices: this.devices,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          message: error,
+        };
+      }
+    } else {
+      return {
+        success: false,
+        message: 'No serial provided',
+      };
+    }
   }
 
 }
