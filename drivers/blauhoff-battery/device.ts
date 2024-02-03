@@ -1,13 +1,15 @@
 import Homey from 'homey';
 import { MockApi } from '../../api/mock-api';
 import { IAPI } from '../../api/models/iapi';
-import { BlauHoffDevice } from '../../api';
+import { API, BlauHoffDevice } from '../../api';
 import { BlauHoffDeviceStatus } from '../../api/models/blauhoff-device-status';
 import { deviceInfoMapping } from './helpers/device-info-mapping';
 
 class BlauhoffBattery extends Homey.Device {
 
-  api: IAPI = new MockApi(this);
+  // api: IAPI = new MockApi(this);
+  api: IAPI = new API(this);
+
   device: BlauHoffDevice | undefined;
   stop: boolean = false;
 
@@ -64,7 +66,13 @@ class BlauhoffBattery extends Homey.Device {
   async onInit() {
     this.log('BlauhoffBattery has been initialized');
 
-    const { accessId, accessSecret, userToken } = this.getSettings();
+    const {
+      accessId, accessSecret, userToken, baseUrl,
+    } = this.getSettings();
+
+    if (baseUrl) {
+      this.api.updateBaseUrl(baseUrl);
+    }
 
     if (!userToken) {
       await this.fetchUserToken(accessId, accessSecret);
@@ -178,18 +186,16 @@ class BlauhoffBattery extends Homey.Device {
     await this.syncUserToken();
 
     const end = Date.now() / 1000;
-    const start = end - 60;
+    const start = end - 1000;
 
     const status = await this.api.queryDevice(this.device, {
       start,
       end,
     });
 
-    const row = this.device.serial === 'SHA602131202215005' ? 0 : 1;
-
-    this.log('parsing row', row);
-
-    await this.setCapabilities(status[row]);
+    if (status.length > 0) {
+      await this.setCapabilities(status[0]);
+    }
 
     if (!this.stop) {
       const { refreshInterval } = this.getSettings();

@@ -34,6 +34,10 @@ export class API implements IAPI {
         this.log = log;
     }
 
+    updateBaseUrl(baseUrl: string): void {
+        this.baseUrl = baseUrl;
+    }
+
     /**
      * Retrieves the authentication information.
      * @returns An object containing the access ID and access secret.
@@ -527,7 +531,7 @@ export class API implements IAPI {
             'Access-Secret': this.accessSecret,
         };
 
-        const data = await this.performRequest<GetUserTokenResponse>(path, 'post', {}, header);
+        const data = await this.performRequest<GetUserTokenResponse>(path, 'get', undefined, header);
 
         if (!isValidResponse(data)) {
             this.userToken = '';
@@ -584,18 +588,23 @@ export class API implements IAPI {
     performRequest = async <Type>(
         path: string,
         method: 'get' | 'post',
-        params: any = {},
+        params: any | undefined = undefined,
         headers?: any,
     ): Promise<Type | undefined> => {
         this.log.log(`Performing request to ${path} with params: ${JSON.stringify(params)}`);
         const header = headers ?? this.authorizationHeader();
 
+        const options = params ? {
+            method,
+            headers: header,
+            body: JSON.stringify(params),
+        } : {
+            method,
+            headers: header,
+        };
+
         try {
-            const response = await fetch(this.baseUrl + path, {
-                method,
-                headers: header,
-                body: JSON.stringify(params),
-            });
+            const response = await fetch(this.baseUrl + path, options);
 
             if (response === undefined || response.status !== 200) {
                 this.log.error(`Response failed: ${response?.statusText}`);

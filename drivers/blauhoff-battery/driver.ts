@@ -1,6 +1,6 @@
 import Homey from 'homey';
 import { PairSession } from 'homey/lib/Driver';
-import { BlauHoffDevice } from '../../api';
+import { API, BlauHoffDevice } from '../../api';
 import { MockApi } from '../../api/mock-api';
 
 interface FormResult {
@@ -42,6 +42,7 @@ class BlauhoffDriver extends Homey.Driver {
         accessId: this.accessId,
         accessSecret: this.accessSecret,
         userToken: this.userToken,
+        baseUrl: 'https://api-vpp-au.weiheng-tech.com/api/vpp',
         refreshInterval: 60,
       },
     };
@@ -77,7 +78,8 @@ class BlauhoffDriver extends Homey.Driver {
       try {
         const { accessId, accessSecret, serial } = data;
 
-        const api = new MockApi(this);
+        // const api = new MockApi(this);
+        const api = new API(this);
 
         const success = await api.updateSettings(accessId, accessSecret);
 
@@ -88,7 +90,7 @@ class BlauhoffDriver extends Homey.Driver {
           };
         }
 
-        this.userToken = api.userToken;
+        this.userToken = api.getUserToken();
         this.accessId = accessId;
         this.accessSecret = accessSecret;
 

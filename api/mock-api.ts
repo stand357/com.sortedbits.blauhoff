@@ -22,6 +22,10 @@ export class MockApi implements IAPI {
         this.log = log;
     }
 
+    updateBaseUrl = (baseUrl: string) => {
+        this.log.log('updateBaseUrl', baseUrl);
+    }
+
     getAuthenticationInfo = (): { accessId: string, accessSecret: string } => {
         return {
             accessId: this.accessId,
