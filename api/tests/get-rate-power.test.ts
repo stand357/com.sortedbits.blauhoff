@@ -47,7 +47,7 @@ describe('get-rate-power', () => {
 
         expect(fetch).toHaveBeenCalledWith(
             `https://api-vpp-au.weiheng-tech.com/api/vpp/v1/hub/device/info?deviceSn=${testDevice.serial}`,
-            { body: '{}', headers: expectedHeaders, method: 'get' },
+            { headers: expectedHeaders, method: 'get' },
         );
 
         expect(response).toStrictEqual(successObject.data);
@@ -79,7 +79,7 @@ describe('get-rate-power', () => {
 
         expect(fetch).toHaveBeenCalledWith(
             `https://api-vpp-au.weiheng-tech.com/api/vpp/v1/hub/device/info?deviceSn=${testDevice.serial}`,
-            { body: '{}', headers: expectedHeaders, method: 'get' },
+            { headers: expectedHeaders, method: 'get' },
         );
 
         expect(response).toStrictEqual(undefined);

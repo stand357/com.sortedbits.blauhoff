@@ -42,7 +42,7 @@ describe('get-user-token', () => {
 
         expect(fetch).toHaveBeenCalledWith(
             'https://api-vpp-au.weiheng-tech.com/api/vpp/v1/user/token',
-            { body: '{}', headers: expectedHeaders, method: 'post' },
+            { headers: expectedHeaders, method: 'get' },
         );
 
         expect(fetch).toHaveBeenCalledTimes(1);

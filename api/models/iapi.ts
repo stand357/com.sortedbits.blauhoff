@@ -7,6 +7,7 @@ import {
 import { Rates } from './responses/get-rate-power-response';
 
 export interface IAPI {
+    updateBaseUrl(baseUrl: string): void;
     getAuthenticationInfo(): { accessId: string, accessSecret: string };
     setAuthenticationInfo(accessId: string, accessSecret: string): void;
     updateSettings(accessId: string, accessSecret: string): Promise<boolean>;
