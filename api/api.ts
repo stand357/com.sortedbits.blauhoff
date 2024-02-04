@@ -511,7 +511,7 @@ export class API {
             return result;
         }
 
-        this.log.log(`setMode${mode} response: ${response}`);
+        this.log.log(`setMode${mode} response: ${JSON.stringify(response)}`);
         result.data = true;
         return result;
     }
