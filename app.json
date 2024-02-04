@@ -75,7 +75,7 @@
           "en": "Set mode2"
         },
         "titleFormatted": {
-          "en": "Direct charge (mode2) with [[batPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
+          "en": "Direct charge (mode2) with [[batPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] seconds."
         },
         "args": [
           {
@@ -114,10 +114,10 @@
               "en": "Duration"
             },
             "placeholder": {
-              "en": "Time between 0 and 80 minutes"
+              "en": "Time between 0 and 5000 seconds"
             },
             "min": 0,
-            "max": 80
+            "max": 5000
           }
         ]
       },
@@ -127,7 +127,7 @@
           "en": "Set mode3"
         },
         "titleFormatted": {
-          "en": "Direct discharge at specified power level (mode3) with [[batPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
+          "en": "Direct discharge at specified power level (mode3) with [[batPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] seconds."
         },
         "args": [
           {
@@ -166,10 +166,10 @@
               "en": "Duration"
             },
             "placeholder": {
-              "en": "Time between 0 and 80 minutes"
+              "en": "Time between 0 and 5000 seconds"
             },
             "min": 0,
-            "max": 80
+            "max": 5000
           }
         ]
       },
@@ -179,7 +179,7 @@
           "en": "Set mode4"
         },
         "titleFormatted": {
-          "en": "Discharge only to the load, avoid charging (mode4) with [[maxFeedInLimit]]% limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
+          "en": "Discharge only to the load, avoid charging (mode4) with [[maxFeedInLimit]]% limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] seconds."
         },
         "args": [
           {
@@ -218,10 +218,10 @@
               "en": "Duration"
             },
             "placeholder": {
-              "en": "Time between 0 and 80 minutes"
+              "en": "Time between 0 and 5000 secondes"
             },
             "min": 0,
-            "max": 80
+            "max": 5000
           }
         ]
       },
@@ -231,7 +231,7 @@
           "en": "Set mode5"
         },
         "titleFormatted": {
-          "en": "Change only，no discharging (mode5) with [[maxFeedInLimit]]% limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
+          "en": "Charge only，no discharging (mode5) with [[maxFeedInLimit]]% limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] seconds."
         },
         "args": [
           {
@@ -270,10 +270,10 @@
               "en": "Duration"
             },
             "placeholder": {
-              "en": "Time between 0 and 80 minutes"
+              "en": "Time between 0 and 5000 seconds"
             },
             "min": 0,
-            "max": 80
+            "max": 5000
           }
         ]
       },
@@ -283,7 +283,7 @@
           "en": "Set mode6"
         },
         "titleFormatted": {
-          "en": "Inverter outputs at specified power (mode6) with [[batPower]]W, inverter limit at [[batPowerInvLimit]]W, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
+          "en": "Inverter outputs at specified power (mode6) with [[batPower]]W, inverter limit at [[batPowerInvLimit]]W, keeping the battery level above [[batCapMin]]%, for [[timeout]] seconds."
         },
         "args": [
           {
@@ -334,10 +334,10 @@
               "en": "Duration"
             },
             "placeholder": {
-              "en": "Time between 0 and 80 minutes"
+              "en": "Time between 0 and 5000 seconds"
             },
             "min": 0,
-            "max": 80
+            "max": 5000
           }
         ]
       },
@@ -347,7 +347,7 @@
           "en": "Set mode7"
         },
         "titleFormatted": {
-          "en": "Inverter operates at the specified power (mode7) with [[batPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
+          "en": "Inverter operates at the specified power (mode7) with [[batPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] seconds."
         },
         "args": [
           {
@@ -386,10 +386,10 @@
               "en": "Duration"
             },
             "placeholder": {
-              "en": "Time between 0 and 80 minutes"
+              "en": "Time between 0 and 5000 seconds"
             },
             "min": 0,
-            "max": 80
+            "max": 5000
           }
         ]
       }
