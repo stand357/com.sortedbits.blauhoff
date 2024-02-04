@@ -89,9 +89,9 @@ class BlauhoffBattery extends Homey.Device {
     } else {
       this.api.setUserToken(userToken);
 
-      const success = await this.api.validateUserToken();
+      const response = await this.api.validateUserToken();
 
-      if (!success) {
+      if (!response.success) {
         await this.refreshUserTokenFromSettings();
       }
     }
@@ -219,7 +219,7 @@ class BlauhoffBattery extends Homey.Device {
         const { refreshInterval } = this.getSettings();
         await this.homey.setTimeout(this.getDeviceStatus.bind(this), refreshInterval * 1000);
       }
-    } else if (status.code === 401 && !comingFromError) {
+    } else if (status.code === 400 && !comingFromError) {
       const refreshResult = await this.refreshUserTokenFromSettings();
       if (refreshResult) {
         await this.getDeviceStatus(true);
