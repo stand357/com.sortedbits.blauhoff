@@ -260,10 +260,10 @@ export class API {
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
     setMode2 = async (device: BlauHoffDevice, options: Mode2): Promise<QueryResponse<boolean>> => {
-        const { batCapPower, batCapMin, timeout } = options;
+        const { batPower, batCapMin, timeout } = options;
 
         this.log.log('Setting mode2', options);
-        if (isNotInRange(batCapPower, -6000, 0)) {
+        if (isNotInRange(batPower, -6000, 0)) {
             this.log.error('batteryPower must be between -6000 and 0');
             return INVALID_PARAMETER_RESPONSE;
         }

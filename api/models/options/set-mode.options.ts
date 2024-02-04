@@ -22,7 +22,7 @@ export interface Mode2 {
      * Battery power. Positive values indicate discharge, negative values indicate charge.
      * Range: -6000 to 0 (W)
      */
-    batCapPower: number;
+    batPower: number;
 
     /**
      * Battery minimum capacity.
