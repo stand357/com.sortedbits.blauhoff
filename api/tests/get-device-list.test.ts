@@ -51,18 +51,22 @@ describe('get-device-list', () => {
 
         const response = await api.queryDeviceList();
 
-        expect(response).toStrictEqual([
-            {
-                serial: 'SHA602131202215005',
-                model: 'SPHA6.0H-10.24kW',
-                id: '1678686019714682881',
-            },
-            {
-                serial: 'SHA602131202215004',
-                model: 'SPHA6.0H-10.24kW',
-                id: '1678686019714682880',
-            },
-        ]);
+        expect(response).toStrictEqual({
+            success: true,
+            code: 200,
+            data: [
+                {
+                    serial: 'SHA602131202215005',
+                    model: 'SPHA6.0H-10.24kW',
+                    id: '1678686019714682881',
+                },
+                {
+                    serial: 'SHA602131202215004',
+                    model: 'SPHA6.0H-10.24kW',
+                    id: '1678686019714682880',
+                },
+            ],
+        });
     });
 
     test('Fetching multiple pages of items', async () => {
@@ -77,9 +81,9 @@ describe('get-device-list', () => {
             .mockResolvedValueOnce(new Response(JSON.stringify(deviceList3)));
 
         const response = await api.queryDeviceList(2);
-        expect(response).toHaveLength(5);
+        expect(response.data).toHaveLength(5);
 
-        expect(response).toStrictEqual([
+        expect(response.data).toStrictEqual([
             {
                 serial: 'SHA602131202215001',
                 model: 'SPHA6.0H-10.12kW',
@@ -120,7 +124,10 @@ describe('get-device-list', () => {
 
         const response = await api.queryDeviceList();
 
-        expect(response).toStrictEqual([]);
+        expect(response).toStrictEqual({
+            success: false,
+            code: 401,
+        });
     });
 
     afterEach(() => {

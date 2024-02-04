@@ -8,20 +8,26 @@ import { GetDeviceListResponse } from './models/responses/get-device-list-respon
 import { GetRatePowerResponse, Rates } from './models/responses/get-rate-power-response';
 import { BindDeviceResponse } from './models/responses/bind-device.response';
 import { convertDeviceInformationToBlauhoffDevice } from './helpers/device-information-to-blauhoff-device';
-import { isValidResponse } from './helpers/is-valid-response';
+import { createQueryBooleanResponse, createQueryResponse, isValidResponse } from './helpers/is-valid-response';
 import { QueryDeviceResponse } from './models/responses/query-device.response';
 import { convertDeviceInfoToBlauhoffDeviceStatus } from './helpers/device-info-to-blauhoff-device-status';
 import { QueryDeviceOptions } from './models/options/query-device.options';
 import {
     Mode1, Mode2, Mode3, Mode4, Mode5, Mode6, Mode7,
 } from './models/options/set-mode.options';
-import { IAPI } from './models/iapi';
 import { isNotInRange } from './helpers/number';
+import { QueryResponse } from './models/responses/query-response';
+
+const INVALID_PARAMETER_RESPONSE = {
+    success: false,
+    code: 410,
+    data: false,
+};
 
 /**
  * Represents the API class for interacting with the Blauhoff API.
  */
-export class API implements IAPI {
+export class API {
 
     private baseUrl: string = 'https://api-vpp-au.weiheng-tech.com/api/vpp';
     private accessId: string = 'XXX';
@@ -83,9 +89,13 @@ export class API implements IAPI {
      * Validates the user token by querying devices. Dumb way to do it, but it works.
      * @returns A promise that resolves to a boolean indicating whether the user token is valid.
      */
-    validateUserToken = async (): Promise<boolean> => {
+    validateUserToken = async (): Promise<QueryResponse<boolean>> => {
         const response = await this.queryDeviceList(10);
-        return (response.length > 0);
+        return {
+            success: response.success,
+            code: response.code,
+            data: response.success,
+        };
     }
 
     /**
@@ -97,7 +107,7 @@ export class API implements IAPI {
      * @param refreshInterval - The refresh interval in milliseconds.
      * @returns A Promise that resolves when the settings are updated.
      */
-    updateSettings = async (accessId: string, accessSecret: string): Promise<boolean> => {
+    updateSettings = async (accessId: string, accessSecret: string): Promise<QueryResponse<boolean>> => {
         this.setAuthenticationInfo(accessId, accessSecret);
         return this.fetchUserToken();
     }
@@ -107,14 +117,15 @@ export class API implements IAPI {
      *
      * @returns A promise that resolves to an array of BlauHoffDevice objects.
      */
-    queryDeviceList = async (pageSize: number = 10): Promise<BlauHoffDevice[]> => {
+    queryDeviceList = async (pageSize: number = 10): Promise<QueryResponse<BlauHoffDevice[]>> => {
         const devices: BlauHoffDevice[] = [];
 
         const page1 = await this.queryDeviceListPage(1, pageSize);
 
-        if (!isValidResponse(page1)) {
-            this.log.error('Failed to get device list');
-            return [];
+        const result = createQueryResponse<BlauHoffDevice[]>(page1);
+        if (!result.success) {
+            this.log.error('Failed to queryDeviceList', JSON.stringify(page1));
+            return result;
         }
 
         page1!.data.data.forEach((item) => {
@@ -130,7 +141,8 @@ export class API implements IAPI {
             }
         }
 
-        return devices;
+        result.data = devices;
+        return result;
     }
 
     /**
@@ -139,7 +151,7 @@ export class API implements IAPI {
      * @param device - The BlauHoff device for which to retrieve the status.
      * @returns A promise that resolves to an array of BlauHoffDeviceStatus objects representing the device status.
      */
-    queryDevice = async (device: BlauHoffDevice, options: QueryDeviceOptions): Promise<BlauHoffDeviceStatus[][]> => {
+    queryDevice = async (device: BlauHoffDevice, options: QueryDeviceOptions): Promise<QueryResponse<BlauHoffDeviceStatus[][]>> => {
         const path = '/v1/hub/device/info/query';
 
         const params = {
@@ -149,14 +161,15 @@ export class API implements IAPI {
 
         const response = await this.performRequest<QueryDeviceResponse>(path, 'post', params);
 
-        if (!isValidResponse(response)) {
-            this.log.error('Failed to get query device');
-            return [];
+        const result = createQueryResponse<BlauHoffDeviceStatus[][]>(response);
+        if (!result.success) {
+            this.log.error('Failed to queryDevice', JSON.stringify(response));
+            return result;
         }
 
-        const data = convertDeviceInfoToBlauhoffDeviceStatus(this.log, response!);
+        result.data = convertDeviceInfoToBlauhoffDeviceStatus(this.log, response!);
 
-        return data;
+        return result;
     }
 
     /**
@@ -165,7 +178,7 @@ export class API implements IAPI {
      * @param serial - The serial number of the device to bind.
      * @returns A promise that resolves when the device is successfully bound.
      */
-    bindDevice = async (serial: string): Promise<boolean> => {
+    bindDevice = async (serial: string): Promise<QueryResponse<boolean>> => {
         const path = '/v1/hub/device/bind';
 
         const params = {
@@ -174,17 +187,15 @@ export class API implements IAPI {
             ],
         };
 
-        const data = await this.performRequest<BindDeviceResponse>(path, 'post', params);
+        const response = await this.performRequest<BindDeviceResponse>(path, 'post', params);
+        const result = createQueryBooleanResponse(response);
 
-        if (!isValidResponse(data)) {
-            return false;
+        if (!result.success) {
+            this.log.error('Failed to bindDevice', JSON.stringify(response));
+            return result;
         }
 
-        if (data!.data.bindedList.indexOf(serial) === -1) {
-            return false;
-        }
-
-        return true;
+        return result;
     }
 
     /**
@@ -193,18 +204,21 @@ export class API implements IAPI {
      * @param device - The BlauHoff device to query.
      * @returns A promise that resolves to the rate power of the device.
      */
-    getRatePower = async (device: BlauHoffDevice): Promise<Rates | undefined> => {
+    getRatePower = async (device: BlauHoffDevice): Promise<QueryResponse<Rates>> => {
         const path = `/v1/hub/device/info?deviceSn=${device.serial}`;
 
-        const data = await this.performRequest<GetRatePowerResponse>(path, 'get');
+        const response = await this.performRequest<GetRatePowerResponse>(path, 'get');
 
-        if (!isValidResponse(data)) {
-            this.log.error('Failed to get rate power');
-            return undefined;
+        const result = createQueryResponse<Rates>(response);
+        if (!result.success) {
+            this.log.error('Failed to getRatePower', JSON.stringify(response));
+            return result;
         }
 
-        this.log.log(`Got device info: ${data}`);
-        return data!.data;
+        this.log.log(`Got device info: ${JSON.stringify(result)}`);
+
+        result.data = response!.data;
+        return result;
     }
 
     /**
@@ -214,17 +228,17 @@ export class API implements IAPI {
      * @param options - The options for setting the mode1.
      * @returns A promise that resolves to a boolean indicating whether the mode1 was set successfully.
      */
-    setMode1 = async (device: BlauHoffDevice, options: Mode1): Promise<boolean> => {
+    setMode1 = async (device: BlauHoffDevice, options: Mode1): Promise<QueryResponse<boolean>> => {
         const { maxFeedInLimit, batCapMin } = options;
 
         if (isNotInRange(maxFeedInLimit, 0, 100)) {
             this.log.error('maxFeedInLimit must be between 0 and 100');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         const path = '/v1/hub/device/vpp/mode1';
@@ -234,15 +248,7 @@ export class API implements IAPI {
             deviceSn: device.serial,
         };
 
-        const data = await this.performRequest<BaseResponse>(path, 'post', params);
-
-        if (!isValidResponse(data)) {
-            this.log.error('Failed to setMode1');
-            return false;
-        }
-
-        this.log.log(`Set mode1: ${data}`);
-        return true;
+        return this.genericSetMode(1, path, params);
     }
 
     /**
@@ -253,23 +259,23 @@ export class API implements IAPI {
      * @param options - The options for setting the mode2.
      * @returns A promise that resolves to a boolean indicating whether the mode2 was set successfully.
      */
-    setMode2 = async (device: BlauHoffDevice, options: Mode2): Promise<boolean> => {
+    setMode2 = async (device: BlauHoffDevice, options: Mode2): Promise<QueryResponse<boolean>> => {
         const { batCapPower, batCapMin, timeout } = options;
 
         this.log.log('Setting mode2', options);
         if (isNotInRange(batCapPower, -6000, 0)) {
             this.log.error('batteryPower must be between -6000 and 0');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(timeout, 0, 5000)) {
             this.log.error('timeout must be between 0 and 5000');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         const path = '/v1/hub/device/vpp/mode2';
@@ -279,15 +285,7 @@ export class API implements IAPI {
             deviceSn: device.serial,
         };
 
-        const data = await this.performRequest<BaseResponse>(path, 'post', params);
-
-        if (!isValidResponse(data)) {
-            this.log.error('Failed to setMode2');
-            return false;
-        }
-
-        this.log.log(`Set mode2: ${data}`);
-        return true;
+        return this.genericSetMode(2, path, params);
     }
 
     /**
@@ -298,22 +296,22 @@ export class API implements IAPI {
      * @param options - The options for setting the mode3.
      * @returns A promise that resolves to a boolean indicating whether the mode3 was set successfully.
      */
-    setMode3 = async (device: BlauHoffDevice, options: Mode3): Promise<boolean> => {
+    setMode3 = async (device: BlauHoffDevice, options: Mode3): Promise<QueryResponse<boolean>> => {
         const { batPower, batCapMin, timeout } = options;
 
         if (isNotInRange(batPower, 0, 6000)) {
             this.log.error('batteryPower must be between 0 and 6000');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(timeout, 0, 5000)) {
             this.log.error('timeout must be between 0 and 5000');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         const path = '/v1/hub/device/vpp/mode3';
@@ -323,15 +321,7 @@ export class API implements IAPI {
             deviceSn: device.serial,
         };
 
-        const data = await this.performRequest<BaseResponse>(path, 'post', params);
-
-        if (!isValidResponse(data)) {
-            this.log.error('Failed to setMode3');
-            return false;
-        }
-
-        this.log.log(`Set mode3: ${data}`);
-        return true;
+        return this.genericSetMode(3, path, params);
     }
 
     /**
@@ -342,22 +332,22 @@ export class API implements IAPI {
      * @param options - The options for setting the mode4.
      * @returns A promise that resolves to a boolean indicating whether the mode4 was set successfully.
      */
-    setMode4 = async (device: BlauHoffDevice, options: Mode4): Promise<boolean> => {
+    setMode4 = async (device: BlauHoffDevice, options: Mode4): Promise<QueryResponse<boolean>> => {
         const { maxFeedInLimit, batCapMin, timeout } = options;
 
         if (isNotInRange(maxFeedInLimit, 0, 100)) {
             this.log.error('maxFeedInLimit must be between 0 and 100');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(timeout, 0, 5000)) {
             this.log.error('timeout must be between 0 and 5000');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         const path = '/v1/hub/device/vpp/mode4';
@@ -367,15 +357,7 @@ export class API implements IAPI {
             deviceSn: device.serial,
         };
 
-        const data = await this.performRequest<BaseResponse>(path, 'post', params);
-
-        if (!isValidResponse(data)) {
-            this.log.error('Failed to setMode4');
-            return false;
-        }
-
-        this.log.log(`Set mode4: ${data}`);
-        return true;
+        return this.genericSetMode(4, path, params);
     }
 
     /**
@@ -386,22 +368,22 @@ export class API implements IAPI {
      * @param options - The options for setting the mode5.
      * @returns A promise that resolves to a boolean indicating whether the mode5 was set successfully.
      */
-    setMode5 = async (device: BlauHoffDevice, options: Mode5): Promise<boolean> => {
+    setMode5 = async (device: BlauHoffDevice, options: Mode5): Promise<QueryResponse<boolean>> => {
         const { maxFeedInLimit, batCapMin, timeout } = options;
 
         if (isNotInRange(maxFeedInLimit, 0, 100)) {
             this.log.error('maxFeedInLimit must be between 0 and 100');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(timeout, 0, 5000)) {
             this.log.error('timeout must be between 0 and 5000');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         const path = '/v1/hub/device/vpp/mode5';
@@ -411,15 +393,7 @@ export class API implements IAPI {
             deviceSn: device.serial,
         };
 
-        const data = await this.performRequest<BaseResponse>(path, 'post', params);
-
-        if (!isValidResponse(data)) {
-            this.log.error('Failed to setMode4');
-            return false;
-        }
-
-        this.log.log(`Set mode5: ${data}`);
-        return true;
+        return this.genericSetMode(5, path, params);
     }
 
     /**
@@ -430,29 +404,29 @@ export class API implements IAPI {
      * @param options - The options for setting the mode6.
      * @returns A promise that resolves to a boolean indicating whether the mode6 was set successfully.
      */
-    setMode6 = async (device: BlauHoffDevice, options: Mode6): Promise<boolean> => {
+    setMode6 = async (device: BlauHoffDevice, options: Mode6): Promise<QueryResponse<boolean>> => {
         const {
             batPower, batPowerInvLimit, batCapMin, timeout,
         } = options;
 
         if (isNotInRange(batPower, 0, 6000)) {
             this.log.error('batPower must be between 0 and 6000');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(batPowerInvLimit, 0, 6000)) {
             this.log.error('batPowerInvLimit must be between 0 and 6000');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(timeout, 0, 5000)) {
             this.log.error('timeout must be between 0 and 5000');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         const path = '/v1/hub/device/vpp/mode6';
@@ -462,15 +436,7 @@ export class API implements IAPI {
             deviceSn: device.serial,
         };
 
-        const data = await this.performRequest<BaseResponse>(path, 'post', params);
-
-        if (!isValidResponse(data)) {
-            this.log.error('Failed to setMode6');
-            return false;
-        }
-
-        this.log.log(`Set mode6: ${data}`);
-        return true;
+        return this.genericSetMode(6, path, params);
     }
 
     /**
@@ -481,22 +447,22 @@ export class API implements IAPI {
      * @param options - The options for setting the mode7.
      * @returns A promise that resolves to a boolean indicating whether the mode7 was set successfully.
      */
-    setMode7 = async (device: BlauHoffDevice, options: Mode7): Promise<boolean> => {
+    setMode7 = async (device: BlauHoffDevice, options: Mode7): Promise<QueryResponse<boolean>> => {
         const { batPower, batCapMin, timeout } = options;
 
         if (isNotInRange(batPower, -6000, 0)) {
             this.log.error('batPower must be between -6000 and 0');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(batCapMin, 10, 100)) {
             this.log.error('batCapMin must be between 10 and 100');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         if (isNotInRange(timeout, 0, 5000)) {
             this.log.error('timeout must be between 0 and 5000');
-            return false;
+            return INVALID_PARAMETER_RESPONSE;
         }
 
         const path = '/v1/hub/device/vpp/mode7';
@@ -506,22 +472,14 @@ export class API implements IAPI {
             deviceSn: device.serial,
         };
 
-        const data = await this.performRequest<BaseResponse>(path, 'post', params);
-
-        if (!isValidResponse(data)) {
-            this.log.error('Failed to setMode7');
-            return false;
-        }
-
-        this.log.log(`Set mode7: ${data}`);
-        return true;
+        return this.genericSetMode(7, path, params);
     }
 
     /**
      * Retrieves the user token from the server.
      * @returns {Promise<void>} A promise that resolves when the user token is retrieved successfully.
      */
-    fetchUserToken = async (): Promise<boolean> => {
+    fetchUserToken = async (): Promise<QueryResponse<boolean>> => {
         const path = '/v1/user/token';
 
         const header = {
@@ -531,15 +489,31 @@ export class API implements IAPI {
             'Access-Secret': this.accessSecret,
         };
 
-        const data = await this.performRequest<GetUserTokenResponse>(path, 'get', undefined, header);
+        const response = await this.performRequest<GetUserTokenResponse>(path, 'get', undefined, header);
+        const result = createQueryBooleanResponse(response);
 
-        if (!isValidResponse(data)) {
-            this.userToken = '';
-            return false;
+        if (!result.success) {
+            this.log.error('Failed to get query device', JSON.stringify(response));
+            return result;
         }
 
-        this.userToken = data!.data;
-        return true;
+        this.userToken = response!.data;
+        return result;
+    }
+
+    private genericSetMode = async (mode: number, path: string, params: any): Promise<QueryResponse<boolean>> => {
+        const response = await this.performRequest<BaseResponse>(path, 'post', params);
+
+        const result = createQueryBooleanResponse(response);
+
+        if (!result.success) {
+            this.log.error(`Failed to setMode${mode}`, JSON.stringify(response));
+            return result;
+        }
+
+        this.log.log(`setMode${mode} response: ${response}`);
+        result.data = true;
+        return result;
     }
 
     /**
@@ -614,10 +588,6 @@ export class API implements IAPI {
             const data = await response.json() as BaseResponse;
 
             this.log.log(`Response from ${path}:`, JSON.stringify(data));
-
-            if (data.code === undefined || data.code !== 200 || data.msg === undefined || data.msg !== 'OK') {
-                return undefined;
-            }
 
             return data as any;
         } catch (error) {

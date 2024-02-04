@@ -20,7 +20,7 @@ const failObject = {
     t: 1684756685989,
 };
 
-describe('get-user-token', () => {
+describe('fetch-user-token', () => {
     test('headers are successfully set', async () => {
         const api = new API(new Logger());
         api.setAuthenticationInfo('mockedAccessId', 'mockedAccessSecret');
@@ -60,7 +60,11 @@ describe('get-user-token', () => {
 
         expect(fetch).toHaveBeenCalledTimes(1);
         expect(api.getUserToken()).toBe('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9');
-        expect(result).toBe(true);
+        expect(result).toStrictEqual({
+            code: 200,
+            success: true,
+            data: true,
+        });
     });
 
     test('fail to get a user token', async () => {
@@ -75,7 +79,11 @@ describe('get-user-token', () => {
 
         expect(fetch).toHaveBeenCalledTimes(1);
         expect(api.getUserToken()).toBe('');
-        expect(result).toBe(false);
+        expect(result).toStrictEqual({
+            code: 401,
+            success: false,
+            data: false,
+        });
     });
 });
 

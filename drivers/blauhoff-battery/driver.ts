@@ -1,7 +1,6 @@
 import Homey from 'homey';
 import { PairSession } from 'homey/lib/Driver';
 import { API, BlauHoffDevice } from '../../api';
-import { MockApi } from '../../api/mock-api';
 
 interface FormResult {
   success: boolean;
@@ -66,12 +65,6 @@ class BlauhoffDriver extends Homey.Driver {
     });
   }
 
-  onRepair = async (session: PairSession, device: Homey.Device) => {
-    session.setHandler('register_serial_complete', async (data: FormData): Promise<FormResult> => {
-      return this.registerSerialFormComplete(data, session);
-    });
-  }
-
   pairFormComplete = async (data: FormData, session: PairSession): Promise<FormResult> => {
     this.log('form_complete', data);
     if (data.accessId && data.accessSecret) {
@@ -81,9 +74,9 @@ class BlauhoffDriver extends Homey.Driver {
         // const api = new MockApi(this);
         const api = new API(this);
 
-        const success = await api.updateSettings(accessId, accessSecret);
+        const result = await api.updateSettings(accessId, accessSecret);
 
-        if (!success) {
+        if (!result.success) {
           return {
             success: false,
             message: 'Invalid credentials',
@@ -96,7 +89,7 @@ class BlauhoffDriver extends Homey.Driver {
 
         if (serial) {
           const bindResult = await api.bindDevice(serial);
-          if (!bindResult) {
+          if (!bindResult.success) {
             return {
               success: false,
               message: 'Could not bind device',
@@ -104,13 +97,20 @@ class BlauhoffDriver extends Homey.Driver {
           }
         }
 
-        this.devices = await api.queryDeviceList();
+        const deviceResult = await api.queryDeviceList();
 
-        await session.nextView();
+        if (deviceResult.success) {
+          this.devices = deviceResult.data ?? [];
+          await session.nextView();
 
+          return {
+            success: true,
+            devices: this.devices,
+          };
+        }
         return {
-          success: true,
-          devices: this.devices,
+          success: false,
+          message: 'Failed to get devices from API, please check the form or try again later',
         };
       } catch (error) {
         return {
@@ -122,41 +122,6 @@ class BlauhoffDriver extends Homey.Driver {
       return {
         success: false,
         message: 'No Access ID or Access Secret provided',
-      };
-    }
-  }
-
-  registerSerialFormComplete = async (data: FormData, session: PairSession): Promise<FormResult> => {
-    this.log('register_serial_complete', data);
-    const { serial } = data;
-    if (serial) {
-      try {
-        const api = new MockApi(this);
-
-        const bindResult = await api.bindDevice(serial);
-        if (!bindResult) {
-          return {
-            success: false,
-            message: 'Could not bind device',
-          };
-        }
-
-        this.devices = await api.queryDeviceList();
-
-        return {
-          success: true,
-          devices: this.devices,
-        };
-      } catch (error) {
-        return {
-          success: false,
-          message: error,
-        };
-      }
-    } else {
-      return {
-        success: false,
-        message: 'No serial provided',
       };
     }
   }

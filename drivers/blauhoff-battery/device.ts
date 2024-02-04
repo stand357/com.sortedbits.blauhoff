@@ -1,14 +1,12 @@
 import Homey from 'homey';
-import { MockApi } from '../../api/mock-api';
-import { IAPI } from '../../api/models/iapi';
 import { API, BlauHoffDevice } from '../../api';
 import { BlauHoffDeviceStatus } from '../../api/models/blauhoff-device-status';
 import { deviceInfoMapping } from './helpers/device-info-mapping';
+import { QueryResponse } from '../../api/models/responses/query-response';
 
 class BlauhoffBattery extends Homey.Device {
 
-  // api: IAPI = new MockApi(this);
-  api: IAPI = new API(this);
+  api = new API(this);
 
   device: BlauHoffDevice | undefined;
   stop: boolean = false;
@@ -22,7 +20,7 @@ class BlauhoffBattery extends Homey.Device {
   fetchUserToken = async (accessId: string, accessSecret: string): Promise<boolean> => {
     const result = await this.api.updateSettings(accessId, accessSecret);
 
-    if (!result) {
+    if (!result.success) {
       this.error('Failed to get user token, please check your credentials');
     } else {
       const token = this.api.getUserToken();
@@ -31,7 +29,7 @@ class BlauhoffBattery extends Homey.Device {
       });
     }
 
-    return result;
+    return result.success;
   }
 
   syncUserToken = async () => {
@@ -60,6 +58,18 @@ class BlauhoffBattery extends Homey.Device {
     };
   }
 
+  refreshUserTokenFromSettings = async (): Promise<boolean> => {
+    const {
+      accessId, accessSecret, baseUrl,
+    } = this.getSettings();
+
+    if (baseUrl) {
+      this.api.updateBaseUrl(baseUrl);
+    }
+
+    return this.fetchUserToken(accessId, accessSecret);
+  }
+
   /**
    * onInit is called when the device is initialized.
    */
@@ -67,7 +77,7 @@ class BlauhoffBattery extends Homey.Device {
     this.log('BlauhoffBattery has been initialized');
 
     const {
-      accessId, accessSecret, userToken, baseUrl,
+      userToken, baseUrl,
     } = this.getSettings();
 
     if (baseUrl) {
@@ -75,14 +85,14 @@ class BlauhoffBattery extends Homey.Device {
     }
 
     if (!userToken) {
-      await this.fetchUserToken(accessId, accessSecret);
+      await this.refreshUserTokenFromSettings();
     } else {
       this.api.setUserToken(userToken);
 
       const success = await this.api.validateUserToken();
 
       if (!success) {
-        await this.fetchUserToken(accessId, accessSecret);
+        await this.refreshUserTokenFromSettings();
       }
     }
 
@@ -96,7 +106,14 @@ class BlauhoffBattery extends Homey.Device {
     this.registerModeListener(this.api.setMode6, 'set_mode_6');
     this.registerModeListener(this.api.setMode7, 'set_mode_7');
 
-    await this.getDeviceStatus();
+    if (this.device) {
+      const rates = await this.api.getRatePower(this.device as BlauHoffDevice);
+      this.log('Downloaded rates', rates);
+
+      await this.getDeviceStatus();
+    } else {
+      this.error('Device information is missing');
+    }
   }
 
   /**
@@ -157,7 +174,7 @@ class BlauhoffBattery extends Homey.Device {
    * Sets the capabilities of the BlauHoff device based on the provided information.
    * @param info An array of BlauHoffDeviceStatus objects representing the capabilities and their values.
    */
-  setCapabilities = async (info: BlauHoffDeviceStatus[]) => {
+  private setCapabilities = async (info: BlauHoffDeviceStatus[]) => {
     for (const capability of info) {
       const mapping = deviceInfoMapping[capability.name];
 
@@ -178,7 +195,7 @@ class BlauhoffBattery extends Homey.Device {
    * Retrieves the status of the device.
    * @returns {Promise<void>} A promise that resolves when the device status is retrieved and processed.
    */
-  getDeviceStatus = async () => {
+  private getDeviceStatus = async (comingFromError: boolean = false) => {
     if (!this.device) {
       return;
     }
@@ -193,13 +210,22 @@ class BlauhoffBattery extends Homey.Device {
       end,
     });
 
-    if (status.length > 0) {
-      await this.setCapabilities(status[0]);
-    }
+    if (status.success) {
+      if (status.data !== undefined && status.data?.length > 0) {
+        await this.setCapabilities(status.data[0]);
+      }
 
-    if (!this.stop) {
-      const { refreshInterval } = this.getSettings();
-      await this.homey.setTimeout(this.getDeviceStatus.bind(this), refreshInterval * 1000);
+      if (!this.stop) {
+        const { refreshInterval } = this.getSettings();
+        await this.homey.setTimeout(this.getDeviceStatus.bind(this), refreshInterval * 1000);
+      }
+    } else if (status.code === 401 && !comingFromError) {
+      const refreshResult = await this.refreshUserTokenFromSettings();
+      if (refreshResult) {
+        await this.getDeviceStatus(true);
+      }
+    } else {
+      this.error('Failed to get device status');
     }
   }
 
@@ -208,7 +234,7 @@ class BlauhoffBattery extends Homey.Device {
    * @param method The method to be executed when the action card is run.
    * @param id The ID of the action card.
    */
-  private registerModeListener = (method: (device: BlauHoffDevice, args: any) => Promise<boolean>, id: string) => {
+  private registerModeListener = (method: (device: BlauHoffDevice, args: any) => Promise<QueryResponse<boolean>>, id: string) => {
     const card = this.homey.flow.getActionCard(id);
 
     card.registerRunListener(async (args) => {

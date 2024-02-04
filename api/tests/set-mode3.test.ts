@@ -53,7 +53,7 @@ describe('setMode3', () => {
             { body: expectedParams, headers: expectHeaders, method: 'post' },
         );
 
-        expect(result).toStrictEqual(true);
+        expect(result.success).toStrictEqual(true);
     });
 
     test('with invalid batteryPower', async () => {
@@ -71,7 +71,8 @@ describe('setMode3', () => {
             timeout: 600,
         });
 
-        expect(result).toStrictEqual(false);
+        expect(result.success).toStrictEqual(false);
+        expect(result.code).toStrictEqual(410);
     });
 
     test('with invalid batCapMin', async () => {
@@ -89,7 +90,8 @@ describe('setMode3', () => {
             timeout: 600,
         });
 
-        expect(result).toStrictEqual(false);
+        expect(result.success).toStrictEqual(false);
+        expect(result.code).toStrictEqual(410);
     });
 
     test('with invalid timeout', async () => {
@@ -107,7 +109,8 @@ describe('setMode3', () => {
             timeout: 6000,
         });
 
-        expect(result).toStrictEqual(false);
+        expect(result.success).toStrictEqual(false);
+        expect(result.code).toStrictEqual(410);
     });
 
     test('fails', async () => {
@@ -125,7 +128,7 @@ describe('setMode3', () => {
             timeout: 600,
         });
 
-        expect(result).toStrictEqual(false);
+        expect(result.success).toStrictEqual(false);
     });
 
     afterEach(() => {

@@ -127,15 +127,15 @@ describe('perform-request', () => {
         );
     });
 
-    test('failing get request, undefined response', async () => {
+    test('failing get request, failed response', async () => {
         const api = new API(new Logger());
 
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockRejectedValue(undefined);
 
-        const resposne = await api.performRequest('/test-path', 'get', {});
-        expect(resposne).toStrictEqual(undefined);
+        const response = await api.performRequest('/test-path', 'get', {});
+        expect(response).toStrictEqual(undefined);
     });
 
     test('failing get, error from server', async () => {
@@ -143,7 +143,7 @@ describe('perform-request', () => {
 
         expect(fetch).toHaveBeenCalledTimes(0);
 
-        (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
+        (fetch as jest.MockedFunction<typeof fetch>).mockRejectedValue(
             new Response(JSON.stringify(failObject)),
         );
 

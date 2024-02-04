@@ -50,7 +50,11 @@ describe('get-rate-power', () => {
             { headers: expectedHeaders, method: 'get' },
         );
 
-        expect(response).toStrictEqual(successObject.data);
+        expect(response).toStrictEqual({
+            code: 200,
+            success: true,
+            data: successObject.data,
+        });
     });
 
     test('failed get rate powers', async () => {
@@ -82,7 +86,10 @@ describe('get-rate-power', () => {
             { headers: expectedHeaders, method: 'get' },
         );
 
-        expect(response).toStrictEqual(undefined);
+        expect(response).toStrictEqual({
+            code: 401,
+            success: false,
+        });
     });
 
     afterEach(() => {
