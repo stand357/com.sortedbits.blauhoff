@@ -30,7 +30,7 @@ describe('setMode2', () => {
         );
 
         const result = await api.setMode2(testDevice, {
-            batCapPower: -2000,
+            batPower: -2000,
             batCapMin: 10,
             timeout: 600,
         });
@@ -42,7 +42,7 @@ describe('setMode2', () => {
         };
 
         const expectedParams = JSON.stringify({
-            batCapPower: -2000,
+            batPower: -2000,
             batCapMin: 10,
             timeout: 600,
             deviceSn: testDevice.serial,
@@ -66,7 +66,7 @@ describe('setMode2', () => {
         );
 
         const result = await api.setMode2(testDevice, {
-            batCapPower: -8000,
+            batPower: -8000,
             batCapMin: 10,
             timeout: 600,
         });
@@ -85,7 +85,7 @@ describe('setMode2', () => {
         );
 
         const result = await api.setMode2(testDevice, {
-            batCapPower: -4000,
+            batPower: -4000,
             batCapMin: 0,
             timeout: 600,
         });
@@ -104,7 +104,7 @@ describe('setMode2', () => {
         );
 
         const result = await api.setMode2(testDevice, {
-            batCapPower: -4000,
+            batPower: -4000,
             batCapMin: 10,
             timeout: 6000,
         });
@@ -123,7 +123,7 @@ describe('setMode2', () => {
         );
 
         const result = await api.setMode2(testDevice, {
-            batCapPower: -5000,
+            batPower: -5000,
             batCapMin: 10,
             timeout: 600,
         });

@@ -41,12 +41,12 @@
                 "en": "Set mode2"
             },
             "titleFormatted": {
-                "en": "Direct charge (mode2) with [[batCapPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
+                "en": "Direct charge (mode2) with [[batPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
             },
             "args": [
                 {
                     "type": "number",
-                    "name": "batCapPower",
+                    "name": "batPower",
                     "title": {
                         "en": "Battery power"
                     },
@@ -182,7 +182,7 @@
                 "en": "Set mode5"
             },
             "titleFormatted": {
-                "en": "Change only，no discharging (mode5) with [[maxFeedInLimit]]% limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
+                "en": "Charge only，no discharging (mode5) with [[maxFeedInLimit]]% limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] minutes."
             },
             "args": [
                 {
