@@ -51,7 +51,7 @@ describe('setMode1', () => {
             { body: expectedParams, headers: expectHeaders, method: 'post' },
         );
 
-        expect(result).toStrictEqual(true);
+        expect(result.success).toStrictEqual(true);
     });
 
     test('with invalid maxFeedInLimit', async () => {
@@ -68,7 +68,8 @@ describe('setMode1', () => {
             batCapMin: 10,
         });
 
-        expect(result).toStrictEqual(false);
+        expect(result.code).toStrictEqual(410);
+        expect(result.success).toStrictEqual(false);
     });
 
     test('with invalid batCapMin', async () => {
@@ -85,7 +86,8 @@ describe('setMode1', () => {
             batCapMin: 5,
         });
 
-        expect(result).toStrictEqual(false);
+        expect(result.success).toStrictEqual(false);
+        expect(result.code).toStrictEqual(410);
     });
 
     test('fails', async () => {
@@ -102,7 +104,7 @@ describe('setMode1', () => {
             batCapMin: 10,
         });
 
-        expect(result).toStrictEqual(false);
+        expect(result.success).toStrictEqual(false);
     });
 
     afterEach(() => {

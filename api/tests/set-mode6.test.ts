@@ -55,7 +55,7 @@ describe('setMode6', () => {
             { body: expectedParams, headers: expectHeaders, method: 'post' },
         );
 
-        expect(result).toStrictEqual(true);
+        expect(result.success).toStrictEqual(true);
     });
 
     test('fails', async () => {
@@ -74,7 +74,7 @@ describe('setMode6', () => {
             timeout: 600,
         });
 
-        expect(result).toStrictEqual(false);
+        expect(result.success).toStrictEqual(false);
     });
 
     afterEach(() => {

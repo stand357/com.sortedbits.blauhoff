@@ -1,4 +1,5 @@
 import { BaseResponse } from '../models/responses/base.response';
+import { QueryResponse } from '../models/responses/query-response';
 
 /**
  * Checks if the given response is a valid response.
@@ -13,4 +14,20 @@ export const isValidResponse = (response: BaseResponse | undefined): boolean => 
     }
 
     return (response.code === 200 && response.msg === 'OK');
+};
+
+export const createQueryResponse = <T>(response: BaseResponse | undefined): QueryResponse<T> => {
+    return {
+        success: isValidResponse(response),
+        code: response?.code,
+    };
+};
+
+export const createQueryBooleanResponse = (response: BaseResponse | undefined): QueryResponse<boolean> => {
+    const isValid = isValidResponse(response);
+    return {
+        success: isValid,
+        data: isValid,
+        code: response?.code,
+    };
 };

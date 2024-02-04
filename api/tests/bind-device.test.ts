@@ -35,7 +35,7 @@ describe('bind-device', () => {
 
         const response = await api.bindDevice('SHA602131202215005');
 
-        expect(response).toStrictEqual(true);
+        expect(response.success).toStrictEqual(true);
     });
 
     test('Fail binding a device', async () => {
@@ -49,7 +49,7 @@ describe('bind-device', () => {
 
         const response = await api.bindDevice('SHA602131202215005');
 
-        expect(response).toStrictEqual(false);
+        expect(response.success).toStrictEqual(false);
     });
 
     afterEach(() => {

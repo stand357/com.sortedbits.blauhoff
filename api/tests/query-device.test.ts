@@ -46,9 +46,10 @@ describe('query-device', () => {
             end: currentTime,
         });
 
-        expect(response.length).toStrictEqual(deviceInfoResponse.data.rows.length);
+        expect(response.success).toBe(true);
+        expect(response.data?.length).toStrictEqual(deviceInfoResponse.data.rows.length);
 
-        response.forEach((row, rowIndex) => {
+        response.data?.forEach((row, rowIndex) => {
             row.forEach((item, itemIndex) => {
                 const compareItem = getObjectsFromRow(deviceInfoResponse, rowIndex, itemIndex);
                 expect(item).toStrictEqual(compareItem);
@@ -73,7 +74,7 @@ describe('query-device', () => {
             end: currentTime,
         });
 
-        expect(response).toStrictEqual([]);
+        expect(response.success).toStrictEqual(false);
     });
 
     afterEach(() => {
