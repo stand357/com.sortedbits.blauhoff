@@ -187,11 +187,15 @@ class BlauhoffBattery extends Homey.Device {
         const { value } = capability;
         const { id, valueMultiplier } = mapping;
 
-        if (valueMultiplier) {
-          await this.setCapabilityValue(id, Number(value) * valueMultiplier);
-        } else {
-          await this.setCapabilityValue(id, value);
-        }
+        await this.setCapabilityValue(id, value);
+        /*
+                if (valueMultiplier) {
+                  await this.setCapabilityValue(id, Number(value) * valueMultiplier);
+                } else {
+                  await this.setCapabilityValue(id, value);
+                }
+        
+                */
       }
     }
   }
@@ -217,7 +221,8 @@ class BlauhoffBattery extends Homey.Device {
 
     if (status.success) {
       if (status.data !== undefined && status.data?.length > 0) {
-        await this.setCapabilities(status.data[0]);
+        const row = status.data.length - 1;
+        await this.setCapabilities(status.data[row]);
       }
 
       if (!this.stop) {
