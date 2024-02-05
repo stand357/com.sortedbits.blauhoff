@@ -32,7 +32,7 @@ describe('setMode5', () => {
         const result = await api.setMode5(testDevice, {
             maxFeedInLimit: 20,
             batCapMin: 10,
-            timeout: 600,
+            timeout: 10,
         });
 
         const expectHeaders = {
@@ -68,7 +68,7 @@ describe('setMode5', () => {
         const result = await api.setMode5(testDevice, {
             maxFeedInLimit: 20,
             batCapMin: 10,
-            timeout: 600,
+            timeout: 10,
         });
 
         expect(result.success).toStrictEqual(false);

@@ -6,11 +6,11 @@
                 "en": "Set mode1"
             },
             "titleFormatted": {
-                "en": "Self consumption (mode1) with [[maxFeedInLimit]]% limit, keeping the battery level above [[batCapMin]]%."
+                "en": "Self consumption (mode1) with [[maxFeedInLimit]] limit, keeping the battery level above [[batCapMin]]."
             },
             "args": [
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "maxFeedInLimit",
                     "title": {
                         "en": "Feed in limit"
@@ -19,10 +19,12 @@
                         "en": "Percentage between 0 and 100"
                     },
                     "min": 0,
-                    "max": 100
+                    "max": 100,
+                    "labelDecimals": 0,
+                    "label": "%"
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "batCapMin",
                     "title": {
                         "en": "Battery capacity minimum"
@@ -31,7 +33,9 @@
                         "en": "Percentage between 10 and 100"
                     },
                     "min": 10,
-                    "max": 100
+                    "max": 100,
+                    "labelDecimals": 0,
+                    "label": "%"
                 }
             ]
         },
@@ -41,11 +45,11 @@
                 "en": "Set mode2"
             },
             "titleFormatted": {
-                "en": "Direct charge (mode2) with [[batPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] seconds."
+                "en": "Direct charge (mode2) with [[batPower]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
             },
             "args": [
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "batPower",
                     "title": {
                         "en": "Battery power"
@@ -54,10 +58,12 @@
                         "en": "Wattage between -6000 and 0W"
                     },
                     "min": -6000,
-                    "max": 0
+                    "max": 0,
+                    "labelDecimals": 0,
+                    "label": "W"
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "batCapMin",
                     "title": {
                         "en": "Battery capacity minimum"
@@ -66,19 +72,22 @@
                         "en": "Percentage between 10 and 100"
                     },
                     "min": 10,
-                    "max": 100
+                    "max": 100,
+                    "labelDecimals": 0,
+                    "label": "%"
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "timeout",
                     "title": {
                         "en": "Duration"
                     },
                     "placeholder": {
-                        "en": "Time between 0 and 5000 seconds"
+                        "en": "Time between 0 and 80 minutes"
                     },
                     "min": 0,
-                    "max": 5000
+                    "max": 80,
+                    "labelDecimals": 0
                 }
             ]
         },
@@ -88,11 +97,11 @@
                 "en": "Set mode3"
             },
             "titleFormatted": {
-                "en": "Direct discharge at specified power level (mode3) with [[batPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] seconds."
+                "en": "Direct discharge at specified power level (mode3) with [[batPower]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
             },
             "args": [
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "batPower",
                     "title": {
                         "en": "Battery power"
@@ -101,10 +110,12 @@
                         "en": "Wattage between 0 and 6000W"
                     },
                     "min": 0,
-                    "max": 6000
+                    "max": 6000,
+                    "labelDecimals": 0,
+                    "label": "W"
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "batCapMin",
                     "title": {
                         "en": "Battery capacity minimum"
@@ -113,19 +124,22 @@
                         "en": "Percentage between 10 and 100"
                     },
                     "min": 10,
-                    "max": 100
+                    "max": 100,
+                    "labelDecimals": 0,
+                    "label": "%"
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "timeout",
                     "title": {
                         "en": "Duration"
                     },
                     "placeholder": {
-                        "en": "Time between 0 and 5000 seconds"
+                        "en": "Time between 0 and 80 minutes"
                     },
                     "min": 0,
-                    "max": 5000
+                    "max": 80,
+                    "labelDecimals": 0
                 }
             ]
         },
@@ -135,11 +149,11 @@
                 "en": "Set mode4"
             },
             "titleFormatted": {
-                "en": "Discharge only to the load, avoid charging (mode4) with [[maxFeedInLimit]]% limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] seconds."
+                "en": "Discharge only to the load, avoid charging (mode4) with [[maxFeedInLimit]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
             },
             "args": [
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "maxFeedInLimit",
                     "title": {
                         "en": "Feed in limit"
@@ -148,10 +162,12 @@
                         "en": "Percentage between 0 and 100"
                     },
                     "min": 0,
-                    "max": 100
+                    "max": 100,
+                    "labelDecimals": 0,
+                    "label": "%"
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "batCapMin",
                     "title": {
                         "en": "Battery capacity minimum"
@@ -160,19 +176,22 @@
                         "en": "Percentage between 10 and 100"
                     },
                     "min": 10,
-                    "max": 100
+                    "max": 100,
+                    "labelDecimals": 0,
+                    "label": "%"
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "timeout",
                     "title": {
                         "en": "Duration"
                     },
                     "placeholder": {
-                        "en": "Time between 0 and 5000 secondes"
+                        "en": "Time between 0 and 80 minutes"
                     },
                     "min": 0,
-                    "max": 5000
+                    "max": 80,
+                    "labelDecimals": 0
                 }
             ]
         },
@@ -182,11 +201,11 @@
                 "en": "Set mode5"
             },
             "titleFormatted": {
-                "en": "Charge only，no discharging (mode5) with [[maxFeedInLimit]]% limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] seconds."
+                "en": "Charge only，no discharging (mode5) with [[maxFeedInLimit]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
             },
             "args": [
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "maxFeedInLimit",
                     "title": {
                         "en": "Feed in limit"
@@ -195,10 +214,12 @@
                         "en": "Percentage between 0 and 100"
                     },
                     "min": 0,
-                    "max": 100
+                    "max": 100,
+                    "labelDecimals": 0,
+                    "label": "%"
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "batCapMin",
                     "title": {
                         "en": "Battery capacity minimum"
@@ -207,19 +228,22 @@
                         "en": "Percentage between 10 and 100"
                     },
                     "min": 10,
-                    "max": 100
+                    "max": 100,
+                    "labelDecimals": 0,
+                    "label": "%"
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "timeout",
                     "title": {
                         "en": "Duration"
                     },
                     "placeholder": {
-                        "en": "Time between 0 and 5000 seconds"
+                        "en": "Time between 0 and 80 minutes"
                     },
                     "min": 0,
-                    "max": 5000
+                    "max": 80,
+                    "labelDecimals": 0
                 }
             ]
         },
@@ -229,11 +253,11 @@
                 "en": "Set mode6"
             },
             "titleFormatted": {
-                "en": "Inverter outputs at specified power (mode6) with [[batPower]]W, inverter limit at [[batPowerInvLimit]]W, keeping the battery level above [[batCapMin]]%, for [[timeout]] seconds."
+                "en": "Inverter outputs at specified power (mode6) with [[batPower]], inverter limit at [[batPowerInvLimit]], keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
             },
             "args": [
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "batPower",
                     "title": {
                         "en": "Battery power"
@@ -242,10 +266,12 @@
                         "en": "Wattage between 0 and 6000W"
                     },
                     "min": 0,
-                    "max": 6000
+                    "max": 6000,
+                    "labelDecimals": 0,
+                    "label": "W"
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "batPowerInvLimit",
                     "title": {
                         "en": "Inverter limit"
@@ -254,10 +280,12 @@
                         "en": "Wattage between 0 and 6000W"
                     },
                     "min": 0,
-                    "max": 6000
+                    "max": 6000,
+                    "labelDecimals": 0,
+                    "label": "W"
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "batCapMin",
                     "title": {
                         "en": "Battery capacity minimum"
@@ -266,19 +294,22 @@
                         "en": "Percentage between 10 and 100"
                     },
                     "min": 10,
-                    "max": 100
+                    "max": 100,
+                    "labelDecimals": 0,
+                    "label": "%"
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "timeout",
                     "title": {
                         "en": "Duration"
                     },
                     "placeholder": {
-                        "en": "Time between 0 and 5000 seconds"
+                        "en": "Time between 0 and 80 minutes"
                     },
                     "min": 0,
-                    "max": 5000
+                    "max": 80,
+                    "labelDecimals": 0
                 }
             ]
         },
@@ -288,11 +319,11 @@
                 "en": "Set mode7"
             },
             "titleFormatted": {
-                "en": "Inverter operates at the specified power (mode7) with [[batPower]]W limit, keeping the battery level above [[batCapMin]]%, for [[timeout]] seconds."
+                "en": "Inverter operates at the specified power (mode7) with [[batPower]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
             },
             "args": [
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "batPower",
                     "title": {
                         "en": "Battery power"
@@ -301,10 +332,12 @@
                         "en": "Wattage between -6000 and 0W"
                     },
                     "min": -6000,
-                    "max": 0
+                    "label": "W",
+                    "max": 0,
+                    "labelDecimals": 0
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "batCapMin",
                     "title": {
                         "en": "Battery capacity minimum"
@@ -313,19 +346,22 @@
                         "en": "Percentage between 10 and 100"
                     },
                     "min": 10,
-                    "max": 100
+                    "max": 100,
+                    "labelDecimals": 0,
+                    "label": "%"
                 },
                 {
-                    "type": "number",
+                    "type": "range",
                     "name": "timeout",
                     "title": {
                         "en": "Duration"
                     },
                     "placeholder": {
-                        "en": "Time between 0 and 5000 seconds"
+                        "en": "Time between 0 and 80 minutes"
                     },
                     "min": 0,
-                    "max": 5000
+                    "max": 80,
+                    "labelDecimals": 0
                 }
             ]
         }
