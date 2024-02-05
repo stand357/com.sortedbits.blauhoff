@@ -1,4 +1,6 @@
 import Homey from 'homey';
+import { addCapabilityIfNotExists, deprecateCapability } from 'homey-helpers';
+
 import { API, BlauHoffDevice } from '../../api';
 import { BlauHoffDeviceStatus } from '../../api/models/blauhoff-device-status';
 import { deviceInfoMapping } from './helpers/device-info-mapping';
@@ -75,6 +77,9 @@ class BlauhoffBattery extends Homey.Device {
    */
   async onInit() {
     this.log('BlauhoffBattery has been initialized');
+
+    deprecateCapability(this, 'measure_battery');
+    addCapabilityIfNotExists(this, 'measure_state_of_charge.battery');
 
     const {
       userToken, baseUrl,

@@ -472,7 +472,7 @@
         "measure_voltage.battery",
         "measure_current.battery",
         "measure_power.battery",
-        "measure_battery",
+        "measure_state_of_charge.battery",
         "status_code.bat_soh",
         "measure_voltage.battery_high",
         "measure_voltage.battery_low",
@@ -830,6 +830,23 @@
       "decimals": 2,
       "insights": true,
       "icon": "/assets/capabilities/wave-square-sharp-light.svg"
+    },
+    "measure_state_of_charge": {
+      "type": "number",
+      "title": {
+        "en": "State of charge",
+        "nl": "Laadtoestand"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "uiQuickAction": true,
+      "units": {
+        "en": "%"
+      },
+      "decimals": 0,
+      "insights": true,
+      "icon": "/assets/capabilities/sharp-light-battery-three-quarters-circle-info.svg"
     },
     "measure_voltamperage": {
       "type": "number",
