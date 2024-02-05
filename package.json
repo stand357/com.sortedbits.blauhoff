@@ -11,7 +11,7 @@
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore ."
   },
   "dependencies": {
-    "homey-helpers": "1.0.7",
+    "homey-helpers": "1.1.0",
     "node-fetch": "2.7.0"
   },
   "devDependencies": {

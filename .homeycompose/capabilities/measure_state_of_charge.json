@@ -1,0 +1,17 @@
+{
+    "type": "number",
+    "title": {
+        "en": "State of charge",
+        "nl": "Laadtoestand"
+    },
+    "getable": true,
+    "setable": false,
+    "uiComponent": "sensor",
+    "uiQuickAction": true,
+    "units": {
+        "en": "%"
+    },
+    "decimals": 0,
+    "insights": true,
+    "icon": "/assets/capabilities/sharp-light-battery-three-quarters-circle-info.svg"
+}
