@@ -32,7 +32,7 @@ describe('setMode7', () => {
         const result = await api.setMode7(testDevice, {
             batPower: -2000,
             batCapMin: 10,
-            timeout: 600,
+            timeout: 10,
         });
 
         const expectHeaders = {
@@ -68,7 +68,7 @@ describe('setMode7', () => {
         const result = await api.setMode7(testDevice, {
             batPower: -8000,
             batCapMin: 10,
-            timeout: 600,
+            timeout: 10,
         });
 
         expect(result.success).toStrictEqual(false);
@@ -87,7 +87,7 @@ describe('setMode7', () => {
         const result = await api.setMode7(testDevice, {
             batPower: -4000,
             batCapMin: 0,
-            timeout: 600,
+            timeout: 10,
         });
 
         expect(result.success).toStrictEqual(false);
@@ -106,7 +106,7 @@ describe('setMode7', () => {
         const result = await api.setMode7(testDevice, {
             batPower: -4000,
             batCapMin: 10,
-            timeout: 6000,
+            timeout: 100,
         });
 
         expect(result.success).toStrictEqual(false);
@@ -124,7 +124,7 @@ describe('setMode7', () => {
         const result = await api.setMode7(testDevice, {
             batPower: -2000,
             batCapMin: 10,
-            timeout: 600,
+            timeout: 10,
         });
 
         expect(result.success).toStrictEqual(false);

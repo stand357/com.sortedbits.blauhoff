@@ -273,8 +273,8 @@ export class API {
             return INVALID_PARAMETER_RESPONSE;
         }
 
-        if (isNotInRange(timeout, 0, 5000)) {
-            this.log.error('timeout must be between 0 and 5000');
+        if (isNotInRange(timeout, 0, 80)) {
+            this.log.error('timeout must be between 0 and 80');
             return INVALID_PARAMETER_RESPONSE;
         }
 
@@ -282,6 +282,7 @@ export class API {
 
         const params = {
             ...options,
+            timeout: options.timeout * 60,
             deviceSn: device.serial,
         };
 
@@ -309,8 +310,8 @@ export class API {
             return INVALID_PARAMETER_RESPONSE;
         }
 
-        if (isNotInRange(timeout, 0, 5000)) {
-            this.log.error('timeout must be between 0 and 5000');
+        if (isNotInRange(timeout, 0, 80)) {
+            this.log.error('timeout must be between 0 and 80');
             return INVALID_PARAMETER_RESPONSE;
         }
 
@@ -318,6 +319,7 @@ export class API {
 
         const params = {
             ...options,
+            timeout: options.timeout * 60,
             deviceSn: device.serial,
         };
 
@@ -345,8 +347,8 @@ export class API {
             return INVALID_PARAMETER_RESPONSE;
         }
 
-        if (isNotInRange(timeout, 0, 5000)) {
-            this.log.error('timeout must be between 0 and 5000');
+        if (isNotInRange(timeout, 0, 80)) {
+            this.log.error('timeout must be between 0 and 80');
             return INVALID_PARAMETER_RESPONSE;
         }
 
@@ -354,6 +356,7 @@ export class API {
 
         const params = {
             ...options,
+            timeout: options.timeout * 60,
             deviceSn: device.serial,
         };
 
@@ -381,8 +384,8 @@ export class API {
             return INVALID_PARAMETER_RESPONSE;
         }
 
-        if (isNotInRange(timeout, 0, 5000)) {
-            this.log.error('timeout must be between 0 and 5000');
+        if (isNotInRange(timeout, 0, 80)) {
+            this.log.error('timeout must be between 0 and 80');
             return INVALID_PARAMETER_RESPONSE;
         }
 
@@ -390,6 +393,7 @@ export class API {
 
         const params = {
             ...options,
+            timeout: options.timeout * 60,
             deviceSn: device.serial,
         };
 
@@ -424,8 +428,8 @@ export class API {
             return INVALID_PARAMETER_RESPONSE;
         }
 
-        if (isNotInRange(timeout, 0, 5000)) {
-            this.log.error('timeout must be between 0 and 5000');
+        if (isNotInRange(timeout, 0, 80)) {
+            this.log.error('timeout must be between 0 and 80');
             return INVALID_PARAMETER_RESPONSE;
         }
 
@@ -433,6 +437,7 @@ export class API {
 
         const params = {
             ...options,
+            timeout: options.timeout * 60,
             deviceSn: device.serial,
         };
 
@@ -460,8 +465,8 @@ export class API {
             return INVALID_PARAMETER_RESPONSE;
         }
 
-        if (isNotInRange(timeout, 0, 5000)) {
-            this.log.error('timeout must be between 0 and 5000');
+        if (isNotInRange(timeout, 0, 80)) {
+            this.log.error('timeout must be between 0 and 80');
             return INVALID_PARAMETER_RESPONSE;
         }
 
@@ -469,6 +474,7 @@ export class API {
 
         const params = {
             ...options,
+            timeout: options.timeout * 60,
             deviceSn: device.serial,
         };
 

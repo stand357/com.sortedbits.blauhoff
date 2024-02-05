@@ -33,7 +33,7 @@ describe('setMode6', () => {
             batPower: 2000,
             batPowerInvLimit: 3500,
             batCapMin: 10,
-            timeout: 600,
+            timeout: 10,
         });
 
         const expectHeaders = {
@@ -71,7 +71,7 @@ describe('setMode6', () => {
             batPower: 2000,
             batPowerInvLimit: 3500,
             batCapMin: 10,
-            timeout: 600,
+            timeout: 10,
         });
 
         expect(result.success).toStrictEqual(false);

@@ -32,7 +32,7 @@ describe('setMode4', () => {
         const result = await api.setMode4(testDevice, {
             maxFeedInLimit: 20,
             batCapMin: 10,
-            timeout: 600,
+            timeout: 10,
         });
 
         const expectHeaders = {
@@ -68,7 +68,7 @@ describe('setMode4', () => {
         const result = await api.setMode4(testDevice, {
             maxFeedInLimit: 150,
             batCapMin: 10,
-            timeout: 600,
+            timeout: 10,
         });
 
         expect(result.success).toStrictEqual(false);
@@ -87,7 +87,7 @@ describe('setMode4', () => {
         const result = await api.setMode4(testDevice, {
             maxFeedInLimit: 25,
             batCapMin: 5,
-            timeout: 600,
+            timeout: 10,
         });
 
         expect(result.success).toStrictEqual(false);
@@ -106,7 +106,7 @@ describe('setMode4', () => {
         const result = await api.setMode4(testDevice, {
             maxFeedInLimit: 25,
             batCapMin: 10,
-            timeout: 6000,
+            timeout: 120,
         });
 
         expect(result.success).toStrictEqual(false);
@@ -125,7 +125,7 @@ describe('setMode4', () => {
         const result = await api.setMode4(testDevice, {
             maxFeedInLimit: 20,
             batCapMin: 10,
-            timeout: 600,
+            timeout: 10,
         });
 
         expect(result.success).toStrictEqual(false);
