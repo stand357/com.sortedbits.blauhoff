@@ -1,6 +1,7 @@
 import Homey from 'homey';
 import { addCapabilityIfNotExists, deprecateCapability } from 'homey-helpers';
 
+import { DateTime } from 'luxon';
 import { API, BlauHoffDevice } from '../../api';
 import { BlauHoffDeviceStatus } from '../../api/models/blauhoff-device-status';
 import { deviceInfoMapping } from './helpers/device-info-mapping';
@@ -78,8 +79,9 @@ class BlauhoffBattery extends Homey.Device {
   async onInit() {
     this.log('BlauhoffBattery has been initialized');
 
-    deprecateCapability(this, 'measure_battery');
-    addCapabilityIfNotExists(this, 'measure_state_of_charge.battery');
+    await deprecateCapability(this, 'measure_battery');
+    await addCapabilityIfNotExists(this, 'measure_state_of_charge.battery');
+    await addCapabilityIfNotExists(this, 'date.record');
 
     const {
       userToken, baseUrl,
@@ -186,16 +188,16 @@ class BlauhoffBattery extends Homey.Device {
       if (mapping) {
         const { value } = capability;
         const { id, valueMultiplier } = mapping;
+        if (valueMultiplier === -9999) {
+          const localTimezone = this.homey.clock.getTimezone();
 
-        await this.setCapabilityValue(id, value);
-        /*
-                if (valueMultiplier) {
-                  await this.setCapabilityValue(id, Number(value) * valueMultiplier);
-                } else {
-                  await this.setCapabilityValue(id, value);
-                }
-        
-                */
+          const date = DateTime.fromMillis(Number(value));
+          const newDate = date.setZone(localTimezone);
+
+          await this.setCapabilityValue(id, newDate.toFormat('HH:mm:ss'));
+        } else {
+          await this.setCapabilityValue(id, value);
+        }
       }
     }
   }

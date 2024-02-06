@@ -4,6 +4,11 @@ interface CapabilityDefinition {
     valueMultiplier?: number;
 }
 export const deviceInfoMapping: { [key: string]: CapabilityDefinition } = {
+    time: {
+        title: { en: 'Last status update' },
+        id: 'date.record',
+        valueMultiplier: -9999,
+    },
     sys_device_type: {
         title: { en: 'Device type' },
         id: 'status_code.device_type',

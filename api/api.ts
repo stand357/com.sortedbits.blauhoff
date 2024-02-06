@@ -593,7 +593,7 @@ export class API {
 
             const data = await response.json() as BaseResponse;
 
-            this.log.log(`Response from ${path}:`, JSON.stringify(data));
+            this.log.log(`Response for ${path} was ${JSON.stringify(data).length} bytes`);
 
             return data as any;
         } catch (error) {

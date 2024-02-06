@@ -438,6 +438,7 @@
       },
       "class": "other",
       "capabilities": [
+        "date.record",
         "status_code.device_type",
         "manufacturer",
         "serial",
@@ -486,6 +487,11 @@
         "meter_power.total_to_grid_pv"
       ],
       "capabilitiesOptions": {
+        "date.record": {
+          "title": {
+            "en": "Last status update"
+          }
+        },
         "status_code.device_type": {
           "title": {
             "en": "Device type"
@@ -801,6 +807,19 @@
     }
   ],
   "capabilities": {
+    "date": {
+      "type": "string",
+      "title": {
+        "en": "Date",
+        "nl": "Datum"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "uiQuickAction": true,
+      "insights": false,
+      "icon": "/assets/capabilities/calendar-days-sharp-thin.svg"
+    },
     "manufacturer": {
       "type": "string",
       "title": {

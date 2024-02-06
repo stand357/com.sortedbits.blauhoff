@@ -4,6 +4,7 @@
   },
   "class": "other",
   "capabilities": [
+    "date.record",
     "status_code.device_type",
     "manufacturer",
     "serial",
@@ -52,6 +53,11 @@
     "meter_power.total_to_grid_pv"
   ],
   "capabilitiesOptions": {
+    "date.record": {
+      "title": {
+        "en": "Last status update"
+      }
+    },
     "status_code.device_type": {
       "title": {
         "en": "Device type"
