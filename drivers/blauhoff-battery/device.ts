@@ -158,6 +158,12 @@ class BlauhoffBattery extends Homey.Device {
         return 'Invalid credentials';
       }
     }
+
+    if (changedKeys.includes('userToken')) {
+      const { userToken } = newSettings;
+      this.log('Setting user token to', userToken);
+      this.api.setUserToken(userToken as string);
+    }
   }
 
   /**
@@ -231,13 +237,17 @@ class BlauhoffBattery extends Homey.Device {
         const { refreshInterval } = this.getSettings();
         await this.homey.setTimeout(this.getDeviceStatus.bind(this), refreshInterval * 1000);
       }
-    } else if (status.code === 400 && !comingFromError) {
+    } else if (!comingFromError) {
+      this.log('First try, we should fetch a new usertoken and try again');
+
       const refreshResult = await this.refreshUserTokenFromSettings();
       if (refreshResult) {
         await this.getDeviceStatus(true);
+      } else {
+        this.error('Failed to refresh user token');
       }
     } else {
-      this.error('Failed to get device status');
+      this.error('Failed to get device status', status.code);
     }
   }
 
@@ -254,15 +264,39 @@ class BlauhoffBattery extends Homey.Device {
         return false;
       }
 
-      await this.syncUserToken();
-
       delete args.device;
 
       this.log(`Triggering '${id}' with ${JSON.stringify(args)}`);
 
-      const result = await method(this.device, args);
-      return result;
+      return this.runMode(this.device, args, method, false);
     });
+  };
+
+  private runMode = async (device: BlauHoffDevice, args: any, method: (device: BlauHoffDevice, args: any) => Promise<QueryResponse<boolean>>, comingFromError: boolean): Promise<boolean> => {
+    if (!this.device) {
+      return false;
+    }
+
+    await this.syncUserToken();
+
+    const result = await method(device, args);
+    if (result.success) {
+      return true;
+    }
+
+    if (!comingFromError) {
+      this.log('First try, we should fetch a new usertoken and try again');
+
+      const refreshResult = await this.refreshUserTokenFromSettings();
+      if (refreshResult) {
+        return this.runMode(device, args, method, true);
+      }
+
+      this.error('Failed to refresh user token');
+      return false;
+    }
+    this.error('Failed to run mode', result.code);
+    return false;
   };
 
 }
