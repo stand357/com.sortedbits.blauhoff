@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
-import { API } from '../api';
-import { Logger } from '../log';
+import { BlauHoffAPI } from '../blauhoff-api';
+import { Logger } from '../../../helpers/log';
 import { testDevice } from './helpers/test-device';
 
 jest.mock('node-fetch');
@@ -19,9 +19,9 @@ const failObject = {
     t: 1684756685989,
 };
 
-describe('setMode4', () => {
+describe('setMode7', () => {
     test('with valid values', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
@@ -29,8 +29,8 @@ describe('setMode4', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode4(testDevice, {
-            maxFeedInLimit: 20,
+        const result = await api.setMode7(testDevice, {
+            batPower: -2000,
             batCapMin: 10,
             timeout: 10,
         });
@@ -42,22 +42,22 @@ describe('setMode4', () => {
         };
 
         const expectedParams = JSON.stringify({
-            maxFeedInLimit: 20,
+            batPower: -2000,
             batCapMin: 10,
             timeout: 600,
             deviceSn: testDevice.serial,
         });
 
         expect(fetch).toHaveBeenCalledWith(
-            'https://api-vpp-au.weiheng-tech.com/api/vpp/v1/hub/device/vpp/mode4',
+            'https://api-vpp-au.weiheng-tech.com/api/vpp/v1/hub/device/vpp/mode7',
             { body: expectedParams, headers: expectHeaders, method: 'post' },
         );
 
         expect(result.success).toStrictEqual(true);
     });
 
-    test('with invalid maxFeedInLimit', async () => {
-        const api = new API(new Logger());
+    test('with invalid batteryPower', async () => {
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
@@ -65,8 +65,8 @@ describe('setMode4', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode4(testDevice, {
-            maxFeedInLimit: 150,
+        const result = await api.setMode7(testDevice, {
+            batPower: -8000,
             batCapMin: 10,
             timeout: 10,
         });
@@ -76,7 +76,7 @@ describe('setMode4', () => {
     });
 
     test('with invalid batCapMin', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
@@ -84,9 +84,9 @@ describe('setMode4', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode4(testDevice, {
-            maxFeedInLimit: 25,
-            batCapMin: 5,
+        const result = await api.setMode7(testDevice, {
+            batPower: -4000,
+            batCapMin: 0,
             timeout: 10,
         });
 
@@ -95,7 +95,7 @@ describe('setMode4', () => {
     });
 
     test('with invalid timeout', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
@@ -103,10 +103,10 @@ describe('setMode4', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode4(testDevice, {
-            maxFeedInLimit: 25,
+        const result = await api.setMode7(testDevice, {
+            batPower: -4000,
             batCapMin: 10,
-            timeout: 120,
+            timeout: 100,
         });
 
         expect(result.success).toStrictEqual(false);
@@ -114,16 +114,15 @@ describe('setMode4', () => {
     });
 
     test('fails', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
             new Response(JSON.stringify(failObject)),
         );
-
-        const result = await api.setMode4(testDevice, {
-            maxFeedInLimit: 20,
+        const result = await api.setMode7(testDevice, {
+            batPower: -2000,
             batCapMin: 10,
             timeout: 10,
         });

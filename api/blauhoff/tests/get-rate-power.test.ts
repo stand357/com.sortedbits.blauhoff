@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
-import { API } from '../api';
-import { Logger } from '../log';
+import { BlauHoffAPI } from '../blauhoff-api';
+import { Logger } from '../../../helpers/log';
 import { BlauHoffDevice } from '../models/blauhoff-device';
 import { testDevice } from './helpers/test-device';
 
@@ -28,7 +28,7 @@ const failObject = {
 
 describe('get-rate-power', () => {
     test('Succesfully get rate powers', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9');
 
         expect(fetch).toHaveBeenCalledTimes(0);
@@ -58,7 +58,7 @@ describe('get-rate-power', () => {
     });
 
     test('failed get rate powers', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9');
 
         expect(fetch).toHaveBeenCalledTimes(0);

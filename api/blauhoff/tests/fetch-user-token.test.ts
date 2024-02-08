@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
-import { API } from '../api';
-import { Logger } from '../log';
+import { BlauHoffAPI } from '../blauhoff-api';
+import { Logger } from '../../../helpers/log';
 
 jest.mock('node-fetch');
 const { Response } = jest.requireActual('node-fetch');
@@ -22,7 +22,7 @@ const failObject = {
 
 describe('fetch-user-token', () => {
     test('headers are successfully set', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setAuthenticationInfo('mockedAccessId', 'mockedAccessSecret');
 
         expect(fetch).toHaveBeenCalledTimes(0);
@@ -49,7 +49,7 @@ describe('fetch-user-token', () => {
     });
 
     test('succesfully get a user token', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
@@ -68,7 +68,7 @@ describe('fetch-user-token', () => {
     });
 
     test('fail to get a user token', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         expect(fetch).toHaveBeenCalledTimes(0);
 
         (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(

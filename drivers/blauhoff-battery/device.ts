@@ -2,10 +2,10 @@ import Homey from 'homey';
 import { addCapabilityIfNotExists, deprecateCapability } from 'homey-helpers';
 
 import { DateTime } from 'luxon';
-import { API, BlauHoffDevice } from '../../api';
-import { BlauHoffDeviceStatus } from '../../api/models/blauhoff-device-status';
+import { API, BlauHoffDevice } from '../../api/blauhoff';
+import { BlauHoffDeviceStatus } from '../../api/blauhoff/models/blauhoff-device-status';
 import { deviceInfoMapping } from './helpers/device-info-mapping';
-import { QueryResponse } from '../../api/models/responses/query-response';
+import { QueryResponse } from '../../api/blauhoff/models/responses/query-response';
 
 class BlauhoffBattery extends Homey.Device {
 

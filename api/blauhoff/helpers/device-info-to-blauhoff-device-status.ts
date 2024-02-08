@@ -1,4 +1,4 @@
-import { IBaseLogger } from '../log';
+import { IBaseLogger } from '../../../helpers/log';
 import { BlauHoffDeviceStatus } from '../models/blauhoff-device-status';
 import { QueryDeviceResponse } from '../models/responses/query-device.response';
 

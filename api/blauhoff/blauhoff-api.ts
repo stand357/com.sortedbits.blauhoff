@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import { BlauHoffDevice } from './models/blauhoff-device';
 import { BlauHoffDeviceStatus } from './models/blauhoff-device-status';
-import { IBaseLogger } from './log';
+import { IBaseLogger } from '../../helpers/log';
 import { BaseResponse } from './models/responses/base.response';
 import { GetUserTokenResponse } from './models/responses/get-user-token-response';
 import { GetDeviceListResponse } from './models/responses/get-device-list-response';
@@ -27,7 +27,7 @@ const INVALID_PARAMETER_RESPONSE = {
 /**
  * Represents the API class for interacting with the Blauhoff API.
  */
-export class API {
+export class BlauHoffAPI {
 
     private baseUrl: string = 'https://api-vpp-au.weiheng-tech.com/api/vpp';
     private accessId: string = 'XXX';

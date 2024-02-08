@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
-import { API } from '../api';
-import { Logger } from '../log';
+import { BlauHoffAPI } from '../blauhoff-api';
+import { Logger } from '../../../helpers/log';
 
 jest.mock('node-fetch');
 const { Response } = jest.requireActual('node-fetch');
@@ -25,7 +25,7 @@ const failObject = {
 
 describe('bind-device', () => {
     test('Succesfully bind a device', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
 
         expect(fetch).toHaveBeenCalledTimes(0);
 
@@ -39,7 +39,7 @@ describe('bind-device', () => {
     });
 
     test('Fail binding a device', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
 
         expect(fetch).toHaveBeenCalledTimes(0);
 
