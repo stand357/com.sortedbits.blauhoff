@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
-import { API } from '../api';
-import { Logger } from '../log';
+import { BlauHoffAPI } from '../blauhoff-api';
+import { Logger } from '../../../helpers/log';
 import { deviceInfoResponse } from './helpers/device-info';
 import { testDevice } from './helpers/test-device';
 import { BlauHoffDeviceStatus } from '../models/blauhoff-device-status';
@@ -30,7 +30,7 @@ const getObjectsFromRow = (deviceInfo: QueryDeviceResponse, row: number, column:
 
 describe('query-device', () => {
     test('succesfully query a device', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
 
         expect(fetch).toHaveBeenCalledTimes(0);
 
@@ -58,7 +58,7 @@ describe('query-device', () => {
     });
 
     test('fail querying a device', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
 
         expect(fetch).toHaveBeenCalledTimes(0);
 

@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
-import { API } from '../api';
-import { Logger } from '../log';
+import { BlauHoffAPI } from '../blauhoff-api';
+import { Logger } from '../../../helpers/log';
 import { testDevice } from './helpers/test-device';
 
 jest.mock('node-fetch');
@@ -19,9 +19,9 @@ const failObject = {
     t: 1684756685989,
 };
 
-describe('setMode3', () => {
+describe('setMode4', () => {
     test('with valid values', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
@@ -29,8 +29,8 @@ describe('setMode3', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode3(testDevice, {
-            batPower: 2000,
+        const result = await api.setMode4(testDevice, {
+            maxFeedInLimit: 20,
             batCapMin: 10,
             timeout: 10,
         });
@@ -42,22 +42,22 @@ describe('setMode3', () => {
         };
 
         const expectedParams = JSON.stringify({
-            batPower: 2000,
+            maxFeedInLimit: 20,
             batCapMin: 10,
             timeout: 600,
             deviceSn: testDevice.serial,
         });
 
         expect(fetch).toHaveBeenCalledWith(
-            'https://api-vpp-au.weiheng-tech.com/api/vpp/v1/hub/device/vpp/mode3',
+            'https://api-vpp-au.weiheng-tech.com/api/vpp/v1/hub/device/vpp/mode4',
             { body: expectedParams, headers: expectHeaders, method: 'post' },
         );
 
         expect(result.success).toStrictEqual(true);
     });
 
-    test('with invalid batteryPower', async () => {
-        const api = new API(new Logger());
+    test('with invalid maxFeedInLimit', async () => {
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
@@ -65,8 +65,8 @@ describe('setMode3', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode3(testDevice, {
-            batPower: 8000,
+        const result = await api.setMode4(testDevice, {
+            maxFeedInLimit: 150,
             batCapMin: 10,
             timeout: 10,
         });
@@ -76,7 +76,7 @@ describe('setMode3', () => {
     });
 
     test('with invalid batCapMin', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
@@ -84,9 +84,9 @@ describe('setMode3', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode3(testDevice, {
-            batPower: 2000,
-            batCapMin: 0,
+        const result = await api.setMode4(testDevice, {
+            maxFeedInLimit: 25,
+            batCapMin: 5,
             timeout: 10,
         });
 
@@ -95,7 +95,7 @@ describe('setMode3', () => {
     });
 
     test('with invalid timeout', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
@@ -103,8 +103,8 @@ describe('setMode3', () => {
             new Response(JSON.stringify(successObject)),
         );
 
-        const result = await api.setMode3(testDevice, {
-            batPower: 2000,
+        const result = await api.setMode4(testDevice, {
+            maxFeedInLimit: 25,
             batCapMin: 10,
             timeout: 120,
         });
@@ -114,7 +114,7 @@ describe('setMode3', () => {
     });
 
     test('fails', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
@@ -122,8 +122,8 @@ describe('setMode3', () => {
             new Response(JSON.stringify(failObject)),
         );
 
-        const result = await api.setMode3(testDevice, {
-            batPower: 2000,
+        const result = await api.setMode4(testDevice, {
+            maxFeedInLimit: 20,
             batCapMin: 10,
             timeout: 10,
         });

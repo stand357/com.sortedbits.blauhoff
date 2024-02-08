@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
-import { API } from '../api';
-import { Logger } from '../log';
+import { BlauHoffAPI } from '../blauhoff-api';
+import { Logger } from '../../../helpers/log';
 import { testDevice } from './helpers/test-device';
 
 jest.mock('node-fetch');
@@ -21,7 +21,7 @@ const failObject = {
 
 describe('setMode5', () => {
     test('with valid values', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 
@@ -57,7 +57,7 @@ describe('setMode5', () => {
     });
 
     test('fails', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('user-token');
         expect(fetch).toHaveBeenCalledTimes(0);
 

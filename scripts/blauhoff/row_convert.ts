@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon';
-import { convertDeviceInfoToBlauhoffDeviceStatus } from '../api/helpers/device-info-to-blauhoff-device-status';
-import { createQueryResponse } from '../api/helpers/is-valid-response';
-import { Logger } from '../api/log';
-import { BlauHoffDeviceStatus } from '../api/models/blauhoff-device-status';
+import { convertDeviceInfoToBlauhoffDeviceStatus } from '../../api/blauhoff/helpers/device-info-to-blauhoff-device-status';
+import { createQueryResponse } from '../../api/blauhoff/helpers/is-valid-response';
+import { Logger } from '../../helpers/log';
+import { BlauHoffDeviceStatus } from '../../api/blauhoff/models/blauhoff-device-status';
 
 const log = new Logger();
 const fs = require('fs');

@@ -1,9 +1,9 @@
-import { API } from '../api';
-import { Logger } from '../log';
+import { BlauHoffAPI } from '../blauhoff-api';
+import { Logger } from '../../../helpers/log';
 
 describe('set-authentication-info', () => {
     test('update', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setUserToken('test');
 
         api.setAuthenticationInfo('access-id', 'access-secret');

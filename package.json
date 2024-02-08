@@ -13,7 +13,8 @@
   "dependencies": {
     "homey-helpers": "1.1.0",
     "node-fetch": "2.7.0",
-    "luxon": "3.4.4"
+    "luxon": "3.4.4",
+    "modbus-serial": "8.0.16"
   },
   "devDependencies": {
     "@tsconfig/node16": "^16.1.1",

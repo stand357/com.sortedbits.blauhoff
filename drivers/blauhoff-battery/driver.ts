@@ -1,6 +1,6 @@
 import Homey from 'homey';
 import { PairSession } from 'homey/lib/Driver';
-import { API, BlauHoffDevice } from '../../api';
+import { API, BlauHoffDevice } from '../../api/blauhoff';
 
 interface FormResult {
   success: boolean;

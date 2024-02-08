@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
-import { API } from '../api';
-import { Logger } from '../log';
+import { BlauHoffAPI } from '../blauhoff-api';
+import { Logger } from '../../../helpers/log';
 import { deviceList1, deviceList2, deviceList3 } from './helpers/device-lists';
 
 jest.mock('node-fetch');
@@ -40,7 +40,7 @@ const failObject = {
 
 describe('get-device-list', () => {
     test('Fetch a single page of items', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setAuthenticationInfo('mockedAccessId', 'mockedAccessSecret');
 
         expect(fetch).toHaveBeenCalledTimes(0);
@@ -70,7 +70,7 @@ describe('get-device-list', () => {
     });
 
     test('Fetching multiple pages of items', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setAuthenticationInfo('mockedAccessId', 'mockedAccessSecret');
 
         expect(fetch).toHaveBeenCalledTimes(0);
@@ -113,7 +113,7 @@ describe('get-device-list', () => {
     });
 
     test('Fail fetching items', async () => {
-        const api = new API(new Logger());
+        const api = new BlauHoffAPI(new Logger());
         api.setAuthenticationInfo('mockedAccessId', 'mockedAccessSecret');
 
         expect(fetch).toHaveBeenCalledTimes(0);
