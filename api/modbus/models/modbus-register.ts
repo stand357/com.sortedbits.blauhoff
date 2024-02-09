@@ -21,4 +21,11 @@ export class ModbusRegister {
         this.multiplier = multiplier;
     }
 
+    calculateValue(value: any): any {
+        if (Number(value)) {
+            return value * this.multiplier;
+        }
+        return value;
+    }
+
 }

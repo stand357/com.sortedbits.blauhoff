@@ -1,6 +1,6 @@
 import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { ModbusRegister } from '../../api/modbus/models/modbus-register';
-import { blauhoffRegisters } from '../../drivers/blauhoff-modbus/definitions/blauhoff';
+import { growattRegisters } from '../../drivers/blauhoff-modbus/definitions/growatt';
 import { Logger } from '../../helpers/log';
 
 const host = '10.210.5.12';
@@ -18,16 +18,27 @@ ModbusAPI.verifyConnection(log, host, port, unitId, getRegisters()).then((result
 });
 */
 
-const valueResolved = (value: any, register: ModbusRegister) => {
-    console.log(register.capabilityId, value);
+const valueResolved = async (value: any, register: ModbusRegister) => {
+    const result = register.calculateValue(value);
+    log.log(register.capabilityId, result);
 };
 
-const api = new ModbusAPI(log, host, port, unitId, blauhoffRegisters);
+const api = new ModbusAPI(log, host, port, unitId, growattRegisters);
+
+const readRegisters = () => {
+    api.readRegisters().then(() => {
+        setTimeout(() => {
+            readRegisters();
+        }, 1000);
+    }).catch((error) => {
+        log.error('readRegisters', error);
+    });
+};
 
 api.connect().then((result) => {
     api.valueResolved = valueResolved;
-    api.readRegisters();
+    readRegisters();
 }).catch((error) => {
-    console.error('error', error);
+    log.error('error', error);
 }).finally(() => {
 });

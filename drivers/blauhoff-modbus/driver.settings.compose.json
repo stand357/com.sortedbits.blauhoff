@@ -1,0 +1,49 @@
+[
+    {
+        "id": "host",
+        "type": "text",
+        "label": {
+            "en": "Host"
+        },
+        "value": "",
+        "hint": {
+            "en": "IP address of the Modbus device"
+        }
+    },
+    {
+        "id": "port",
+        "type": "number",
+        "label": {
+            "en": "Port"
+        },
+        "value": 502,
+        "hint": {
+            "en": "The port number of the Modbus device"
+        }
+    },
+    {
+        "id": "unitId",
+        "type": "number",
+        "label": {
+            "en": "Unit ID"
+        },
+        "value": 1,
+        "hint": {
+            "en": "The unit ID of the Modbus device"
+        }
+    },
+    {
+        "id": "refreshInterval",
+        "type": "number",
+        "label": {
+            "en": "Update interval",
+            "nl": "Update interval"
+        },
+        "min": 10,
+        "value": 60,
+        "max": 120,
+        "hint": {
+            "en": "Time in seconds used to query device details"
+        }
+    }
+]
