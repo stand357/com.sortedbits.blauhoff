@@ -30,9 +30,39 @@ class MyDriver extends Homey.Driver {
     this.log('MyDriver has been initialized');
   }
 
+  iconForDeviceType = (deviceType: DeviceType): string => {
+    switch (deviceType) {
+      case DeviceType.Blauhoff:
+        return 'blauhoff-device.svg';
+      case DeviceType.Growatt:
+        return 'growatt-device.svg';
+      case DeviceType.Kstar:
+        return 'kstar-device.svg';
+      case DeviceType.Deye:
+        return 'deye-device.svg';
+      default:
+        return 'icon.svg';
+    }
+  }
+
+  nameForDeviceType = (deviceType: DeviceType): string => {
+    switch (deviceType) {
+      case DeviceType.Blauhoff:
+        return 'Blauhoff device';
+      case DeviceType.Growatt:
+        return 'Growatt debug device';
+      case DeviceType.Kstar:
+        return 'Kstar device';
+      case DeviceType.Deye:
+        return 'Deye device';
+      default:
+        return 'Unknown device';
+    }
+  }
+
   createPairingDevice = (deviceInformation: ModbusDeviceInformation): any => {
     const result = {
-      name: 'Modbus device',
+      name: this.nameForDeviceType(this.pairingDeviceType),
       data: {
         id: `${this.pairingDeviceType}-${deviceInformation.host}-${deviceInformation.port}-${deviceInformation.unitId}`,
         deviceType: this.pairingDeviceType,
@@ -43,6 +73,7 @@ class MyDriver extends Homey.Driver {
         unitId: deviceInformation.unitId,
         refreshInterval: 10,
       },
+      icon: this.iconForDeviceType(this.pairingDeviceType),
     };
 
     this.log('createPairingDevice', result);

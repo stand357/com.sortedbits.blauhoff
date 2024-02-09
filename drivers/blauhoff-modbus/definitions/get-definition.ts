@@ -6,6 +6,8 @@ import { growattRegisters } from './growatt';
 export enum DeviceType {
     Blauhoff = 'blauhoff',
     Growatt = 'growatt',
+    Deye = 'deye',
+    Kstar = 'kstar'
 }
 
 export const getDefinition = (log: IBaseLogger, deviceType: DeviceType): ModbusDeviceDefinition => {
