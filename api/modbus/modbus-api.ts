@@ -23,7 +23,8 @@ export class ModbusAPI {
      * @param register - The Modbus register associated with the resolved value.
      * @returns A promise that resolves when the callback function completes.
      */
-    valueResolved?: (value: any, register: ModbusRegister) => Promise<void>;
+    dataReceived?: (value: any, register: ModbusRegister) => Promise<void>;
+    onError?: (error: unknown, register: ModbusRegister) => Promise<void>;
 
     /**
      * Represents a Modbus API.
@@ -54,10 +55,11 @@ export class ModbusAPI {
             await this.client.connectTCP(this.host, {
                 port: this.port,
                 keepAlive: true,
-                timeout: 2000,
+                timeout: 22,
             });
 
             this.client.setID(this.unitId);
+            this.client.setTimeout(500);
 
             this.client.on('close', () => {
                 this.log.log('Modbus connection closed');
@@ -109,7 +111,7 @@ export class ModbusAPI {
      * @returns {Promise<void>} A promise that resolves when all registers have been read.
      */
     readRegisters = async () => {
-        if (!this.valueResolved) {
+        if (!this.dataReceived) {
             this.log.error('No valueResolved function set');
         }
 
@@ -118,11 +120,15 @@ export class ModbusAPI {
                 const input = await this.client.readInputRegisters(register.address, register.length);
                 const result = this.deviceInfo.inputRegisterResultConversion(this.log, input, register);
 
-                if (this.valueResolved) {
-                    await this.valueResolved(result, register);
+                if (this.dataReceived) {
+                    await this.dataReceived(result, register);
                 }
             } catch (error) {
-                this.log.error('Error reading register:', register.address, 'length:', register.length, 'error:', error);
+                if (this.onError) {
+                    await this.onError(error, register);
+                } else {
+                    this.log.error('Failed to readInputRegisters', error, register);
+                }
             }
         }
 
@@ -131,11 +137,15 @@ export class ModbusAPI {
                 const input = await this.client.readHoldingRegisters(register.address, register.length);
                 const result = this.deviceInfo.holdingRegisterResultConversion(this.log, input, register);
 
-                if (this.valueResolved) {
-                    await this.valueResolved(result, register);
+                if (this.dataReceived) {
+                    await this.dataReceived(result, register);
                 }
             } catch (error) {
-                this.log.error('Error reading register:', register.address, 'length:', register.length, 'error:', error);
+                if (this.onError) {
+                    await this.onError(error, register);
+                } else {
+                    this.log.error('Failed to readHoldingRegisters', error, register);
+                }
             }
         }
 

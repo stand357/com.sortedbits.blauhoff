@@ -11,6 +11,7 @@ class ModbusDevice extends Homey.Device {
   private api?: ModbusAPI;
   private deviceType?: DeviceType;
   private stop: boolean = false;
+  private reachable: boolean = true;
 
   /**
    * Handles the value received from a Modbus register.
@@ -19,10 +20,22 @@ class ModbusDevice extends Homey.Device {
    * @param register - The Modbus register object.
    * @returns A Promise that resolves when the value is handled.
    */
-  private handleValue = async (value: any, register: ModbusRegister) => {
+  private dataReceived = async (value: any, register: ModbusRegister) => {
     const result = register.calculateValue(value);
     this.log(register.capabilityId, result);
     await this.setCapabilityValue(register.capabilityId, result);
+
+    if (!this.reachable) {
+      this.reachable = true;
+    }
+  }
+
+  private onError = async (error: unknown, register: ModbusRegister) => {
+    if (error && (error as any)['name'] && (error as any)['name'] === 'TransactionTimedOutError') {
+      this.reachable = false;
+    } else {
+      this.error('Request failed', error);
+    }
   }
 
   /**
@@ -60,7 +73,8 @@ class ModbusDevice extends Homey.Device {
       await this.initializeCapabilities(registers);
 
       this.api = new ModbusAPI(this, host, port, unitId, registers);
-      this.api.valueResolved = this.handleValue;
+      this.api.dataReceived = this.dataReceived;
+      this.api.onError = this.onError;
 
       const isOpen = await this.api.connect();
 
@@ -78,11 +92,15 @@ class ModbusDevice extends Homey.Device {
    * @returns {Promise<void>} A promise that resolves when the registers are read.
    */
   private readRegisters = async () => {
+    this.log('Reading registers for ', this.getName());
     await this.api?.readRegisters();
 
     if (!this.stop) {
       const { refreshInterval } = this.getSettings();
-      await this.homey.setTimeout(this.readRegisters.bind(this), refreshInterval * 1000);
+
+      const interval = this.reachable ? refreshInterval * 1000 : 60000;
+
+      await this.homey.setTimeout(this.readRegisters.bind(this), interval);
     }
   }
 

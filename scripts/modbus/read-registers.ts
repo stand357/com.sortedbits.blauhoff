@@ -36,7 +36,7 @@ const readRegisters = () => {
 };
 
 api.connect().then((result) => {
-    api.valueResolved = valueResolved;
+    api.dataReceived = valueResolved;
     readRegisters();
 }).catch((error) => {
     log.error('error', error);
