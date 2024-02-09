@@ -1,7 +1,7 @@
 import ModbusRTU from 'modbus-serial';
 import { IBaseLogger } from '../../helpers/log';
 import { ModbusRegister } from './models/modbus-register';
-import { DeviceInformation } from './helpers/convert-register-list';
+import { ModbusDeviceDefinition } from './models/modbus-device-registers';
 
 export class ModbusAPI {
 
@@ -11,11 +11,11 @@ export class ModbusAPI {
     private port: number;
     private unitId: number;
     private log: IBaseLogger;
-    private deviceInfo: DeviceInformation;
+    private deviceInfo: ModbusDeviceDefinition;
 
     valueResolved?: (value: any, register: ModbusRegister) => void;
 
-    constructor(log: IBaseLogger, host: string, port: number, unitId: number, deviceInfo: DeviceInformation) {
+    constructor(log: IBaseLogger, host: string, port: number, unitId: number, deviceInfo: ModbusDeviceDefinition) {
         this.host = host;
         this.port = port;
         this.unitId = unitId;
@@ -52,7 +52,7 @@ export class ModbusAPI {
         this.client.close(() => { });
     }
 
-    static verifyConnection = async (log: IBaseLogger, host: string, port: number, unitId: number, deviceInfo: DeviceInformation): Promise<boolean> => {
+    static verifyConnection = async (log: IBaseLogger, host: string, port: number, unitId: number, deviceInfo: ModbusDeviceDefinition): Promise<boolean> => {
         log.log('Creating modbus API');
         const api = new ModbusAPI(log, host, port, unitId, deviceInfo);
 
@@ -74,24 +74,33 @@ export class ModbusAPI {
 
         for (const register of this.deviceInfo.inputRegisters) {
             try {
-                const result = await this.client.readInputRegisters(register.address, register.length);
-
-                console.log(result.buffer);
-
-                const b = Buffer.from(result.buffer.toString());
-
-                console.log(b.readFloatBE(0));
-
-                const buffer = result.buffer.readFloatBE(0);
+                const input = await this.client.readInputRegisters(register.address, register.length);
+                const result = this.deviceInfo.inputRegisterResultConversion(this.log, input, register);
 
                 if (this.valueResolved) {
-                    this.valueResolved(buffer, register);
+                    this.valueResolved(result, register);
                 }
             } catch (error) {
                 this.log.error('Error reading register:', register.address, 'length:', register.length, 'error:', error);
             }
             // this.valueResolved!(result, register);
         }
+
+        for (const register of this.deviceInfo.holdingRegisters) {
+            try {
+                const input = await this.client.readHoldingRegisters(register.address, register.length);
+                const result = this.deviceInfo.holdingRegisterResultConversion(this.log, input, register);
+
+                if (this.valueResolved) {
+                    this.valueResolved(result, register);
+                }
+            } catch (error) {
+                this.log.error('Error reading register:', register.address, 'length:', register.length, 'error:', error);
+            }
+            // this.valueResolved!(result, register);
+        }
+
+        this.log.log('Finished reading registers');
     }
 
 }

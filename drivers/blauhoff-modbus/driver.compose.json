@@ -1,9 +1,294 @@
 {
   "name": {
-    "en": "BlauHoff Modbus"
+    "en": "Modbus TCP device"
   },
   "class": "other",
-  "capabilities": [],
+  "capabilities": [
+    "date.record",
+    "status_code.device_type",
+    "manufacturer",
+    "serial",
+    "version.dsp1",
+    "version.dsp2",
+    "version.bms",
+    "version.ems",
+    "status_code.run_mode",
+    "status_code.bat_basic_status",
+    "status_code.sys_error_code",
+    "status_code.sys_bat_error_code",
+    "measure_voltage.pv1",
+    "measure_current.pv1",
+    "measure_voltage.pv2",
+    "measure_current.pv2",
+    "measure_power.pv1",
+    "measure_power.pv2",
+    "measure_voltage.ac",
+    "measure_current.ac",
+    "measure_frequency.ac",
+    "measure_power.ac",
+    "measure_voltamperage.ac",
+    "measure_voltage.eps",
+    "measure_current.eps",
+    "measure_power.eps",
+    "measure_voltamperage.eps",
+    "measure_voltage.meter",
+    "measure_current.meter",
+    "measure_frequency.meter",
+    "measure_power.meter",
+    "measure_voltamperage.meter",
+    "measure_voltage.battery",
+    "measure_current.battery",
+    "measure_power.battery",
+    "measure_state_of_charge.battery",
+    "status_code.bat_soh",
+    "measure_voltage.battery_high",
+    "measure_voltage.battery_low",
+    "measure_temperature.battery_high",
+    "measure_temperature.battery_low",
+    "meter_power.battery_total_charge",
+    "meter_power.battery_total_discharge",
+    "meter_power.pv",
+    "meter_power.total_to_grid",
+    "meter_power.total_from_grid",
+    "meter_power.total_to_grid_pv"
+  ],
+  "capabilitiesOptions": {
+    "date.record": {
+      "title": {
+        "en": "Last status update"
+      }
+    },
+    "status_code.device_type": {
+      "title": {
+        "en": "Device type"
+      }
+    },
+    "manufacturer": {
+      "title": {
+        "en": "Manufacturer"
+      }
+    },
+    "serial": {
+      "title": {
+        "en": "Serial number"
+      }
+    },
+    "version.dsp1": {
+      "title": {
+        "en": "DSP 1 version"
+      }
+    },
+    "version.dsp2": {
+      "title": {
+        "en": "DSP 2 version"
+      }
+    },
+    "version.bms": {
+      "title": {
+        "en": "BMS version"
+      }
+    },
+    "version.ems": {
+      "title": {
+        "en": "EMS version"
+      }
+    },
+    "status_code.run_mode": {
+      "title": {
+        "en": "Run mode"
+      }
+    },
+    "status_code.bat_basic_status": {
+      "title": {
+        "en": "Battery status"
+      }
+    },
+    "status_code.sys_error_code": {
+      "title": {
+        "en": "Error code"
+      }
+    },
+    "status_code.sys_bat_error_code": {
+      "title": {
+        "en": "Battery error code"
+      }
+    },
+    "measure_voltage.pv1": {
+      "title": {
+        "en": "PV1 voltage"
+      }
+    },
+    "measure_current.pv1": {
+      "title": {
+        "en": "PV1 current"
+      }
+    },
+    "measure_voltage.pv2": {
+      "title": {
+        "en": "PV2 voltage"
+      }
+    },
+    "measure_current.pv2": {
+      "title": {
+        "en": "PV2 current"
+      }
+    },
+    "measure_power.pv1": {
+      "title": {
+        "en": "PV1 power"
+      }
+    },
+    "measure_power.pv2": {
+      "title": {
+        "en": "PV2 power"
+      }
+    },
+    "measure_voltage.ac": {
+      "title": {
+        "en": "AC voltage"
+      }
+    },
+    "measure_current.ac": {
+      "title": {
+        "en": "AC current"
+      }
+    },
+    "measure_frequency.ac": {
+      "title": {
+        "en": "AC frequency"
+      }
+    },
+    "measure_power.ac": {
+      "title": {
+        "en": "AC power"
+      }
+    },
+    "measure_voltamperage.ac": {
+      "title": {
+        "en": "AC voltamperage"
+      }
+    },
+    "measure_voltage.eps": {
+      "title": {
+        "en": "EPS voltage"
+      }
+    },
+    "measure_current.eps": {
+      "title": {
+        "en": "EPS current"
+      }
+    },
+    "measure_power.eps": {
+      "title": {
+        "en": "EPS power"
+      }
+    },
+    "measure_voltamperage.eps": {
+      "title": {
+        "en": "EPS voltamperage"
+      }
+    },
+    "measure_voltage.meter": {
+      "title": {
+        "en": "Meter voltage"
+      }
+    },
+    "measure_current.meter": {
+      "title": {
+        "en": "Meter current"
+      }
+    },
+    "measure_frequency.meter": {
+      "title": {
+        "en": "Meter frequency"
+      }
+    },
+    "measure_power.meter": {
+      "title": {
+        "en": "Meter power"
+      }
+    },
+    "measure_voltamperage.meter": {
+      "title": {
+        "en": "Meter voltamperage"
+      }
+    },
+    "measure_voltage.battery": {
+      "title": {
+        "en": "Battery voltage"
+      }
+    },
+    "measure_current.battery": {
+      "title": {
+        "en": "Battery current"
+      }
+    },
+    "measure_power.battery": {
+      "title": {
+        "en": "Battery power"
+      }
+    },
+    "status_code.bat_soc": {
+      "title": {
+        "en": "Battery SOC"
+      }
+    },
+    "status_code.bat_soh": {
+      "title": {
+        "en": "Battery SOH"
+      }
+    },
+    "measure_voltage.battery_high": {
+      "title": {
+        "en": "Battery voltage high"
+      }
+    },
+    "measure_voltage.battery_low": {
+      "title": {
+        "en": "Battery voltage low"
+      }
+    },
+    "measure_temperature.battery_high": {
+      "title": {
+        "en": "Battery temperature high"
+      }
+    },
+    "measure_temperature.battery_low": {
+      "title": {
+        "en": "Battery temperature low"
+      }
+    },
+    "meter_power.battery_total_charge": {
+      "title": {
+        "en": "Battery total charge"
+      }
+    },
+    "meter_power.battery_total_discharge": {
+      "title": {
+        "en": "Battery total discharge"
+      }
+    },
+    "meter_power.pv": {
+      "title": {
+        "en": "PV total"
+      }
+    },
+    "meter_power.total_to_grid": {
+      "title": {
+        "en": "Total to grid"
+      }
+    },
+    "meter_power.total_from_grid": {
+      "title": {
+        "en": "Total from grid"
+      }
+    },
+    "meter_power.total_to_grid_pv": {
+      "title": {
+        "en": "PV total to grid"
+      }
+    }
+  },
   "platforms": [
     "local"
   ],
@@ -14,5 +299,24 @@
     "small": "{{driverAssetsPath}}/images/small.png",
     "large": "{{driverAssetsPath}}/images/large.png",
     "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
-  }
+  },
+  "pair": [
+    {
+      "id": "device_type"
+    },
+    {
+      "id": "modbus_information"
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
 }

@@ -33,13 +33,17 @@
         flex-direction: column;
         justify-content: space-between;
     }
+
+    .intro {
+        color: rgb(147, 147, 154);
+    }
 </style>
 
 <form class="homey-form">
     <fieldset class="homey-form-fieldset">
         <legend class="homey-form-legend" data-i18n="pair.title"></legend>
 
-        <div clss="homey-form-group" data-i18n="pair.intro" />
+        <div class="homey-form-group intro" data-i18n="pair.intro" />
 
         <div class="homey-form-group">
             <a href="https://sortedbits.com" target="_blank" data-i18n="pair.linktext"></a>
@@ -54,7 +58,7 @@
             <label class="homey-form-label" for="accessSecret" data-i18n="pair.accessSecret"></label>
             <input class="homey-form-input" id="accessSecret" type="password" value="" />
         </div>
-        <div clss="homey-form-group" data-i18n="pair.serialIntro" />
+        <div class="homey-form-group intro" data-i18n="pair.serialIntro" />
         <div class="homey-form-group">
             <label class="homey-form-label" for="serial" data-i18n="pair.serial"></label>
             <input class="homey-form-input" id="serial" type="text" value="" />
