@@ -2,9 +2,8 @@ import Homey from 'homey';
 import { PairSession } from 'homey/lib/Driver';
 import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { getDefinition } from './helpers/get-definition';
-import { getDeviceType } from './helpers/device-type';
+import { getDeviceType, iconForDeviceType, nameForDeviceType } from './helpers/device-type';
 import { DeviceType } from './models/device-type';
-import { nameForDeviceType } from './helpers/name-for-device-type';
 
 interface DeviceTypeFormData {
   deviceType: string;
@@ -46,7 +45,7 @@ class ModbusDriver extends Homey.Driver {
         unitId: deviceInformation.unitId,
         refreshInterval: 10,
       },
-      icon: this.iconForDeviceType(this.pairingDeviceType),
+      icon: iconForDeviceType(this.pairingDeviceType),
     };
 
     this.log('createPairingDevice', result);
