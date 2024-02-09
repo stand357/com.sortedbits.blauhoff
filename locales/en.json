@@ -8,12 +8,17 @@
         "serial": "Serial number",
         "submit": "Submit"
     },
-    "register_serial": {
-        "title": "Register a serial with BlauHoff Cloud",
-        "intro": "BlauHoff Cloud is a cloud service for BlauHoff devices. It provides a secure and reliable way to store your data.",
-        "serialIntro": "To register a serial with BlauHoff Cloud, please enter the serial number of your device. After you have it registered, you should add this device to Homey.",
-        "linktext": "Click here to request your cloud details",
-        "serial": "Serial number",
-        "submit": "Register"
+    "modbus_pair": {
+        "title": "Connect to Modbus",
+        "intro": "Using Modbus to connect to your device requires you to have Modbus TCP enabled for your device and a ethernet cable connected.",
+        "linktext": "Click here to read more about connecting your modbus device to your network.",
+        "host": "Host",
+        "port": "Port",
+        "unitId": "Unit ID",
+        "submit": "Connect"
+    },
+    "device_select": {
+        "title": "Select your device type",
+        "submit": "Next"
     }
 }
