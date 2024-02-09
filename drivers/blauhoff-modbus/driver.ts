@@ -1,7 +1,10 @@
 import Homey from 'homey';
 import { PairSession } from 'homey/lib/Driver';
 import { ModbusAPI } from '../../api/modbus/modbus-api';
-import { DeviceType, getDefinition } from './definitions/get-definition';
+import { getDefinition } from './helpers/get-definition';
+import { getDeviceType } from './helpers/device-type';
+import { DeviceType } from './models/device-type';
+import { nameForDeviceType } from './helpers/name-for-device-type';
 
 interface DeviceTypeFormData {
   deviceType: string;
@@ -18,7 +21,7 @@ interface FormResult {
   message?: unknown;
 }
 
-class MyDriver extends Homey.Driver {
+class ModbusDriver extends Homey.Driver {
 
   pairingDeviceType: DeviceType = DeviceType.Blauhoff;
   modbusDeviceInformation: ModbusDeviceInformation | undefined;
@@ -27,42 +30,12 @@ class MyDriver extends Homey.Driver {
    * onInit is called when the driver is initialized.
    */
   async onInit() {
-    this.log('MyDriver has been initialized');
-  }
-
-  iconForDeviceType = (deviceType: DeviceType): string => {
-    switch (deviceType) {
-      case DeviceType.Blauhoff:
-        return 'blauhoff-device.svg';
-      case DeviceType.Growatt:
-        return 'growatt-device.svg';
-      case DeviceType.Kstar:
-        return 'kstar-device.svg';
-      case DeviceType.Deye:
-        return 'deye-device.svg';
-      default:
-        return 'icon.svg';
-    }
-  }
-
-  nameForDeviceType = (deviceType: DeviceType): string => {
-    switch (deviceType) {
-      case DeviceType.Blauhoff:
-        return 'Blauhoff device';
-      case DeviceType.Growatt:
-        return 'Growatt debug device';
-      case DeviceType.Kstar:
-        return 'Kstar device';
-      case DeviceType.Deye:
-        return 'Deye device';
-      default:
-        return 'Unknown device';
-    }
+    this.log('ModbusDriver has been initialized');
   }
 
   createPairingDevice = (deviceInformation: ModbusDeviceInformation): any => {
     const result = {
-      name: this.nameForDeviceType(this.pairingDeviceType),
+      name: nameForDeviceType(this.pairingDeviceType),
       data: {
         id: `${this.pairingDeviceType}-${deviceInformation.host}-${deviceInformation.port}-${deviceInformation.unitId}`,
         deviceType: this.pairingDeviceType,
@@ -91,17 +64,13 @@ class MyDriver extends Homey.Driver {
     });
 
     session.setHandler('device_type_selected', async (data: DeviceTypeFormData): Promise<FormResult> => {
-      switch (data.deviceType) {
-        case 'blauhoff':
-          this.pairingDeviceType = DeviceType.Blauhoff;
-          break;
-        case 'growatt':
-          this.pairingDeviceType = DeviceType.Growatt;
-          break;
-        default:
-          this.error('Unknown device type', data.deviceType);
-          return { success: false, message: 'Unknown device type' };
+      const result = getDeviceType(data.deviceType);
+      if (!result) {
+        this.error('Unknown device type', data.deviceType);
+        return { success: false, message: 'Unknown device type' };
       }
+
+      this.pairingDeviceType = result;
 
       this.log('Set pairing device type', this.pairingDeviceType);
 
@@ -150,4 +119,4 @@ class MyDriver extends Homey.Driver {
 
 }
 
-module.exports = MyDriver;
+module.exports = ModbusDriver;

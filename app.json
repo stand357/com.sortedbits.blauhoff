@@ -810,55 +810,7 @@
         "en": "Modbus TCP device"
       },
       "class": "other",
-      "capabilities": [
-        "date.record",
-        "status_code.device_type",
-        "manufacturer",
-        "serial",
-        "version.dsp1",
-        "version.dsp2",
-        "version.bms",
-        "version.ems",
-        "status_code.run_mode",
-        "status_code.bat_basic_status",
-        "status_code.sys_error_code",
-        "status_code.sys_bat_error_code",
-        "measure_voltage.pv1",
-        "measure_current.pv1",
-        "measure_voltage.pv2",
-        "measure_current.pv2",
-        "measure_power.pv1",
-        "measure_power.pv2",
-        "measure_voltage.ac",
-        "measure_current.ac",
-        "measure_frequency.ac",
-        "measure_power.ac",
-        "measure_voltamperage.ac",
-        "measure_voltage.eps",
-        "measure_current.eps",
-        "measure_power.eps",
-        "measure_voltamperage.eps",
-        "measure_voltage.meter",
-        "measure_current.meter",
-        "measure_frequency.meter",
-        "measure_power.meter",
-        "measure_voltamperage.meter",
-        "measure_voltage.battery",
-        "measure_current.battery",
-        "measure_power.battery",
-        "measure_state_of_charge.battery",
-        "status_code.bat_soh",
-        "measure_voltage.battery_high",
-        "measure_voltage.battery_low",
-        "measure_temperature.battery_high",
-        "measure_temperature.battery_low",
-        "meter_power.battery_total_charge",
-        "meter_power.battery_total_discharge",
-        "meter_power.pv",
-        "meter_power.total_to_grid",
-        "meter_power.total_from_grid",
-        "meter_power.total_to_grid_pv"
-      ],
+      "capabilities": [],
       "capabilitiesOptions": {
         "date.record": {
           "title": {
@@ -920,10 +872,29 @@
             "en": "Battery error code"
           }
         },
+        "measure_voltage.phase1": {
+          "title": {
+            "en": "Phase 1 voltage"
+          },
+          "decimals": 0
+        },
+        "measure_voltage.phase2": {
+          "title": {
+            "en": "Phase 2 voltage"
+          },
+          "decimals": 0
+        },
+        "measure_voltage.phase3": {
+          "title": {
+            "en": "Phase 3 voltage"
+          },
+          "decimals": 0
+        },
         "measure_voltage.pv1": {
           "title": {
             "en": "PV1 voltage"
-          }
+          },
+          "decimals": 0
         },
         "measure_current.pv1": {
           "title": {
@@ -933,7 +904,8 @@
         "measure_voltage.pv2": {
           "title": {
             "en": "PV2 voltage"
-          }
+          },
+          "decimals": 0
         },
         "measure_current.pv2": {
           "title": {
@@ -943,17 +915,26 @@
         "measure_power.pv1": {
           "title": {
             "en": "PV1 power"
-          }
+          },
+          "decimals": 0
         },
         "measure_power.pv2": {
           "title": {
             "en": "PV2 power"
-          }
+          },
+          "decimals": 0
+        },
+        "measure_power.pv": {
+          "title": {
+            "en": "PV power"
+          },
+          "decimals": 0
         },
         "measure_voltage.ac": {
           "title": {
             "en": "AC voltage"
-          }
+          },
+          "decimals": 0
         },
         "measure_current.ac": {
           "title": {
@@ -968,7 +949,8 @@
         "measure_power.ac": {
           "title": {
             "en": "AC power"
-          }
+          },
+          "decimals": 0
         },
         "measure_voltamperage.ac": {
           "title": {
@@ -1096,6 +1078,9 @@
           }
         }
       },
+      "energy": {
+        "cumulative": true
+      },
       "platforms": [
         "local"
       ],
@@ -1126,7 +1111,56 @@
           "template": "add_devices"
         }
       ],
-      "id": "blauhoff-modbus"
+      "id": "blauhoff-modbus",
+      "settings": [
+        {
+          "id": "host",
+          "type": "text",
+          "label": {
+            "en": "Host"
+          },
+          "value": "",
+          "hint": {
+            "en": "IP address of the Modbus device"
+          }
+        },
+        {
+          "id": "port",
+          "type": "number",
+          "label": {
+            "en": "Port"
+          },
+          "value": 502,
+          "hint": {
+            "en": "The port number of the Modbus device"
+          }
+        },
+        {
+          "id": "unitId",
+          "type": "number",
+          "label": {
+            "en": "Unit ID"
+          },
+          "value": 1,
+          "hint": {
+            "en": "The unit ID of the Modbus device"
+          }
+        },
+        {
+          "id": "refreshInterval",
+          "type": "number",
+          "label": {
+            "en": "Update interval",
+            "nl": "Update interval"
+          },
+          "min": 10,
+          "value": 60,
+          "max": 120,
+          "hint": {
+            "en": "Time in seconds used to query device details"
+          }
+        }
+      ]
     }
   ],
   "capabilities": {

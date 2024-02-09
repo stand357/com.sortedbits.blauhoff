@@ -1,19 +1,96 @@
 import Homey from 'homey';
+import { ModbusAPI } from '../../api/modbus/modbus-api';
+import { getDefinition } from './helpers/get-definition';
+import { ModbusRegister } from '../../api/modbus/models/modbus-register';
+import { ModbusDeviceDefinition } from '../../api/modbus/models/modbus-device-registers';
+import { DeviceType } from './models/device-type';
+import { getDeviceType } from './helpers/device-type';
 
-class MyDevice extends Homey.Device {
+class ModbusDevice extends Homey.Device {
+
+  private api?: ModbusAPI;
+  private deviceType?: DeviceType;
+  private stop: boolean = false;
+
+  /**
+   * Handles the value received from a Modbus register.
+   *
+   * @param value - The value received from the Modbus register.
+   * @param register - The Modbus register object.
+   * @returns A Promise that resolves when the value is handled.
+   */
+  private handleValue = async (value: any, register: ModbusRegister) => {
+    const result = register.calculateValue(value);
+    this.log(register.capabilityId, result);
+    await this.setCapabilityValue(register.capabilityId, result);
+  }
+
+  /**
+   * Initializes the capabilities of the Modbus device based on the provided definition.
+   * @param definition The Modbus device definition.
+   */
+  private initializeCapabilities = async (definition: ModbusDeviceDefinition) => {
+    for (const register of definition.inputRegisters) {
+      if (!this.hasCapability(register.capabilityId)) {
+        await this.addCapability(register.capabilityId);
+      }
+    }
+    for (const register of definition.holdingRegisters) {
+      if (!this.hasCapability(register.capabilityId)) {
+        await this.addCapability(register.capabilityId);
+      }
+    }
+  }
 
   /**
    * onInit is called when the device is initialized.
    */
   async onInit() {
-    this.log('MyDevice has been initialized');
+    this.log('ModbusDevice has been initialized');
+
+    const { host, port, unitId } = this.getSettings();
+    const { deviceType } = this.getData();
+
+    this.log('ModbusDevice', host, port, unitId, deviceType);
+
+    this.deviceType = getDeviceType(deviceType);
+
+    if (this.deviceType) {
+      const registers = getDefinition(this, this.deviceType);
+      await this.initializeCapabilities(registers);
+
+      this.api = new ModbusAPI(this, host, port, unitId, registers);
+      this.api.valueResolved = this.handleValue;
+
+      const isOpen = await this.api.connect();
+
+      if (isOpen) {
+        await this.readRegisters();
+      }
+    } else {
+      this.error('Unknown device type', deviceType);
+    }
+  }
+
+  /**
+   * Reads the registers from the device.
+   *
+   * @returns {Promise<void>} A promise that resolves when the registers are read.
+   */
+  private readRegisters = async () => {
+    await this.api?.readRegisters();
+
+    if (!this.stop) {
+      const { refreshInterval } = this.getSettings();
+      await this.homey.setTimeout(this.readRegisters.bind(this), refreshInterval * 1000);
+    }
   }
 
   /**
    * onAdded is called when the user adds the device, called just after pairing.
    */
   async onAdded() {
-    this.log('MyDevice has been added');
+    this.log('ModbusDevice has been added');
   }
 
   /**
@@ -33,7 +110,7 @@ class MyDevice extends Homey.Device {
     newSettings: { [key: string]: boolean | string | number | undefined | null };
     changedKeys: string[];
   }): Promise<string | void> {
-    this.log("MyDevice settings where changed");
+    this.log('ModbusDevice settings where changed');
   }
 
   /**
@@ -42,16 +119,17 @@ class MyDevice extends Homey.Device {
    * @param {string} name The new name
    */
   async onRenamed(name: string) {
-    this.log('MyDevice was renamed');
+    this.log('ModbusDevice was renamed');
   }
 
   /**
    * onDeleted is called when the user deleted the device.
    */
   async onDeleted() {
-    this.log('MyDevice has been deleted');
+    this.log('ModbusDevice has been deleted');
+    this.stop = true;
   }
 
 }
 
-module.exports = MyDevice;
+module.exports = ModbusDevice;
