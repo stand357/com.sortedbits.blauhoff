@@ -4,7 +4,6 @@ import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { getDefinition, getModelsForBrand } from './helpers/get-definition';
 import { getBrand, iconForBrand, getDeviceModelName } from './helpers/brand-name';
 import { Brand } from './models/brand';
-import { devices } from './devices/devices';
 
 interface DeviceTypeFormData {
   deviceType: string;
