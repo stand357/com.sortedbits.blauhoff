@@ -17,21 +17,21 @@ import { ModbusDeviceDefinition } from '../../../../api/modbus/models/modbus-dev
  * Field 7: Multiplier
  */
 const inputRegisters = [
-    new ModbusRegister(0, 2, RegisterDataType.UINT16, 1, 'status_code.run_mode', RegisterCalculation.None, 0),
-    new ModbusRegister(3, 2, RegisterDataType.UINT16, 1, 'measure_voltage.pv1', RegisterCalculation.None, 0.1),
-    new ModbusRegister(7, 2, RegisterDataType.UINT16, 1, 'measure_voltage.pv2', RegisterCalculation.None, 0.1),
-    new ModbusRegister(1, 2, RegisterDataType.UINT32, 1, 'measure_power.ac', RegisterCalculation.None, 0.1),
-    new ModbusRegister(5, 2, RegisterDataType.UINT32, 1, 'measure_power.pv1', RegisterCalculation.None, 0.1),
-    new ModbusRegister(9, 2, RegisterDataType.UINT32, 1, 'measure_power.pv2', RegisterCalculation.None, 0.1),
-    new ModbusRegister(35, 2, RegisterDataType.UINT32, 1, 'measure_power.pv', RegisterCalculation.None, 0.1),
+    new ModbusRegister(0, 2, RegisterDataType.UINT16, 0, 'status_code.run_mode', RegisterCalculation.None),
+    new ModbusRegister(3, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.pv1', RegisterCalculation.None),
+    new ModbusRegister(7, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.pv2', RegisterCalculation.None),
+    new ModbusRegister(1, 2, RegisterDataType.UINT32, 0.1, 'measure_power.ac', RegisterCalculation.None),
+    new ModbusRegister(5, 2, RegisterDataType.UINT32, 0.1, 'measure_power.pv1', RegisterCalculation.None),
+    new ModbusRegister(9, 2, RegisterDataType.UINT32, 0.1, 'measure_power.pv2', RegisterCalculation.None),
+    new ModbusRegister(35, 2, RegisterDataType.UINT32, 0.1, 'measure_power.pv', RegisterCalculation.None),
 
-    new ModbusRegister(38, 2, RegisterDataType.UINT16, 1, 'measure_voltage.phase1', RegisterCalculation.None, 0.1),
-    new ModbusRegister(53, 2, RegisterDataType.UINT32, 1, 'meter_power.today', RegisterCalculation.None, 0.1),
-    new ModbusRegister(55, 2, RegisterDataType.UINT32, 1, 'meter_power.total', RegisterCalculation.None, 0.1),
+    new ModbusRegister(38, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.phase1', RegisterCalculation.None),
+    new ModbusRegister(53, 2, RegisterDataType.UINT32, 0.1, 'meter_power.today', RegisterCalculation.None),
+    new ModbusRegister(55, 2, RegisterDataType.UINT32, 0.1, 'meter_power.total', RegisterCalculation.None),
 ];
 
 const holdingRegisters: ModbusRegister[] = [
-    new ModbusRegister(23, 5, RegisterDataType.STRING, 1, 'serial', RegisterCalculation.None, 0),
+    new ModbusRegister(23, 5, RegisterDataType.STRING, 0, 'serial', RegisterCalculation.None),
 ];
 
 const inputRegisterResultConversion = (log: IBaseLogger, readRegisterResult: ReadRegisterResult, register: ModbusRegister): any => {

@@ -9,21 +9,19 @@ export class ModbusRegister {
     scale: number;
     capabilityId: string;
     calculation: RegisterCalculation;
-    multiplier: number;
 
-    constructor(address: number, length: number, dataType: RegisterDataType, scale: number, capabilityId: string, calculation: RegisterCalculation, multiplier: number) {
+    constructor(address: number, length: number, dataType: RegisterDataType, scale: number, capabilityId: string, calculation: RegisterCalculation) {
         this.address = address;
         this.length = length;
         this.dataType = dataType;
         this.scale = scale;
         this.capabilityId = capabilityId;
         this.calculation = calculation;
-        this.multiplier = multiplier;
     }
 
     calculateValue(value: any): any {
-        if (Number(value)) {
-            return value * this.multiplier;
+        if (Number(value) && this.scale !== 0) {
+            return value * this.scale;
         }
         return value;
     }

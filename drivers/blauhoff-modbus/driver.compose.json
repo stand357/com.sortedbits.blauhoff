@@ -50,6 +50,11 @@
         "en": "Run mode"
       }
     },
+    "status_code.work_mode": {
+      "title": {
+        "en": "Work mode"
+      }
+    },
     "status_code.bat_basic_status": {
       "title": {
         "en": "Battery status"
@@ -216,6 +221,11 @@
       }
     },
     "status_code.bat_soh": {
+      "title": {
+        "en": "Battery SOH"
+      }
+    },
+    "measure_state_of_charge.bat_soh": {
       "title": {
         "en": "Battery SOH"
       }
