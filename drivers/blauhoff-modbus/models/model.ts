@@ -6,6 +6,7 @@ export interface DeviceModel {
     brand: Brand;
     name: string;
     description: string;
+    debug: boolean;
 
     getDefinition: () => ModbusDeviceDefinition;
 }

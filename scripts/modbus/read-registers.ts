@@ -1,6 +1,6 @@
 import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { ModbusRegister } from '../../api/modbus/models/modbus-register';
-import { mod_tl3_registers } from '../../drivers/blauhoff-modbus/definitions/growatt/mod-XXXX-tl3';
+import { mod_tl3_registers } from '../../drivers/blauhoff-modbus/devices/growatt/mod-XXXX-tl3';
 import { Logger } from '../../helpers/log';
 
 const host = '10.210.5.12';

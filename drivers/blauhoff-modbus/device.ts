@@ -73,35 +73,33 @@ class ModbusDevice extends Homey.Device {
   async onInit() {
     this.log('ModbusDevice has been initialized');
 
-    const {
-      host, port, unitId,
-    } = this.getSettings();
+    const { host, port, unitId } = this.getSettings();
     const { deviceType, modelId } = this.getData();
 
     this.log('ModbusDevice', host, port, unitId, deviceType, modelId);
 
     const brand = getBrand(deviceType);
-
-    if (brand) {
-      const deviceDefinition = getDefinition(brand, modelId);
-      if (!deviceDefinition) {
-        this.error('Unknown device type', deviceType);
-        throw new Error('Unknown device type');
-      }
-
-      await this.initializeCapabilities(deviceDefinition);
-
-      this.api = new ModbusAPI(this, host, port, unitId, deviceDefinition);
-      this.api.onDataReceived = this.onDataReceived;
-      this.api.onError = this.onError;
-
-      const isOpen = await this.api.connect();
-
-      if (isOpen) {
-        await this.readRegisters();
-      }
-    } else {
+    if (!brand) {
       this.error('Unknown device type', deviceType);
+      throw new Error('Unknown device type');
+    }
+
+    const deviceDefinition = getDefinition(brand, modelId);
+    if (!deviceDefinition) {
+      this.error('Unknown device type', deviceType);
+      throw new Error('Unknown device type');
+    }
+
+    await this.initializeCapabilities(deviceDefinition);
+
+    this.api = new ModbusAPI(this, host, port, unitId, deviceDefinition);
+    this.api.onDataReceived = this.onDataReceived;
+    this.api.onError = this.onError;
+
+    const isOpen = await this.api.connect();
+
+    if (isOpen) {
+      await this.readRegisters();
     }
   }
 
@@ -111,8 +109,13 @@ class ModbusDevice extends Homey.Device {
    * @returns {Promise<void>} A promise that resolves when the registers are read.
    */
   private readRegisters = async () => {
+    if (!this.api) {
+      this.error('ModbusAPI is not initialized');
+      return;
+    }
+
     this.log('Reading registers for ', this.getName());
-    await this.api?.readRegisters();
+    await this.api.readRegisters();
 
     if (!this.stop) {
       const { refreshInterval } = this.getSettings();
