@@ -24,30 +24,17 @@ export const getDeviceModelName = (brandName: Brand, modelId: string): string =>
         return model.name;
     }
 
-    switch (brandName) {
-        case Brand.Blauhoff:
-            return 'Unknown Blauhoff device';
-        case Brand.Growatt:
-            return 'Unknown Growatt debug device';
-        case Brand.Kstar:
-            return 'Unknown Kstar device';
-        case Brand.Deye:
-            return 'Unknown Deye device';
-        default:
-            return 'Unknown device';
-    }
+    const output = brandName.charAt(0).toUpperCase() + brandName.slice(1);
+    return `Unknown ${output} device`;
 };
 
 export const iconForBrand = (brandName: Brand): string => {
     switch (brandName) {
         case Brand.Blauhoff:
-            return 'blauhoff-device.svg';
         case Brand.Growatt:
-            return 'growatt-device.svg';
         case Brand.Kstar:
-            return 'kstar-device.svg';
         case Brand.Deye:
-            return 'deye-device.svg';
+            return `${brandName}-device.svg`;
         default:
             return 'icon.svg';
     }

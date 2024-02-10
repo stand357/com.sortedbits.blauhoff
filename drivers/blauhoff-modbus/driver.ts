@@ -107,6 +107,7 @@ class ModbusDriver extends Homey.Driver {
 
     session.setHandler('list_models', async (): Promise<DeviceModelDTO[]> => {
       this.log('Listing models for', this.pairingDeviceBrand);
+
       return getModelsForBrand(this.pairingDeviceBrand).map((model) => {
         return {
           id: model.id,
