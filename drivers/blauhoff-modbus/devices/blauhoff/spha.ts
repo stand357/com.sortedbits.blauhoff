@@ -17,20 +17,30 @@ import { ModbusDeviceDefinition } from '../../../../api/modbus/models/modbus-dev
  * Field 7: Multiplier
  */
 const inputRegisters = [
-    new ModbusRegister(0, 2, RegisterDataType.FLOAT32, 1, 'measure_voltage.ac', RegisterCalculation.None, 1),
-    new ModbusRegister(6, 2, RegisterDataType.FLOAT32, 1, 'measure_current.ac', RegisterCalculation.None, 1),
-    new ModbusRegister(12, 2, RegisterDataType.FLOAT32, 1, 'measure_power.ac', RegisterCalculation.None, 1),
-    new ModbusRegister(18, 2, RegisterDataType.FLOAT32, 1, 'measure_voltamperage.ac', RegisterCalculation.None, 1),
-    new ModbusRegister(70, 2, RegisterDataType.FLOAT32, 1, 'measure_frequence.ac', RegisterCalculation.None, 1),
+    new ModbusRegister(36101, 1, RegisterDataType.UINT16, 1, 'status_code.run_mode', RegisterCalculation.None, 1),
+
+    new ModbusRegister(36108, 1, RegisterDataType.UINT16, 1, 'measure_voltage.pv1', RegisterCalculation.None, 0.1),
+    new ModbusRegister(36109, 1, RegisterDataType.UINT16, 1, 'measure_current.pv1', RegisterCalculation.None, 0.1),
+
+    new ModbusRegister(36110, 1, RegisterDataType.UINT16, 1, 'measure_voltage.pv2', RegisterCalculation.None, 0.1),
+    new ModbusRegister(36111, 1, RegisterDataType.UINT16, 1, 'measure_current.pv2', RegisterCalculation.None, 0.1),
+
+    new ModbusRegister(36112, 1, RegisterDataType.UINT16, 1, 'measure_power.pv1', RegisterCalculation.None, 1),
+    new ModbusRegister(36113, 1, RegisterDataType.UINT16, 1, 'measure_power.pv2', RegisterCalculation.None, 1),
+    new ModbusRegister(36205, 2, RegisterDataType.UINT16, 1, 'measure_power.pv', RegisterCalculation.None, 1),
+
+    new ModbusRegister(36155, 1, RegisterDataType.UINT16, 1, 'measure_state_of_charge.battery', RegisterCalculation.None, 1),
+
+    new ModbusRegister(36151, 1, RegisterDataType.UINT16, 1, 'measure_voltage.battery', RegisterCalculation.None, 0.1),
 ];
 
 const holdingRegisters: ModbusRegister[] = [
-    new ModbusRegister(64512, 2, RegisterDataType.UINT32, 1, 'serial', RegisterCalculation.None, 1),
-    // new ModbusRegister(64515, 1, RegisterDataType.UINT32, 1, 'version.ems', RegisterCalculation.None, 1),
 ];
 
 const inputRegisterResultConversion = (log: IBaseLogger, readRegisterResult: ReadRegisterResult, register: ModbusRegister): any => {
     switch (register.dataType) {
+        case RegisterDataType.UINT16:
+            return readRegisterResult.buffer.readUInt16BE();
         case RegisterDataType.FLOAT32:
             return readRegisterResult.buffer.readFloatBE();
         case RegisterDataType.UINT32:
