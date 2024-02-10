@@ -56,11 +56,11 @@ export class ModbusAPI {
             await this.client.connectTCP(this.host, {
                 port: this.port,
                 keepAlive: true,
-                timeout: 22,
+                timeout: 1000,
             });
 
-            this.client.setID(this.unitId);
-            this.client.setTimeout(500);
+            this.client.setID(1);
+            this.client.setTimeout(1000);
 
             this.client.on('close', () => {
                 this.log.log('Modbus connection closed');
