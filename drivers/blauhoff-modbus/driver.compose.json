@@ -290,6 +290,9 @@
       "id": "device_type"
     },
     {
+      "id": "device_model"
+    },
+    {
       "id": "modbus_information"
     },
     {

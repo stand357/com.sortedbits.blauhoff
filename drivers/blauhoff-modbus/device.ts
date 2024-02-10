@@ -3,13 +3,12 @@ import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { getDefinition } from './helpers/get-definition';
 import { ModbusRegister } from '../../api/modbus/models/modbus-register';
 import { ModbusDeviceDefinition } from '../../api/modbus/models/modbus-device-registers';
-import { DeviceType } from './models/device-type';
-import { getDeviceType } from './helpers/device-type';
+import { getBrand } from './helpers/brand-name';
+import { orderModbusRegisters } from './helpers/order-modbus-registers';
 
 class ModbusDevice extends Homey.Device {
 
   private api?: ModbusAPI;
-  private deviceType?: DeviceType;
   private stop: boolean = false;
   private reachable: boolean = true;
 
@@ -20,7 +19,7 @@ class ModbusDevice extends Homey.Device {
    * @param register - The Modbus register object.
    * @returns A Promise that resolves when the value is handled.
    */
-  private dataReceived = async (value: any, register: ModbusRegister) => {
+  private onDataReceived = async (value: any, register: ModbusRegister) => {
     const result = register.calculateValue(value);
     this.log(register.capabilityId, result);
     await this.setCapabilityValue(register.capabilityId, result);
@@ -30,6 +29,14 @@ class ModbusDevice extends Homey.Device {
     }
   }
 
+  /**
+   * Handles the error that occurs during a Modbus operation.
+   * If the error is a TransactionTimedOutError, sets the device as unreachable.
+   * Otherwise, logs the error message.
+   *
+   * @param error - The error that occurred.
+   * @param register - The Modbus register associated with the error.
+   */
   private onError = async (error: unknown, register: ModbusRegister) => {
     if (error && (error as any)['name'] && (error as any)['name'] === 'TransactionTimedOutError') {
       this.reachable = false;
@@ -43,12 +50,17 @@ class ModbusDevice extends Homey.Device {
    * @param definition The Modbus device definition.
    */
   private initializeCapabilities = async (definition: ModbusDeviceDefinition) => {
-    for (const register of definition.inputRegisters) {
+    const inputRegisters = orderModbusRegisters(definition.inputRegisters);
+
+    for (const register of inputRegisters) {
       if (!this.hasCapability(register.capabilityId)) {
         await this.addCapability(register.capabilityId);
       }
     }
-    for (const register of definition.holdingRegisters) {
+
+    const holdingRegisters = orderModbusRegisters(definition.holdingRegisters);
+
+    for (const register of holdingRegisters) {
       if (!this.hasCapability(register.capabilityId)) {
         await this.addCapability(register.capabilityId);
       }
@@ -61,19 +73,26 @@ class ModbusDevice extends Homey.Device {
   async onInit() {
     this.log('ModbusDevice has been initialized');
 
-    const { host, port, unitId } = this.getSettings();
-    const { deviceType } = this.getData();
+    const {
+      host, port, unitId,
+    } = this.getSettings();
+    const { deviceType, modelId } = this.getData();
 
-    this.log('ModbusDevice', host, port, unitId, deviceType);
+    this.log('ModbusDevice', host, port, unitId, deviceType, modelId);
 
-    this.deviceType = getDeviceType(deviceType);
+    const brand = getBrand(deviceType);
 
-    if (this.deviceType) {
-      const registers = getDefinition(this, this.deviceType);
-      await this.initializeCapabilities(registers);
+    if (brand) {
+      const deviceDefinition = getDefinition(brand, modelId);
+      if (!deviceDefinition) {
+        this.error('Unknown device type', deviceType);
+        throw new Error('Unknown device type');
+      }
 
-      this.api = new ModbusAPI(this, host, port, unitId, registers);
-      this.api.dataReceived = this.dataReceived;
+      await this.initializeCapabilities(deviceDefinition);
+
+      this.api = new ModbusAPI(this, host, port, unitId, deviceDefinition);
+      this.api.onDataReceived = this.onDataReceived;
       this.api.onError = this.onError;
 
       const isOpen = await this.api.connect();

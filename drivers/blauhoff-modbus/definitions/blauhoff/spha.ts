@@ -1,9 +1,9 @@
 import { ReadRegisterResult } from 'modbus-serial/ModbusRTU';
-import { RegisterCalculation } from '../../../api/modbus/models/register-calculation';
-import { RegisterDataType } from '../../../api/modbus/models/register-datatype';
-import { ModbusRegister } from '../../../api/modbus/models/modbus-register';
-import { IBaseLogger } from '../../../helpers/log';
-import { ModbusDeviceDefinition } from '../../../api/modbus/models/modbus-device-registers';
+import { RegisterCalculation } from '../../../../api/modbus/models/register-calculation';
+import { RegisterDataType } from '../../../../api/modbus/models/register-datatype';
+import { ModbusRegister } from '../../../../api/modbus/models/modbus-register';
+import { IBaseLogger } from '../../../../helpers/log';
+import { ModbusDeviceDefinition } from '../../../../api/modbus/models/modbus-device-registers';
 
 /**
  * This is the list of registers for the Blauhoff Modbus device.
@@ -41,7 +41,7 @@ const inputRegisterResultConversion = (log: IBaseLogger, readRegisterResult: Rea
     }
 };
 
-export const blauhoffRegisters: ModbusDeviceDefinition = {
+export const blauhoff_spha: ModbusDeviceDefinition = {
     inputRegisters,
     holdingRegisters,
     inputRegisterResultConversion,

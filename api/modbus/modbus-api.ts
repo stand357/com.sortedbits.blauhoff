@@ -14,7 +14,7 @@ export class ModbusAPI {
     private port: number;
     private unitId: number;
     private log: IBaseLogger;
-    private deviceInfo: ModbusDeviceDefinition;
+    private deviceDefinition: ModbusDeviceDefinition;
 
     /**
      * Callback function that is called when a value is resolved.
@@ -23,7 +23,7 @@ export class ModbusAPI {
      * @param register - The Modbus register associated with the resolved value.
      * @returns A promise that resolves when the callback function completes.
      */
-    dataReceived?: (value: any, register: ModbusRegister) => Promise<void>;
+    onDataReceived?: (value: any, register: ModbusRegister) => Promise<void>;
     onError?: (error: unknown, register: ModbusRegister) => Promise<void>;
 
     /**
@@ -32,15 +32,15 @@ export class ModbusAPI {
      * @param host - The host address.
      * @param port - The port number.
      * @param unitId - The unit ID.
-     * @param deviceInfo - The Modbus device information.
+     * @param deviceDefinition - The Modbus device information.
      */
-    constructor(log: IBaseLogger, host: string, port: number, unitId: number, deviceInfo: ModbusDeviceDefinition) {
+    constructor(log: IBaseLogger, host: string, port: number, unitId: number, deviceDefinition: ModbusDeviceDefinition) {
         this.host = host;
         this.port = port;
         this.unitId = unitId;
         this.client = new ModbusRTU();
         this.log = log;
-        this.deviceInfo = deviceInfo;
+        this.deviceDefinition = deviceDefinition;
     }
 
     /**
@@ -87,12 +87,12 @@ export class ModbusAPI {
      * @param host - The host address of the Modbus device.
      * @param port - The port number of the Modbus device.
      * @param unitId - The unit ID of the Modbus device.
-     * @param deviceInfo - The device information of the Modbus device.
+     * @param deviceDefinition - The device information of the Modbus device.
      * @returns A promise that resolves to a boolean indicating the success of the connection.
      */
-    static verifyConnection = async (log: IBaseLogger, host: string, port: number, unitId: number, deviceInfo: ModbusDeviceDefinition): Promise<boolean> => {
+    static verifyConnection = async (log: IBaseLogger, host: string, port: number, unitId: number, deviceDefinition: ModbusDeviceDefinition): Promise<boolean> => {
         log.log('Creating modbus API');
-        const api = new ModbusAPI(log, host, port, unitId, deviceInfo);
+        const api = new ModbusAPI(log, host, port, unitId, deviceDefinition);
 
         log.log('Connecting...');
         const result = await api.connect();
@@ -111,17 +111,20 @@ export class ModbusAPI {
      * @returns {Promise<void>} A promise that resolves when all registers have been read.
      */
     readRegisters = async () => {
-        if (!this.dataReceived) {
+        if (!this.onDataReceived) {
             this.log.error('No valueResolved function set');
         }
 
-        for (const register of this.deviceInfo.inputRegisters) {
+        const addresses = this.deviceDefinition.inputRegisters.map((register) => register.address);
+        this.log.log('Reading input registers', addresses);
+
+        for (const register of this.deviceDefinition.inputRegisters) {
             try {
                 const input = await this.client.readInputRegisters(register.address, register.length);
-                const result = this.deviceInfo.inputRegisterResultConversion(this.log, input, register);
+                const result = this.deviceDefinition.inputRegisterResultConversion(this.log, input, register);
 
-                if (this.dataReceived) {
-                    await this.dataReceived(result, register);
+                if (this.onDataReceived) {
+                    await this.onDataReceived(result, register);
                 }
             } catch (error) {
                 if (this.onError) {
@@ -132,13 +135,13 @@ export class ModbusAPI {
             }
         }
 
-        for (const register of this.deviceInfo.holdingRegisters) {
+        for (const register of this.deviceDefinition.holdingRegisters) {
             try {
                 const input = await this.client.readHoldingRegisters(register.address, register.length);
-                const result = this.deviceInfo.holdingRegisterResultConversion(this.log, input, register);
+                const result = this.deviceDefinition.holdingRegisterResultConversion(this.log, input, register);
 
-                if (this.dataReceived) {
-                    await this.dataReceived(result, register);
+                if (this.onDataReceived) {
+                    await this.onDataReceived(result, register);
                 }
             } catch (error) {
                 if (this.onError) {

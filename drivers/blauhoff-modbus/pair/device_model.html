@@ -1,0 +1,111 @@
+<script type="application/javascript">
+
+    function noModelsFound() {
+        var element = document.getElementById('device-model-list');
+        element.innerHTML = '<div class="homey-form-group">No models found</div>';
+    }
+
+    function renderModels(models) {
+        var element = document.getElementById('device-model-list');
+        element.innerHTML = '';
+
+        models.forEach(function (model) {
+            var div = document.createElement('div');
+            div.classList.add('homey-form-group');
+
+            var label = document.createElement('label');
+            label.classList.add('homey-form-radio');
+
+            var input = document.createElement('input');
+            input.classList.add('homey-form-radio-input');
+            input.setAttribute('type', 'radio');
+            input.setAttribute('name', 'model_id');
+            input.setAttribute('value', model.id);
+
+            var span = document.createElement('span');
+            span.classList.add('homey-form-radio-checkmark');
+
+            var text = document.createElement('span');
+            text.classList.add('homey-form-radio-text');
+            text.innerHTML = model.name;
+
+            label.appendChild(input);
+            label.appendChild(span);
+            label.appendChild(text);
+
+            var description = document.createElement('div');
+            description.classList.add('device-description');
+            description.innerHTML = model.description;
+
+            div.appendChild(label);
+            div.appendChild(description);
+
+            element.appendChild(div);
+        });
+    }
+
+    function getModels() {
+        var button = document.getElementById('submit-button');
+        button.classList.add('is-loading');
+
+        Homey.emit("list_models").then(function (result) {
+            button.classList.remove('is-loading');
+            if (result.lenght === 0) {
+                noModelsFound();
+            } else {
+                renderModels(result);
+            }
+        });
+    }
+
+    function submitForm() {
+        var button = document.getElementById('submit-button');
+        button.classList.add('is-loading');
+
+        var model = document.querySelector('input[name="model_id"]:checked').value;
+
+        var data = {
+            model: model,
+        };
+
+        Homey.emit("device_model_selected", data).then(function (result) {
+            button.classList.remove('is-loading');
+
+            if (!result.success) {
+                Homey.alert(result.message);
+            }
+        });
+    }
+</script>
+
+<style>
+    .homey-form {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .device-description {
+        color: rgb(147, 147, 154);
+    }
+</style>
+
+<form class="homey-form">
+    <div class="top-aligned">
+        <fieldset class="homey-form-fieldset">
+            <legend class="homey-form-legend" data-i18n="model_select.title"></legend>
+        </fieldset>
+
+        <div class="modbus-device-types" id="device-model-list">
+            <div class="homey-form-group">Loading models...</div>
+        </div>
+    </div>
+    <button id="submit-button" type="button" onclick="submitForm()" class="homey-button-primary-full"
+        data-i18n="model_select.submit">
+    </button>
+</form>
+
+<script>
+    getModels();
+</script>

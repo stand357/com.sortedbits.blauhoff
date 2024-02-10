@@ -20,7 +20,7 @@
             if (result.success !== true) {
                 Homey.alert(`Failed to connect, please check the form: ${JSON.stringify(result.message)}`);
             } else {
-                console.log('Found devices: ', result.heaters);
+                Homey.alert(result.message);
             }
         });
     }
@@ -46,7 +46,7 @@
         <div class="homey-form-group intro" data-i18n="modbus_pair.intro" />
 
         <div class="homey-form-group">
-            <a href="https://sortedbits.com" target="_blank" data-i18n="modbus_pair.linktext"></a>
+            <a href="https://blauhoff.com" target="_blank" data-i18n="modbus_pair.linktext"></a>
         </div>
 
         <div class="homey-form-group">
