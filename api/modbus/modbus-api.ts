@@ -25,6 +25,7 @@ export class ModbusAPI {
      */
     onDataReceived?: (value: any, register: ModbusRegister) => Promise<void>;
     onError?: (error: unknown, register: ModbusRegister) => Promise<void>;
+    onDisconnect?: () => Promise<void>;
 
     /**
      * Represents a Modbus API.
@@ -63,6 +64,12 @@ export class ModbusAPI {
 
             this.client.on('close', () => {
                 this.log.log('Modbus connection closed');
+
+                this.onDisconnect?.().then(() => {
+                    this.log.log('Modbus connection re-established');
+                }).catch((error) => {
+                    this.log.error('Failed to re-establish Modbus connection', error);
+                });
             });
 
             this.log.log('Modbus connection established', this.client.isOpen);
@@ -80,6 +87,29 @@ export class ModbusAPI {
         this.client.close(() => { });
     }
 
+    /*
+    reconnect = async () => {
+        if (this.client.isOpen) {
+            return;
+        }
+
+        this.log.log('Reconnecting to Modbus host:', this.host, 'port:', this.port, 'unitId:', this.unitId);
+
+        try {
+            await this.client.connectTCP(this.host, {
+                port: this.port,
+                keepAlive: true,
+                timeout: 22,
+            });
+        } catch (error) {
+            this.log.error('Failed to reconnect to Modbus host:', this.host, 'port:', this.port, 'unitId:', this.unitId);
+        }
+
+        if (!this.client.isOpen) {
+
+        }
+    }
+*/
     /**
      * Verifies the connection to a Modbus device.
      *

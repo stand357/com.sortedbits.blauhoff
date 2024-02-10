@@ -12,6 +12,20 @@ class ModbusDevice extends Homey.Device {
   private stop: boolean = false;
   private reachable: boolean = true;
 
+  private onDisconnect = async () => {
+    if (this.stop || !this.api) {
+      return;
+    }
+
+    const isOpen = await this.api.connect();
+
+    if (!isOpen) {
+      this.reachable = false;
+
+      this.homey.setTimeout(this.onDisconnect, 60000);
+    }
+  };
+
   /**
    * Handles the value received from a Modbus register.
    *
@@ -95,6 +109,7 @@ class ModbusDevice extends Homey.Device {
     this.api = new ModbusAPI(this, host, port, unitId, deviceDefinition);
     this.api.onDataReceived = this.onDataReceived;
     this.api.onError = this.onError;
+    this.api.onDisconnect = this.onDisconnect;
 
     const isOpen = await this.api.connect();
 
