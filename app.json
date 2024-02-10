@@ -27,6 +27,7 @@
     "name": "Wim Haanstra",
     "email": "wim@x256.nl"
   },
+  "brandColor": "#263D7F",
   "flow": {
     "actions": [
       {
@@ -1095,6 +1096,9 @@
       "pair": [
         {
           "id": "device_type"
+        },
+        {
+          "id": "device_model"
         },
         {
           "id": "modbus_information"

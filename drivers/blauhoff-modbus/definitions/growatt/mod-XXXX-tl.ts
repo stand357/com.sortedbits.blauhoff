@@ -1,9 +1,9 @@
 import { ReadRegisterResult } from 'modbus-serial/ModbusRTU';
-import { RegisterCalculation } from '../../../api/modbus/models/register-calculation';
-import { RegisterDataType } from '../../../api/modbus/models/register-datatype';
-import { ModbusRegister } from '../../../api/modbus/models/modbus-register';
-import { IBaseLogger } from '../../../helpers/log';
-import { ModbusDeviceDefinition } from '../../../api/modbus/models/modbus-device-registers';
+import { RegisterCalculation } from '../../../../api/modbus/models/register-calculation';
+import { RegisterDataType } from '../../../../api/modbus/models/register-datatype';
+import { ModbusRegister } from '../../../../api/modbus/models/modbus-register';
+import { IBaseLogger } from '../../../../helpers/log';
+import { ModbusDeviceDefinition } from '../../../../api/modbus/models/modbus-device-registers';
 
 /**
  * This is the list of registers for the Blauhoff Modbus device.
@@ -26,8 +26,6 @@ const inputRegisters = [
     new ModbusRegister(35, 2, RegisterDataType.UINT32, 1, 'measure_power.pv', RegisterCalculation.None, 0.1),
 
     new ModbusRegister(38, 2, RegisterDataType.UINT16, 1, 'measure_voltage.phase1', RegisterCalculation.None, 0.1),
-    new ModbusRegister(42, 2, RegisterDataType.UINT16, 1, 'measure_voltage.phase2', RegisterCalculation.None, 0.1),
-    new ModbusRegister(46, 2, RegisterDataType.UINT16, 1, 'measure_voltage.phase3', RegisterCalculation.None, 0.1),
     new ModbusRegister(53, 2, RegisterDataType.UINT32, 1, 'meter_power.today', RegisterCalculation.None, 0.1),
     new ModbusRegister(55, 2, RegisterDataType.UINT32, 1, 'meter_power.total', RegisterCalculation.None, 0.1),
 ];
@@ -52,7 +50,8 @@ const inputRegisterResultConversion = (log: IBaseLogger, readRegisterResult: Rea
     }
 };
 
-export const growattRegisters: ModbusDeviceDefinition = {
+// eslint-disable-next-line camelcase
+export const mod_tl_registers: ModbusDeviceDefinition = {
     inputRegisters,
     holdingRegisters,
     inputRegisterResultConversion,

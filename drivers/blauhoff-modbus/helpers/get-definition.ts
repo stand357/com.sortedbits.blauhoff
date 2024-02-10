@@ -1,25 +1,35 @@
 import { ModbusDeviceDefinition } from '../../../api/modbus/models/modbus-device-registers';
-import { IBaseLogger } from '../../../helpers/log';
-import { DeviceType } from '../models/device-type';
-import { blauhoffRegisters } from '../definitions/blauhoff';
-import { growattRegisters } from '../definitions/growatt';
+import { Brand } from '../models/brand';
+import { DeviceModel } from '../models/model';
+import { models } from './device-models';
 
 /**
  * Retrieves the Modbus device definition based on the device type.
  *
  * @param log - The logger instance.
- * @param deviceType - The type of the device.
+ * @param brand - The type of the device.
  * @returns The Modbus device definition.
  * @throws Error if the device type is unknown.
  */
-export const getDefinition = (log: IBaseLogger, deviceType: DeviceType): ModbusDeviceDefinition => {
-    switch (deviceType) {
-        case DeviceType.Blauhoff:
-            return blauhoffRegisters;
-        case DeviceType.Growatt:
-            return growattRegisters;
-        default:
-            log.error('Unknown device type', deviceType);
-            throw new Error('Unknown device type');
+export const getDeviceModel = (brand: Brand, modelId: string): DeviceModel | undefined => {
+    const register = models.find((model) => model.id === modelId && model.brand === brand);
+    return register;
+};
+
+/**
+ * Retrieves the Modbus device definition based on the device type.
+ *
+ * @param log - The logger instance.
+ * @param brand - The type of the device.
+ * @returns The Modbus device definition.
+ * @throws Error if the device type is unknown.
+ */
+export const getDefinition = (brand: Brand, modelId: string): ModbusDeviceDefinition | undefined => {
+    const model = getDeviceModel(brand, modelId);
+
+    if (model) {
+        return model.getDefinition();
     }
+
+    return undefined;
 };

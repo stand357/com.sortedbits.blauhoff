@@ -17,10 +17,8 @@
         Homey.emit("form_complete", data).then(function (result) {
             button.classList.remove('is-loading');
 
-            if (result.success !== true) {
+            if (!result.success) {
                 Homey.alert(`Failed to connect, please check the form: ${JSON.stringify(result.message)}`);
-            } else {
-                console.log('Found devices: ', result.heaters);
             }
         });
     }
@@ -46,7 +44,7 @@
         <div class="homey-form-group intro" data-i18n="pair.intro" />
 
         <div class="homey-form-group">
-            <a href="https://sortedbits.com" target="_blank" data-i18n="pair.linktext"></a>
+            <a href="https://blauhoff.com" target="_blank" data-i18n="pair.linktext"></a>
         </div>
 
         <div class="homey-form-group">

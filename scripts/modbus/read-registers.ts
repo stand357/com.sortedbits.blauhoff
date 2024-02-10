@@ -1,6 +1,6 @@
 import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { ModbusRegister } from '../../api/modbus/models/modbus-register';
-import { growattRegisters } from '../../drivers/blauhoff-modbus/definitions/growatt';
+import { mod_tl3_registers } from '../../drivers/blauhoff-modbus/definitions/growatt/mod-XXXX-tl3';
 import { Logger } from '../../helpers/log';
 
 const host = '10.210.5.12';
@@ -23,7 +23,7 @@ const valueResolved = async (value: any, register: ModbusRegister) => {
     log.log(register.capabilityId, result);
 };
 
-const api = new ModbusAPI(log, host, port, unitId, growattRegisters);
+const api = new ModbusAPI(log, host, port, unitId, mod_tl3_registers);
 
 const readRegisters = () => {
     api.readRegisters().then(() => {
@@ -36,7 +36,7 @@ const readRegisters = () => {
 };
 
 api.connect().then((result) => {
-    api.dataReceived = valueResolved;
+    api.onDataReceived = valueResolved;
     readRegisters();
 }).catch((error) => {
     log.error('error', error);

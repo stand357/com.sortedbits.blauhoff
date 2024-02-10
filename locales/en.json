@@ -20,5 +20,9 @@
     "device_select": {
         "title": "Select your device type",
         "submit": "Next"
+    },
+    "model_select": {
+        "title": "Select your device model",
+        "submit": "Next"
     }
 }

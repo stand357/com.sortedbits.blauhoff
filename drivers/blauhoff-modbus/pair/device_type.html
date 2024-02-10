@@ -13,10 +13,8 @@
         Homey.emit("device_type_selected", data).then(function (result) {
             button.classList.remove('is-loading');
 
-            if (result.success !== true) {
-                Homey.alert(`Failed to connect, please check the form: ${JSON.stringify(result.message)}`);
-            } else {
-                console.log('Found devices: ', result.heaters);
+            if (!result.success) {
+                Homey.alert(result.message);
             }
         });
     }
