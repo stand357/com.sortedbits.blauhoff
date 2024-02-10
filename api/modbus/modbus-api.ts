@@ -2,6 +2,7 @@ import ModbusRTU from 'modbus-serial';
 import { IBaseLogger } from '../../helpers/log';
 import { ModbusRegister } from './models/modbus-register';
 import { ModbusDeviceDefinition } from './models/modbus-device-registers';
+import { Mode1, Mode2, Mode3 } from '../blauhoff/models/options/set-mode.options';
 
 /**
  * Represents a Modbus API.
@@ -80,6 +81,69 @@ export class ModbusAPI {
         }
     }
 
+    setMode1 = async (options: Mode1): Promise<boolean> => {
+        try {
+            await this.client.writeRegisters(60001, [
+                0, // Work mode
+                1, // Remote start/stop inverter
+                options.maxFeedInLimit, // MaxFeedinLimit
+                0, // Battery Power Ref (-5000 - 5000)
+                0, // uwPowerRefInvLimit (0 - 5000)
+                0, // Power Limit of PV (0 - 8000)
+                5000, // Timeout
+                0, // VPPtimer_enable (0 = disable, 1 = enable)
+                options.batCapMin, // BatCapMin (10 - 100)
+            ]);
+
+            return true;
+        } catch (error) {
+            this.log.error('Failed to setMode1', error);
+            return false;
+        }
+    }
+
+    setMode2 = async (options: Mode2): Promise<boolean> => {
+        try {
+            await this.client.writeRegisters(60001, [
+                1, // Work mode
+                1, // Remote start/stop inverter
+                100, // MaxFeedinLimit
+                options.batPower, // Battery Power Ref / Battery charge power (-5000 - 5000)
+                0, // uwPowerRefInvLimit (0 - 5000)
+                0, // Power Limit of PV (0 - 8000)
+                options.timeout, // Timeout
+                1, // VPPtimer_enable (0 = disable, 1 = enable)
+                options.batCapMin, // BatCapMin (10 - 100)
+            ]);
+
+            return true;
+        } catch (error) {
+            this.log.error('Failed to setMode1', error);
+            return false;
+        }
+    }
+
+    setMode3 = async (options: Mode3): Promise<boolean> => {
+        try {
+            await this.client.writeRegisters(60001, [
+                1, // Work mode
+                1, // Remote start/stop inverter
+                100, // MaxFeedinLimit
+                options.batPower, // Battery Power Ref / Battery charge power (-5000 - 5000)
+                0, // uwPowerRefInvLimit (0 - 5000)
+                0, // Power Limit of PV (0 - 8000)
+                options.timeout, // Timeout
+                1, // VPPtimer_enable (0 = disable, 1 = enable)
+                options.batCapMin, // BatCapMin (10 - 100)
+            ]);
+
+            return true;
+        } catch (error) {
+            this.log.error('Failed to setMode1', error);
+            return false;
+        }
+    }
+
     /**
      * Disconnects from the Modbus server.
      */
@@ -87,29 +151,6 @@ export class ModbusAPI {
         this.client.close(() => { });
     }
 
-    /*
-    reconnect = async () => {
-        if (this.client.isOpen) {
-            return;
-        }
-
-        this.log.log('Reconnecting to Modbus host:', this.host, 'port:', this.port, 'unitId:', this.unitId);
-
-        try {
-            await this.client.connectTCP(this.host, {
-                port: this.port,
-                keepAlive: true,
-                timeout: 22,
-            });
-        } catch (error) {
-            this.log.error('Failed to reconnect to Modbus host:', this.host, 'port:', this.port, 'unitId:', this.unitId);
-        }
-
-        if (!this.client.isOpen) {
-
-        }
-    }
-*/
     /**
      * Verifies the connection to a Modbus device.
      *
