@@ -1,10 +1,10 @@
 import Homey from 'homey';
 import { PairSession } from 'homey/lib/Driver';
 import { ModbusAPI } from '../../api/modbus/modbus-api';
-import { getDefinition } from './helpers/get-definition';
+import { getDefinition, getModelsForBrand } from './helpers/get-definition';
 import { getBrand, iconForBrand, getDeviceModelName } from './helpers/brand-name';
 import { Brand } from './models/brand';
-import { models } from './helpers/device-models';
+import { devices } from './devices/devices';
 
 interface DeviceTypeFormData {
   deviceType: string;
@@ -107,7 +107,7 @@ class ModbusDriver extends Homey.Driver {
 
     session.setHandler('list_models', async (): Promise<DeviceModelDTO[]> => {
       this.log('Listing models for', this.pairingDeviceBrand);
-      return models.filter((model) => model.brand === this.pairingDeviceBrand).map((model) => {
+      return getModelsForBrand(this.pairingDeviceBrand).map((model) => {
         return {
           id: model.id,
           brand: model.brand,

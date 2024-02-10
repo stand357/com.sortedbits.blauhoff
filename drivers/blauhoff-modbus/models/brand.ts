@@ -1,5 +1,5 @@
 /**
- * Represents the type of a device.
+ * Represents the brand of a device.
  */
 export enum Brand {
     Blauhoff = 'blauhoff',

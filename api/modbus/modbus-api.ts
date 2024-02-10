@@ -115,9 +115,6 @@ export class ModbusAPI {
             this.log.error('No valueResolved function set');
         }
 
-        const addresses = this.deviceDefinition.inputRegisters.map((register) => register.address);
-        this.log.log('Reading input registers', addresses);
-
         for (const register of this.deviceDefinition.inputRegisters) {
             try {
                 const input = await this.client.readInputRegisters(register.address, register.length);
