@@ -14,7 +14,6 @@ import { ModbusDeviceDefinition } from '../../../../api/modbus/models/modbus-dev
  * Field 4: Scale
  * Field 5: Capability ID
  * Field 6: Calculation that needs to be performed on the value
- * Field 7: Multiplier
  */
 const inputRegisters = [
     new ModbusRegister(0, 2, RegisterDataType.UINT16, 0, 'status_code.run_mode', RegisterCalculation.None),
@@ -23,11 +22,11 @@ const inputRegisters = [
     new ModbusRegister(1, 2, RegisterDataType.UINT32, 0.1, 'measure_power.ac', RegisterCalculation.None),
     new ModbusRegister(5, 2, RegisterDataType.UINT32, 0.1, 'measure_power.pv1', RegisterCalculation.None),
     new ModbusRegister(9, 2, RegisterDataType.UINT32, 0.1, 'measure_power.pv2', RegisterCalculation.None),
-    new ModbusRegister(35, 2, RegisterDataType.UINT32, 0.1, 'measure_power.pv', RegisterCalculation.None),
+    new ModbusRegister(35, 2, RegisterDataType.UINT32, 0.1, 'measure_power', RegisterCalculation.None),
 
     new ModbusRegister(38, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.phase1', RegisterCalculation.None),
     new ModbusRegister(53, 2, RegisterDataType.UINT32, 0.1, 'meter_power.today', RegisterCalculation.None),
-    new ModbusRegister(55, 2, RegisterDataType.UINT32, 0.1, 'meter_power.total', RegisterCalculation.None),
+    new ModbusRegister(55, 2, RegisterDataType.UINT32, 0.1, 'meter_power', RegisterCalculation.None),
 ];
 
 const holdingRegisters: ModbusRegister[] = [

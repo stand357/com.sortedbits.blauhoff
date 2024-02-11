@@ -1,0 +1,12 @@
+{
+    "type": "boolean",
+    "title": {
+        "en": "On/off",
+        "nl": "Aan/uit"
+    },
+    "getable": true,
+    "setable": false,
+    "uiComponent": "sensor",
+    "insights": true,
+    "icon": "/assets/capabilities/power-off-sharp-light.svg"
+}

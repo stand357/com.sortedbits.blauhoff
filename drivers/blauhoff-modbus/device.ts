@@ -1,4 +1,5 @@
 import Homey from 'homey';
+import { addCapabilityIfNotExists, deprecateCapability } from 'homey-helpers';
 import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { getDefinition } from './helpers/get-definition';
 import { ModbusRegister } from '../../api/modbus/models/modbus-register';
@@ -10,7 +11,7 @@ class ModbusDevice extends Homey.Device {
 
   private api?: ModbusAPI;
   private stop: boolean = false;
-  private reachable: boolean = true;
+  private reachable: boolean = false;
 
   private onDisconnect = async () => {
     if (this.stop || !this.api) {
@@ -20,9 +21,11 @@ class ModbusDevice extends Homey.Device {
     const isOpen = await this.api.connect();
 
     if (!isOpen) {
-      this.reachable = false;
+      await this.setUnavailable('Modbus connection unavailable');
 
       this.homey.setTimeout(this.onDisconnect, 60000);
+    } else {
+      await this.setAvailable();
     }
   };
 
@@ -40,6 +43,7 @@ class ModbusDevice extends Homey.Device {
 
     if (!this.reachable) {
       this.reachable = true;
+      await this.setCapabilityValue('readable_boolean.device_status', true);
     }
   }
 
@@ -54,6 +58,8 @@ class ModbusDevice extends Homey.Device {
   private onError = async (error: unknown, register: ModbusRegister) => {
     if (error && (error as any)['name'] && (error as any)['name'] === 'TransactionTimedOutError') {
       this.reachable = false;
+
+      await this.setCapabilityValue('readable_boolean.device_status', false);
     } else {
       this.error('Request failed', error);
     }
@@ -91,6 +97,9 @@ class ModbusDevice extends Homey.Device {
     const { deviceType, modelId } = this.getData();
 
     this.log('ModbusDevice', host, port, unitId, deviceType, modelId);
+
+    await deprecateCapability(this, 'status_code.device_online');
+    await addCapabilityIfNotExists(this, 'readable_boolean.device_status');
 
     const brand = getBrand(deviceType);
     if (!brand) {
@@ -135,6 +144,7 @@ class ModbusDevice extends Homey.Device {
     if (!this.stop) {
       const { refreshInterval } = this.getSettings();
 
+      this.log('Setting timeout', refreshInterval, this.reachable);
       const interval = this.reachable ? refreshInterval * 1000 : 60000;
 
       await this.homey.setTimeout(this.readRegisters.bind(this), interval);
