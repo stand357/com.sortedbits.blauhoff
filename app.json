@@ -437,7 +437,7 @@
       "name": {
         "en": "BlauHoff Battery"
       },
-      "class": "other",
+      "class": "solarpanel",
       "capabilities": [
         "date.record",
         "status_code.device_type",
@@ -810,12 +810,19 @@
       "name": {
         "en": "Modbus TCP device"
       },
-      "class": "other",
-      "capabilities": [],
+      "class": "solarpanel",
+      "capabilities": [
+        "readable_boolean.device_status"
+      ],
       "capabilitiesOptions": {
         "date.record": {
           "title": {
             "en": "Last status update"
+          }
+        },
+        "readable_boolean.device_status": {
+          "title": {
+            "en": "Device online"
           }
         },
         "status_code.device_type": {
@@ -978,6 +985,16 @@
             "en": "EPS power"
           }
         },
+        "measure_power.grid_output": {
+          "title": {
+            "en": "Grid output power"
+          }
+        },
+        "measure_power.dsp": {
+          "title": {
+            "en": "DSP power"
+          }
+        },
         "measure_voltamperage.eps": {
           "title": {
             "en": "EPS voltamperage"
@@ -1071,6 +1088,11 @@
         "meter_power.pv": {
           "title": {
             "en": "PV total"
+          }
+        },
+        "meter_power.today": {
+          "title": {
+            "en": "Energy today"
           }
         },
         "meter_power.total_to_grid": {
@@ -1254,6 +1276,18 @@
       "decimals": 2,
       "insights": true,
       "icon": "/assets/capabilities/bolt-sharp-light.svg"
+    },
+    "readable_boolean": {
+      "type": "boolean",
+      "title": {
+        "en": "On/off",
+        "nl": "Aan/uit"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "insights": true,
+      "icon": "/assets/capabilities/power-off-sharp-light.svg"
     },
     "serial": {
       "type": "string",

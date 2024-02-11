@@ -2,7 +2,7 @@
   "name": {
     "en": "BlauHoff Battery"
   },
-  "class": "other",
+  "class": "solarpanel",
   "capabilities": [
     "date.record",
     "status_code.device_type",
