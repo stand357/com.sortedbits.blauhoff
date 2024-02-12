@@ -1,6 +1,7 @@
 import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { ModbusRegister } from '../../api/modbus/models/modbus-register';
-import { blauhoff_spha } from '../../drivers/blauhoff-modbus/devices/blauhoff/spha';
+import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
+import { Brand } from '../../api/modbus/models/brand';
 // import { mod_tl3_registers } from '../../drivers/blauhoff-modbus/devices/growatt/mod-XXXX-tl3';
 import { Logger } from '../../helpers/log';
 
@@ -14,17 +15,23 @@ const valueResolved = async (value: any, register: ModbusRegister) => {
     log.log(register.capabilityId, result);
 };
 
-const api = new ModbusAPI(log, host, port, unitId, blauhoff_spha);
+const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Blauhoff, 'blauhoff-1');
 
-api.connect().then((result) => {
-    api.onDataReceived = valueResolved;
-    api.readRegisters().then(() => {
-        log.log('readRegisters done');
-        api.disconnect();
+if (!device) {
+    log.error('Device not found');
+} else {
+    const api = new ModbusAPI(log, host, port, unitId, device!.definition);
+
+    api.connect().then((result) => {
+        api.onDataReceived = valueResolved;
+        api.readRegisters().then(() => {
+            log.log('readRegisters done');
+            api.disconnect();
+        }).catch((error) => {
+            log.error('error', error);
+        });
     }).catch((error) => {
         log.error('error', error);
+    }).finally(() => {
     });
-}).catch((error) => {
-    log.error('error', error);
-}).finally(() => {
-});
+}

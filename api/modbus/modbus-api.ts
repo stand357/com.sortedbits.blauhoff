@@ -16,6 +16,11 @@ export class ModbusAPI {
     private unitId: number;
     private log: IBaseLogger;
     private deviceDefinition: ModbusDeviceDefinition;
+    private disconnecting: boolean = false;
+
+    get isOpen(): boolean {
+        return this.client.isOpen;
+    }
 
     /**
      * Callback function that is called when a value is resolved.
@@ -27,6 +32,12 @@ export class ModbusAPI {
     onDataReceived?: (value: any, register: ModbusRegister) => Promise<void>;
     onError?: (error: unknown, register: ModbusRegister) => Promise<void>;
     onDisconnect?: () => Promise<void>;
+
+    private onApiDisconnect = async () => {
+        if (this.onDisconnect && !this.disconnecting) {
+            await this.onDisconnect();
+        }
+    }
 
     /**
      * Represents a Modbus API.
@@ -52,6 +63,7 @@ export class ModbusAPI {
      */
     connect = async (): Promise<boolean> => {
         this.log.log('Connecting to Modbus host:', this.host, 'port:', this.port, 'unitId:', this.unitId);
+        this.disconnecting = false;
 
         try {
             await this.client.connectTCP(this.host, {
@@ -66,7 +78,7 @@ export class ModbusAPI {
             this.client.on('close', () => {
                 this.log.log('Modbus connection closed');
 
-                this.onDisconnect?.().then(() => {
+                this.onApiDisconnect().then(() => {
                     this.log.log('Modbus connection re-established');
                 }).catch((error) => {
                     this.log.error('Failed to re-establish Modbus connection', error);
@@ -148,6 +160,7 @@ export class ModbusAPI {
      * Disconnects from the Modbus server.
      */
     disconnect = () => {
+        this.disconnecting = true;
         this.client.close(() => { });
     }
 

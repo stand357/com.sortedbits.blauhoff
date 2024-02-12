@@ -9,4 +9,5 @@ Object.keys(maps).forEach((key) => {
     output[id] = { title };
 });
 
+// eslint-disable-next-line no-console
 console.log(JSON.stringify(output, null, 2));

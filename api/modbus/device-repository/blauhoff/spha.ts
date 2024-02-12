@@ -1,8 +1,11 @@
 import { ReadRegisterResult } from 'modbus-serial/ModbusRTU';
-import { RegisterDataType } from '../../../../api/modbus/models/register-datatype';
-import { ModbusRegister } from '../../../../api/modbus/models/modbus-register';
+import { RegisterDataType } from '../../models/register-datatype';
+import { ModbusRegister } from '../../models/modbus-register';
 import { IBaseLogger } from '../../../../helpers/log';
-import { ModbusDeviceDefinition } from '../../../../api/modbus/models/modbus-device-registers';
+import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
+import { Brand } from '../../models/brand';
+import { DeviceModel } from '../../models/device-model';
+import { defaultValueConverter } from '../_shared/default-value-converter';
 
 /**
  * This is the list of registers for the Blauhoff Modbus device.
@@ -36,8 +39,8 @@ const inputRegisters = [
 
     new ModbusRegister(36151, 1, RegisterDataType.UINT16, 0.1, 'measure_voltage.battery'),
 
-    new ModbusRegister(36155, 1, RegisterDataType.UINT16, 1, 'measure_state_of_charge.bat_soc'),
-    new ModbusRegister(36156, 1, RegisterDataType.UINT16, 1, 'measure_state_of_charge.bat_soh'),
+    new ModbusRegister(36155, 1, RegisterDataType.UINT16, 1, 'measure_percentage.bat_soc'),
+    new ModbusRegister(36156, 1, RegisterDataType.UINT16, 1, 'measure_percentage.bat_soh'),
 
     new ModbusRegister(36161, 1, RegisterDataType.UINT16, 0.1, 'measure_temperature.battery_high'),
     new ModbusRegister(36163, 1, RegisterDataType.UINT16, 0.1, 'measure_temperature.battery_low'),
@@ -57,26 +60,18 @@ const holdingRegisters: ModbusRegister[] = [
     new ModbusRegister(60001, 1, RegisterDataType.UINT16, 0.1, 'status_code.work_mode'),
 ];
 
-const inputRegisterResultConversion = (log: IBaseLogger, readRegisterResult: ReadRegisterResult, register: ModbusRegister): any => {
-    switch (register.dataType) {
-        case RegisterDataType.UINT16:
-            return readRegisterResult.buffer.readUInt16BE();
-        case RegisterDataType.FLOAT32:
-            return readRegisterResult.buffer.readFloatBE();
-        case RegisterDataType.UINT32:
-            return readRegisterResult.buffer.readUInt32BE();
-        case RegisterDataType.INT32:
-            return readRegisterResult.buffer.readInt32BE();
-
-        default:
-            log.error('Unknown data type', register.dataType);
-            return undefined;
-    }
-};
-
-export const blauhoff_spha: ModbusDeviceDefinition = {
+const spha: ModbusDeviceDefinition = {
     inputRegisters,
     holdingRegisters,
-    inputRegisterResultConversion,
-    holdingRegisterResultConversion: inputRegisterResultConversion,
+    inputRegisterResultConversion: defaultValueConverter,
+    holdingRegisterResultConversion: defaultValueConverter,
+};
+
+export const blauhoffSPHA: DeviceModel = {
+    id: 'blauhoff-1',
+    brand: Brand.Blauhoff,
+    name: 'Blauhoff SPHA',
+    description: 'Blauhoff SPHA series of string inverters with MODBUS interface.',
+    debug: false,
+    definition: spha,
 };

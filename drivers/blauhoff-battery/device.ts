@@ -10,9 +10,8 @@ import { QueryResponse } from '../../api/blauhoff/models/responses/query-respons
 class BlauhoffBattery extends Homey.Device {
 
   api = new API(this);
-
   device: BlauHoffDevice | undefined;
-  stop: boolean = false;
+  private timeout: NodeJS.Timeout | undefined;
 
   /**
    * Fetches the user token using the provided access ID and access secret.
@@ -80,8 +79,12 @@ class BlauhoffBattery extends Homey.Device {
     this.log('BlauhoffBattery has been initialized');
 
     await deprecateCapability(this, 'measure_battery');
-    await addCapabilityIfNotExists(this, 'measure_state_of_charge.battery');
+    await deprecateCapability(this, 'measure_state_of_charge.battery');
+    await deprecateCapability(this, 'status_code.bat_soh');
+
     await addCapabilityIfNotExists(this, 'date.record');
+    await addCapabilityIfNotExists(this, 'measure_percentage.bat_soc');
+    await addCapabilityIfNotExists(this, 'measure_percentage.bat_soh');
 
     const {
       userToken, baseUrl,
@@ -179,8 +182,11 @@ class BlauhoffBattery extends Homey.Device {
    * onDeleted is called when the user deleted the device.
    */
   async onDeleted() {
-    this.stop = true;
     this.log('BlauhoffBattery has been deleted');
+
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
   }
 
   /**
@@ -233,10 +239,8 @@ class BlauhoffBattery extends Homey.Device {
         await this.setCapabilities(status.data[row]);
       }
 
-      if (!this.stop) {
-        const { refreshInterval } = this.getSettings();
-        await this.homey.setTimeout(this.getDeviceStatus.bind(this), refreshInterval * 1000);
-      }
+      const { refreshInterval } = this.getSettings();
+      this.timeout = await this.homey.setTimeout(this.getDeviceStatus.bind(this), refreshInterval * 1000);
     } else if (!comingFromError) {
       this.log('First try, we should fetch a new usertoken and try again');
 

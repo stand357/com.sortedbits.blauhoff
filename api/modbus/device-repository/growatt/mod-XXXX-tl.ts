@@ -1,8 +1,9 @@
-import { ReadRegisterResult } from 'modbus-serial/ModbusRTU';
-import { RegisterDataType } from '../../../../api/modbus/models/register-datatype';
-import { ModbusRegister } from '../../../../api/modbus/models/modbus-register';
-import { IBaseLogger } from '../../../../helpers/log';
-import { ModbusDeviceDefinition } from '../../../../api/modbus/models/modbus-device-registers';
+import { RegisterDataType } from '../../models/register-datatype';
+import { ModbusRegister } from '../../models/modbus-register';
+import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
+import { Brand } from '../../models/brand';
+import { DeviceModel } from '../../models/device-model';
+import { defaultValueConverter } from '../_shared/default-value-converter';
 
 /**
  * This is the list of registers for the Blauhoff Modbus device.
@@ -32,26 +33,19 @@ const holdingRegisters: ModbusRegister[] = [
     new ModbusRegister(23, 5, RegisterDataType.STRING, 0, 'serial'),
 ];
 
-const inputRegisterResultConversion = (log: IBaseLogger, readRegisterResult: ReadRegisterResult, register: ModbusRegister): any => {
-    switch (register.dataType) {
-        case RegisterDataType.FLOAT32:
-            return readRegisterResult.buffer.readFloatBE();
-        case RegisterDataType.UINT32:
-            return readRegisterResult.buffer.readUInt32BE();
-        case RegisterDataType.UINT16:
-            return readRegisterResult.buffer.readUInt16BE();
-        case RegisterDataType.STRING:
-            return readRegisterResult.buffer.toString('utf8');
-        default:
-            log.error('Unknown data type', register.dataType);
-            return undefined;
-    }
-};
-
 // eslint-disable-next-line camelcase
 export const mod_tl_registers: ModbusDeviceDefinition = {
     inputRegisters,
     holdingRegisters,
-    inputRegisterResultConversion,
-    holdingRegisterResultConversion: inputRegisterResultConversion,
+    inputRegisterResultConversion: defaultValueConverter,
+    holdingRegisterResultConversion: defaultValueConverter,
+};
+
+export const growattTL: DeviceModel = {
+    id: 'growatt-tl',
+    brand: Brand.Growatt,
+    name: 'Growatt 1PH MIC TL-X series',
+    description: 'Single phase Growatt string inverters with MODBUS interface.',
+    debug: true,
+    definition: mod_tl_registers,
 };

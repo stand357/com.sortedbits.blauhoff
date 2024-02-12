@@ -61,7 +61,7 @@ export const deviceInfoResponse: QueryDeviceResponse = {
             'meter_p_pv', // unit 0.1kWh, 10=1kWh
             'electricity_e_total_to_grid', // unit 0.1kWh, 10=1kWh
             'electricity_e_total_from_grid', // unit 0.1kWh, 10=1kWh
-            'electricity_e_total_to_grid_pv' // unit 0.1kWh, 10=1kWh
+            'electricity_e_total_to_grid_pv', // unit 0.1kWh, 10=1kWh
         ],
         metadata: [
             'TIMESTAMP',
