@@ -434,63 +434,16 @@
   },
   "drivers": [
     {
-      "name": {
-        "en": "BlauHoff Battery"
-      },
       "class": "solarpanel",
-      "capabilities": [
-        "date.record",
-        "status_code.device_type",
-        "manufacturer",
-        "serial",
-        "version.dsp1",
-        "version.dsp2",
-        "version.bms",
-        "version.ems",
-        "status_code.run_mode",
-        "status_code.bat_basic_status",
-        "status_code.sys_error_code",
-        "status_code.sys_bat_error_code",
-        "measure_voltage.pv1",
-        "measure_current.pv1",
-        "measure_voltage.pv2",
-        "measure_current.pv2",
-        "measure_power.pv1",
-        "measure_power.pv2",
-        "measure_voltage.ac",
-        "measure_current.ac",
-        "measure_frequency.ac",
-        "measure_power.ac",
-        "measure_voltamperage.ac",
-        "measure_voltage.eps",
-        "measure_current.eps",
-        "measure_power.eps",
-        "measure_voltamperage.eps",
-        "measure_voltage.meter",
-        "measure_current.meter",
-        "measure_frequency.meter",
-        "measure_power.meter",
-        "measure_voltamperage.meter",
-        "measure_voltage.battery",
-        "measure_current.battery",
-        "measure_power.battery",
-        "measure_state_of_charge.battery",
-        "status_code.bat_soh",
-        "measure_voltage.battery_high",
-        "measure_voltage.battery_low",
-        "measure_temperature.battery_high",
-        "measure_temperature.battery_low",
-        "meter_power.battery_total_charge",
-        "meter_power.battery_total_discharge",
-        "meter_power.pv",
-        "meter_power.total_to_grid",
-        "meter_power.total_from_grid",
-        "meter_power.total_to_grid_pv"
-      ],
       "capabilitiesOptions": {
         "date.record": {
           "title": {
             "en": "Last status update"
+          }
+        },
+        "readable_boolean.device_status": {
+          "title": {
+            "en": "Device online"
           }
         },
         "status_code.device_type": {
@@ -533,6 +486,11 @@
             "en": "Run mode"
           }
         },
+        "status_code.work_mode": {
+          "title": {
+            "en": "Work mode"
+          }
+        },
         "status_code.bat_basic_status": {
           "title": {
             "en": "Battery status"
@@ -548,10 +506,29 @@
             "en": "Battery error code"
           }
         },
+        "measure_voltage.phase1": {
+          "title": {
+            "en": "Phase 1 voltage"
+          },
+          "decimals": 0
+        },
+        "measure_voltage.phase2": {
+          "title": {
+            "en": "Phase 2 voltage"
+          },
+          "decimals": 0
+        },
+        "measure_voltage.phase3": {
+          "title": {
+            "en": "Phase 3 voltage"
+          },
+          "decimals": 0
+        },
         "measure_voltage.pv1": {
           "title": {
             "en": "PV1 voltage"
-          }
+          },
+          "decimals": 0
         },
         "measure_current.pv1": {
           "title": {
@@ -561,7 +538,8 @@
         "measure_voltage.pv2": {
           "title": {
             "en": "PV2 voltage"
-          }
+          },
+          "decimals": 0
         },
         "measure_current.pv2": {
           "title": {
@@ -571,17 +549,26 @@
         "measure_power.pv1": {
           "title": {
             "en": "PV1 power"
-          }
+          },
+          "decimals": 0
         },
         "measure_power.pv2": {
           "title": {
             "en": "PV2 power"
-          }
+          },
+          "decimals": 0
+        },
+        "measure_power.pv": {
+          "title": {
+            "en": "PV power"
+          },
+          "decimals": 0
         },
         "measure_voltage.ac": {
           "title": {
             "en": "AC voltage"
-          }
+          },
+          "decimals": 0
         },
         "measure_current.ac": {
           "title": {
@@ -596,7 +583,8 @@
         "measure_power.ac": {
           "title": {
             "en": "AC power"
-          }
+          },
+          "decimals": 0
         },
         "measure_voltamperage.ac": {
           "title": {
@@ -616,6 +604,16 @@
         "measure_power.eps": {
           "title": {
             "en": "EPS power"
+          }
+        },
+        "measure_power.grid_output": {
+          "title": {
+            "en": "Grid output power"
+          }
+        },
+        "measure_power.dsp": {
+          "title": {
+            "en": "DSP power"
           }
         },
         "measure_voltamperage.eps": {
@@ -673,6 +671,11 @@
             "en": "Battery SOH"
           }
         },
+        "measure_state_of_charge.bat_soh": {
+          "title": {
+            "en": "Battery SOH"
+          }
+        },
         "measure_voltage.battery_high": {
           "title": {
             "en": "Battery voltage high"
@@ -708,6 +711,11 @@
             "en": "PV total"
           }
         },
+        "meter_power.today": {
+          "title": {
+            "en": "Energy today"
+          }
+        },
         "meter_power.total_to_grid": {
           "title": {
             "en": "Total to grid"
@@ -724,6 +732,9 @@
           }
         }
       },
+      "energy": {
+        "cumulative": true
+      },
       "platforms": [
         "local"
       ],
@@ -735,6 +746,58 @@
         "large": "/drivers/blauhoff-battery/assets/images/large.png",
         "xlarge": "/drivers/blauhoff-battery/assets/images/xlarge.png"
       },
+      "name": {
+        "en": "BlauHoff Battery"
+      },
+      "capabilities": [
+        "date.record",
+        "status_code.device_type",
+        "manufacturer",
+        "serial",
+        "version.dsp1",
+        "version.dsp2",
+        "version.bms",
+        "version.ems",
+        "status_code.run_mode",
+        "status_code.bat_basic_status",
+        "status_code.sys_error_code",
+        "status_code.sys_bat_error_code",
+        "measure_voltage.pv1",
+        "measure_current.pv1",
+        "measure_voltage.pv2",
+        "measure_current.pv2",
+        "measure_power.pv1",
+        "measure_power.pv2",
+        "measure_voltage.ac",
+        "measure_current.ac",
+        "measure_frequency.ac",
+        "measure_power.ac",
+        "measure_voltamperage.ac",
+        "measure_voltage.eps",
+        "measure_current.eps",
+        "measure_power.eps",
+        "measure_voltamperage.eps",
+        "measure_voltage.meter",
+        "measure_current.meter",
+        "measure_frequency.meter",
+        "measure_power.meter",
+        "measure_voltamperage.meter",
+        "measure_voltage.battery",
+        "measure_current.battery",
+        "measure_power.battery",
+        "measure_state_of_charge.battery",
+        "status_code.bat_soh",
+        "measure_voltage.battery_high",
+        "measure_voltage.battery_low",
+        "measure_temperature.battery_high",
+        "measure_temperature.battery_low",
+        "meter_power.battery_total_charge",
+        "meter_power.battery_total_discharge",
+        "meter_power.pv",
+        "meter_power.total_to_grid",
+        "meter_power.total_from_grid",
+        "meter_power.total_to_grid_pv"
+      ],
       "pair": [
         {
           "id": "pair"
@@ -807,13 +870,7 @@
       ]
     },
     {
-      "name": {
-        "en": "Modbus TCP device"
-      },
       "class": "solarpanel",
-      "capabilities": [
-        "readable_boolean.device_status"
-      ],
       "capabilitiesOptions": {
         "date.record": {
           "title": {
@@ -1125,6 +1182,12 @@
         "large": "/drivers/blauhoff-modbus/assets/images/large.png",
         "xlarge": "/drivers/blauhoff-modbus/assets/images/xlarge.png"
       },
+      "name": {
+        "en": "Modbus TCP device"
+      },
+      "capabilities": [
+        "readable_boolean.device_status"
+      ],
       "pair": [
         {
           "id": "device_type"
