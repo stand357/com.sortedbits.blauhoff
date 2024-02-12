@@ -7,3 +7,5 @@ export enum Brand {
     Deye = 'deye',
     Kstar = 'kstar'
 }
+
+export const brands = [Brand.Blauhoff, Brand.Growatt, Brand.Deye, Brand.Kstar];
