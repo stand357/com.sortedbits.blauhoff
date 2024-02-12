@@ -16,17 +16,17 @@ brands.forEach((brand) => {
         const registers = model.getDefinition();
 
         output += '### Input Registers\n';
-        output += '| Address | Length | Data Type | Scale | Capability ID | Calculation |\n';
-        output += '| ------- | ------ | --------- | ----- | ------------- | ----------- |\n';
+        output += '| Address | Length | Data Type | Scale | Capability ID |\n';
+        output += '| ------- | ------ | --------- | ----- | ------------- |\n';
         orderModbusRegisters(registers.inputRegisters).forEach((register) => {
-            output += `| ${register.address} | ${register.length} | ${register.dataType.toString()} | ${register.scale} | ${register.capabilityId} | ${register.calculation} |\n`;
+            output += `| ${register.address} | ${register.length} | ${register.dataType.toString()} | ${register.scale} | ${register.capabilityId} |\n`;
         });
 
         output += '\n### Holding Registers\n';
-        output += '| Address | Length | Data Type | Scale | Capability ID | Calculation |\n';
-        output += '| ------- | ------ | --------- | ----- | ------------- | ----------- |\n';
+        output += '| Address | Length | Data Type | Scale | Capability ID |\n';
+        output += '| ------- | ------ | --------- | ----- | ------------- |\n';
         orderModbusRegisters(registers.holdingRegisters).forEach((register) => {
-            output += `| ${register.address} | ${register.length} | ${register.dataType.toString()} | ${register.scale} | ${register.capabilityId} | ${register.calculation} |\n`;
+            output += `| ${register.address} | ${register.length} | ${register.dataType.toString()} | ${register.scale} | ${register.capabilityId} |\n`;
         });
 
         output += '\n';
