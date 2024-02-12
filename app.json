@@ -661,20 +661,16 @@
             "en": "Battery power"
           }
         },
-        "status_code.bat_soc": {
+        "measure_percentage.bat_soc": {
           "title": {
-            "en": "Battery SOC"
+            "en": "State of charge"
           }
         },
-        "status_code.bat_soh": {
+        "measure_percentage.bat_soh": {
           "title": {
-            "en": "Battery SOH"
-          }
-        },
-        "measure_state_of_charge.bat_soh": {
-          "title": {
-            "en": "Battery SOH"
-          }
+            "en": "State of health"
+          },
+          "icon": "/assets/capabilities/sharp-light-battery-three-quarters-circle-info.svg"
         },
         "measure_voltage.battery_high": {
           "title": {
@@ -785,8 +781,8 @@
         "measure_voltage.battery",
         "measure_current.battery",
         "measure_power.battery",
-        "measure_state_of_charge.battery",
-        "status_code.bat_soh",
+        "measure_percentage.bat_soc",
+        "measure_percentage.bat_soh",
         "measure_voltage.battery_high",
         "measure_voltage.battery_low",
         "measure_temperature.battery_high",
@@ -1097,20 +1093,16 @@
             "en": "Battery power"
           }
         },
-        "status_code.bat_soc": {
+        "measure_percentage.bat_soc": {
           "title": {
-            "en": "Battery SOC"
+            "en": "State of charge"
           }
         },
-        "status_code.bat_soh": {
+        "measure_percentage.bat_soh": {
           "title": {
-            "en": "Battery SOH"
-          }
-        },
-        "measure_state_of_charge.bat_soh": {
-          "title": {
-            "en": "Battery SOH"
-          }
+            "en": "State of health"
+          },
+          "icon": "/assets/capabilities/sharp-light-battery-three-quarters-circle-info.svg"
         },
         "measure_voltage.battery_high": {
           "title": {
@@ -1306,11 +1298,10 @@
       "insights": true,
       "icon": "/assets/capabilities/wave-square-sharp-light.svg"
     },
-    "measure_state_of_charge": {
+    "measure_percentage": {
       "type": "number",
       "title": {
-        "en": "State of charge",
-        "nl": "Laadtoestand"
+        "en": "Percentage"
       },
       "getable": true,
       "setable": false,
@@ -1321,7 +1312,7 @@
       },
       "decimals": 0,
       "insights": true,
-      "icon": "/assets/capabilities/sharp-light-battery-three-quarters-circle-info.svg"
+      "icon": "/assets/capabilities/percent-thin.svg"
     },
     "measure_voltamperage": {
       "type": "number",

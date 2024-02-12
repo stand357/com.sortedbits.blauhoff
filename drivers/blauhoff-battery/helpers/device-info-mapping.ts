@@ -171,11 +171,11 @@ export const deviceInfoMapping: { [key: string]: CapabilityDefinition } = {
     }, // W
     bat_soc: {
         title: { en: 'State of charge' },
-        id: 'measure_state_of_charge.battery',
+        id: 'measure_percentage.bat_soc',
     }, // 1
     bat_soh: {
         title: { en: 'Battery SOH' },
-        id: 'status_code.bat_soh',
+        id: 'measure_percentage.bat_soh',
     }, // 1
 
     bat_voltage_high: {

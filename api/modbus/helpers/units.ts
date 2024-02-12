@@ -1,3 +1,8 @@
+/**
+ * Returns the unit symbol for a given capability.
+ * @param capabilityId - The capability ID.
+ * @returns The unit symbol corresponding to the capability.
+ */
 export const unitForCapability = (capabilityId: string): string => {
     const parts = capabilityId.split('.');
     if (parts.length === 0) {
@@ -13,7 +18,7 @@ export const unitForCapability = (capabilityId: string): string => {
             return 'A';
         case 'measure_power':
             return 'W';
-        case 'measure_state_of_charge':
+        case 'measure_percentage':
             return '%';
         case 'measure_temperature':
             return '°C';

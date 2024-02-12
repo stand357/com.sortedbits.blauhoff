@@ -1,17 +1,17 @@
 import path from 'path';
 import fs from 'fs';
-import { devices } from '../../drivers/blauhoff-modbus/devices/devices';
-import { orderModbusRegisters } from '../../drivers/blauhoff-modbus/helpers/order-modbus-registers';
-import { brands } from '../../drivers/blauhoff-modbus/models/brand';
-import { unitForCapability } from '../../drivers/blauhoff-modbus/helpers/units';
-import { findFile } from '../../helpers/fs-helpers';
+import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-registers';
+import { brands } from '../../api/modbus/models/brand';
+import { unitForCapability } from '../../api/modbus/helpers/units';
+import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
+import { findFile } from './helpers/fs-helpers';
 
 let output = '';
 
 const capabilitiesOptions: { [key: string]: any } = {};
 
-const driverComposeFiles = findFile('../../drivers', 'driver.compose.json');
-driverComposeFiles.push(path.resolve('../../.homeycompose/drivers/templates/defaults.json'));
+const driverComposeFiles = findFile('./drivers', 'driver.compose.json');
+driverComposeFiles.push(path.resolve('./.homeycompose/drivers/templates/defaults.json'));
 
 for (const file of driverComposeFiles) {
     const json = fs.readFileSync(file, { encoding: 'utf-8' });
@@ -30,22 +30,31 @@ for (const file of driverComposeFiles) {
     }
 }
 
+capabilitiesOptions['measure_power'] = 'Power';
+capabilitiesOptions['meter_power'] = 'Energy';
+
 brands.forEach((brand) => {
-    const models = devices.filter((device) => device.brand === brand);
+    const models = DeviceRepository.getDevicesByBrand(brand);
 
     output += `# ${brand.toLocaleUpperCase()}\n`;
     models.forEach((model) => {
         output += `## ${model.name}\n`;
         output += `${model.description}\n\n`;
 
-        const registers = model.getDefinition();
+        const registers = model.definition;
 
         output += '### Input Registers\n';
         output += '| Address | Length | Data Type | Unit | Scale | Capability ID | Capability name |\n';
         output += '| ------- | ------ | --------- | ---- | ----- | ------------- | --------------- |\n';
         orderModbusRegisters(registers.inputRegisters).forEach((register) => {
             const unit = unitForCapability(register.capabilityId);
-            output += `| ${register.address} | ${register.length} | ${register.dataType.toString()} | ${unit} | ${register.scale} | ${register.capabilityId} | ${capabilitiesOptions[register.capabilityId]} |\n`;
+            output += `| ${register.address}`;
+            output += `| ${register.length}`;
+            output += `| ${register.dataType.toString()}`;
+            output += `| ${unit}`;
+            output += `| ${register.scale}`;
+            output += `| ${register.capabilityId}`;
+            output += `| ${capabilitiesOptions[register.capabilityId]} |\n`;
         });
 
         output += '\n### Holding Registers\n';
@@ -53,15 +62,21 @@ brands.forEach((brand) => {
         output += '| ------- | ------ | --------- | ---- |----- | ------------- | --------------- |\n';
         orderModbusRegisters(registers.holdingRegisters).forEach((register) => {
             const unit = unitForCapability(register.capabilityId);
-            output += `| ${register.address} | ${register.length} | ${register.dataType.toString()} | ${unit} | ${register.scale} | ${register.capabilityId} | ${capabilitiesOptions[register.capabilityId]} |\n`;
+            output += `| ${register.address}`;
+            output += `| ${register.length}`;
+            output += `| ${register.dataType.toString()}`;
+            output += `| ${unit}`;
+            output += `| ${register.scale}`;
+            output += `| ${register.capabilityId}`;
+            output += `| ${capabilitiesOptions[register.capabilityId]} |\n`;
         });
 
         output += '\n';
     });
 });
 
-fs.writeFileSync('../../.build/modbus-registers.md', output);
+fs.writeFileSync('./.build/modbus-registers.md', output);
 
-const readme = fs.readFileSync('../../docs/README-template.md', 'utf8');
+const readme = fs.readFileSync('./docs/README-template.md', 'utf8');
 
-fs.writeFileSync('../../README.md', readme.replace('{{MODBUS_REGISTERS}}', output));
+fs.writeFileSync('./README.md', readme.replace('{{MODBUS_REGISTERS}}', output));

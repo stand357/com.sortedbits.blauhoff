@@ -7,6 +7,7 @@ export const findFile = (directory: string, filter: string): string[] => {
     let result: string[] = [];
 
     if (!existsSync(directory)) {
+        // eslint-disable-next-line no-console
         console.log('Path does not exist', fullDirectory);
         return [];
     }

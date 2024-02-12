@@ -1,8 +1,7 @@
 {
     "type": "number",
     "title": {
-        "en": "State of charge",
-        "nl": "Laadtoestand"
+        "en": "Percentage"
     },
     "getable": true,
     "setable": false,
@@ -13,5 +12,5 @@
     },
     "decimals": 0,
     "insights": true,
-    "icon": "/assets/capabilities/sharp-light-battery-three-quarters-circle-info.svg"
+    "icon": "/assets/capabilities/percent-thin.svg"
 }

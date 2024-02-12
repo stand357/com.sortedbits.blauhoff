@@ -226,20 +226,16 @@
                 "en": "Battery power"
             }
         },
-        "status_code.bat_soc": {
+        "measure_percentage.bat_soc": {
             "title": {
-                "en": "Battery SOC"
+                "en": "State of charge"
             }
         },
-        "status_code.bat_soh": {
+        "measure_percentage.bat_soh": {
             "title": {
-                "en": "Battery SOH"
-            }
-        },
-        "measure_state_of_charge.bat_soh": {
-            "title": {
-                "en": "Battery SOH"
-            }
+                "en": "State of health"
+            },
+            "icon": "/assets/capabilities/sharp-light-battery-three-quarters-circle-info.svg"
         },
         "measure_voltage.battery_high": {
             "title": {

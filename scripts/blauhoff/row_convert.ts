@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { DateTime } from 'luxon';
 import { convertDeviceInfoToBlauhoffDeviceStatus } from '../../api/blauhoff/helpers/device-info-to-blauhoff-device-status';
 import { createQueryResponse } from '../../api/blauhoff/helpers/is-valid-response';

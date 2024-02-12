@@ -1,9 +1,9 @@
 import Homey from 'homey';
 import { PairSession } from 'homey/lib/Driver';
 import { ModbusAPI } from '../../api/modbus/modbus-api';
-import { getDefinition, getModelsForBrand } from './helpers/get-definition';
-import { getBrand, iconForBrand, getDeviceModelName } from './helpers/brand-name';
-import { Brand } from './models/brand';
+import { getBrand, iconForBrand, getDeviceModelName } from '../../api/modbus/helpers/brand-name';
+import { Brand } from '../../api/modbus/models/brand';
+import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
 
 interface DeviceTypeFormData {
   deviceType: string;
@@ -95,8 +95,9 @@ class ModbusDriver extends Homey.Driver {
 
       this.log('Set pairing device model', this.pairingDeviceModelId);
 
-      const definition = getDefinition(this.pairingDeviceBrand, this.pairingDeviceModelId);
-      if (!definition) {
+      const device = DeviceRepository.getDeviceByBrandAndModel(this.pairingDeviceBrand, this.pairingDeviceModelId);
+
+      if (!device?.definition) {
         return { success: false, message: 'Unknown device type' };
       }
 
@@ -107,7 +108,9 @@ class ModbusDriver extends Homey.Driver {
     session.setHandler('list_models', async (): Promise<DeviceModelDTO[]> => {
       this.log('Listing models for', this.pairingDeviceBrand);
 
-      return getModelsForBrand(this.pairingDeviceBrand).map((model) => {
+      const models = DeviceRepository.getDevicesByBrand(this.pairingDeviceBrand);
+
+      return models.map((model) => {
         return {
           id: model.id,
           brand: model.brand,
@@ -130,13 +133,13 @@ class ModbusDriver extends Homey.Driver {
       throw new Error('pairingDeviceModelId is not set');
     }
 
-    const definition = getDefinition(this.pairingDeviceBrand, this.pairingDeviceModelId);
-    if (!definition) {
-      this.error('Unknown device type', definition);
+    const device = DeviceRepository.getDeviceByBrandAndModel(this.pairingDeviceBrand, this.pairingDeviceModelId);
+    if (!device?.definition) {
+      this.error('Unknown device type', this.pairingDeviceBrand, this.pairingDeviceModelId);
       throw new Error('Unknown device type');
     }
 
-    const result = await ModbusAPI.verifyConnection(this, data.host, data.port, data.unitId, definition);
+    const result = await ModbusAPI.verifyConnection(this, data.host, data.port, data.unitId, device.definition);
 
     if (result) {
       await session.nextView();

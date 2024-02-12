@@ -1,20 +1,24 @@
 import Homey from 'homey';
 import { addCapabilityIfNotExists, deprecateCapability } from 'homey-helpers';
 import { ModbusAPI } from '../../api/modbus/modbus-api';
-import { getDefinition } from './helpers/get-definition';
 import { ModbusRegister } from '../../api/modbus/models/modbus-register';
 import { ModbusDeviceDefinition } from '../../api/modbus/models/modbus-device-registers';
-import { getBrand } from './helpers/brand-name';
-import { orderModbusRegisters } from './helpers/order-modbus-registers';
+import { getBrand } from '../../api/modbus/helpers/brand-name';
+import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-registers';
+import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
 
 class ModbusDevice extends Homey.Device {
 
   private api?: ModbusAPI;
-  private stop: boolean = false;
   private reachable: boolean = false;
+  private readRegisterTimeout: NodeJS.Timeout | undefined;
 
   private onDisconnect = async () => {
-    if (this.stop || !this.api) {
+    if (this.readRegisterTimeout) {
+      clearTimeout(this.readRegisterTimeout);
+    }
+
+    if (!this.api) {
       return;
     }
 
@@ -26,6 +30,7 @@ class ModbusDevice extends Homey.Device {
       this.homey.setTimeout(this.onDisconnect, 60000);
     } else {
       await this.setAvailable();
+      await this.readRegisters();
     }
   };
 
@@ -88,18 +93,18 @@ class ModbusDevice extends Homey.Device {
   }
 
   /**
-   * onInit is called when the device is initialized.
+   * Establishes a connection to the Modbus device.
+   * @returns {Promise<void>} A promise that resolves when the connection is established.
    */
-  async onInit() {
-    this.log('ModbusDevice has been initialized');
-
+  private connect = async () => {
     const { host, port, unitId } = this.getSettings();
     const { deviceType, modelId } = this.getData();
 
-    this.log('ModbusDevice', host, port, unitId, deviceType, modelId);
+    if (this.readRegisterTimeout) {
+      clearTimeout(this.readRegisterTimeout);
+    }
 
-    await deprecateCapability(this, 'status_code.device_online');
-    await addCapabilityIfNotExists(this, 'readable_boolean.device_status');
+    this.log('ModbusDevice', host, port, unitId, deviceType, modelId);
 
     const brand = getBrand(deviceType);
     if (!brand) {
@@ -107,15 +112,16 @@ class ModbusDevice extends Homey.Device {
       throw new Error('Unknown device type');
     }
 
-    const deviceDefinition = getDefinition(brand, modelId);
-    if (!deviceDefinition) {
+    const device = DeviceRepository.getDeviceByBrandAndModel(brand, modelId);
+
+    if (!device?.definition) {
       this.error('Unknown device type', deviceType);
       throw new Error('Unknown device type');
     }
 
-    await this.initializeCapabilities(deviceDefinition);
+    await this.initializeCapabilities(device.definition);
 
-    this.api = new ModbusAPI(this, host, port, unitId, deviceDefinition);
+    this.api = new ModbusAPI(this, host, port, unitId, device.definition);
     this.api.onDataReceived = this.onDataReceived;
     this.api.onError = this.onError;
     this.api.onDisconnect = this.onDisconnect;
@@ -125,6 +131,18 @@ class ModbusDevice extends Homey.Device {
     if (isOpen) {
       await this.readRegisters();
     }
+  }
+
+  /**
+   * onInit is called when the device is initialized.
+   */
+  async onInit() {
+    this.log('ModbusDevice has been initialized');
+
+    await deprecateCapability(this, 'status_code.device_online');
+    await addCapabilityIfNotExists(this, 'readable_boolean.device_status');
+
+    await this.connect();
   }
 
   /**
@@ -141,14 +159,12 @@ class ModbusDevice extends Homey.Device {
     this.log('Reading registers for ', this.getName());
     await this.api.readRegisters();
 
-    if (!this.stop) {
-      const { refreshInterval } = this.getSettings();
+    const { refreshInterval } = this.getSettings();
 
-      this.log('Setting timeout', refreshInterval, this.reachable);
-      const interval = this.reachable ? refreshInterval * 1000 : 60000;
+    this.log('Setting timeout', refreshInterval, this.reachable);
+    const interval = this.reachable ? refreshInterval * 1000 : 60000;
 
-      await this.homey.setTimeout(this.readRegisters.bind(this), interval);
-    }
+    this.readRegisterTimeout = await this.homey.setTimeout(this.readRegisters.bind(this), interval);
   }
 
   /**
@@ -176,6 +192,16 @@ class ModbusDevice extends Homey.Device {
     changedKeys: string[];
   }): Promise<string | void> {
     this.log('ModbusDevice settings where changed');
+
+    if (this.readRegisterTimeout) {
+      clearTimeout(this.readRegisterTimeout);
+    }
+
+    if (this.api?.isOpen) {
+      await this.api?.disconnect();
+    }
+
+    await this.connect();
   }
 
   /**
@@ -192,7 +218,14 @@ class ModbusDevice extends Homey.Device {
    */
   async onDeleted() {
     this.log('ModbusDevice has been deleted');
-    this.stop = true;
+
+    if (this.readRegisterTimeout) {
+      clearTimeout(this.readRegisterTimeout);
+    }
+
+    if (this.api?.isOpen) {
+      await this.api?.disconnect();
+    }
   }
 
 }

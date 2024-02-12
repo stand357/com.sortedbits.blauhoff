@@ -1,4 +1,4 @@
-import { ModbusDeviceDefinition } from '../../../api/modbus/models/modbus-device-registers';
+import { ModbusDeviceDefinition } from './modbus-device-registers';
 import { Brand } from './brand';
 
 export interface DeviceModel {
@@ -8,5 +8,5 @@ export interface DeviceModel {
     description: string;
     debug: boolean;
 
-    getDefinition: () => ModbusDeviceDefinition;
+    definition: ModbusDeviceDefinition;
 }
