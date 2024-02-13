@@ -52,8 +52,6 @@ class BlauhoffDriver extends Homey.Driver {
   }
 
   onPair = async (session: PairSession) => {
-    await session.done();
-
     session.setHandler('list_devices', async () => {
       return this.devices.map((device) => {
         return this.createDeviceSettings(device);
