@@ -252,6 +252,11 @@ class BlauhoffBattery extends Homey.Device {
       }
     } else {
       this.error('Failed to get device status', status.code);
+
+      // Wait 30 seconds and try again
+      this.log('Retrying in 30 seconds');
+
+      this.timeout = await this.homey.setTimeout(this.getDeviceStatus.bind(this), 30000);
     }
   }
 
