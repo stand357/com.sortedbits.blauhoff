@@ -80,6 +80,7 @@ class BlauhoffBattery extends Homey.Device {
 
     await deprecateCapability(this, 'measure_battery');
     await deprecateCapability(this, 'measure_state_of_charge.battery');
+    await deprecateCapability(this, 'measure_state_of_charge.bat_soc');
     await deprecateCapability(this, 'status_code.bat_soh');
 
     await addCapabilityIfNotExists(this, 'date.record');

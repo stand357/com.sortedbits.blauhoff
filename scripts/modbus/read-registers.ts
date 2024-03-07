@@ -24,6 +24,7 @@ if (!device) {
 
     api.connect().then((result) => {
         api.onDataReceived = valueResolved;
+
         api.readRegisters().then(() => {
             log.log('readRegisters done');
             api.disconnect();

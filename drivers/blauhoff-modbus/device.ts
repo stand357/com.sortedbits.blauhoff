@@ -6,6 +6,7 @@ import { ModbusDeviceDefinition } from '../../api/modbus/models/modbus-device-re
 import { getBrand } from '../../api/modbus/helpers/brand-name';
 import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-registers';
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
+import { DateTime } from 'luxon';
 
 class ModbusDevice extends Homey.Device {
 
@@ -78,17 +79,12 @@ class ModbusDevice extends Homey.Device {
     const inputRegisters = orderModbusRegisters(definition.inputRegisters);
 
     for (const register of inputRegisters) {
-      if (!this.hasCapability(register.capabilityId)) {
-        await this.addCapability(register.capabilityId);
-      }
+      await addCapabilityIfNotExists(this, register.capabilityId);
     }
 
     const holdingRegisters = orderModbusRegisters(definition.holdingRegisters);
-
     for (const register of holdingRegisters) {
-      if (!this.hasCapability(register.capabilityId)) {
-        await this.addCapability(register.capabilityId);
-      }
+      await addCapabilityIfNotExists(this, register.capabilityId);
     }
   }
 
@@ -141,6 +137,7 @@ class ModbusDevice extends Homey.Device {
 
     await deprecateCapability(this, 'status_code.device_online');
     await addCapabilityIfNotExists(this, 'readable_boolean.device_status');
+    await addCapabilityIfNotExists(this, 'date.record');
 
     await this.connect();
   }
@@ -155,6 +152,12 @@ class ModbusDevice extends Homey.Device {
       this.error('ModbusAPI is not initialized');
       return;
     }
+
+    const localTimezone = this.homey.clock.getTimezone();
+    const date = DateTime.now();
+    const localDate = date.setZone(localTimezone);
+
+    await this.setCapabilityValue('date.record', localDate.toFormat('HH:mm:ss'));
 
     this.log('Reading registers for ', this.getName());
     await this.api.readRegisters();
