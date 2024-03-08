@@ -58,6 +58,12 @@ const inputRegisters = [
 
 const holdingRegisters: ModbusRegister[] = [
     new ModbusRegister(60001, 1, RegisterDataType.UINT16, 0.1, 'status_code.work_mode'),
+    new ModbusRegister(60003, 1, RegisterDataType.UINT16, 1, 'measure_percentage.max_feedin_limit'),
+    new ModbusRegister(60004, 1, RegisterDataType.INT16, 1, 'measure_power.battery_power_ref'),
+    new ModbusRegister(60005, 1, RegisterDataType.INT16, 1, 'measure_power.power_ref_inv_limit'),
+    new ModbusRegister(60007, 1, RegisterDataType.UINT16, 1, 'measure_xxxtimexxx.vpp_timer'),
+    new ModbusRegister(60008, 1, RegisterDataType.UINT16, 1, 'onoff.vpp_timer_enable'), //heeft nog niet de juiste capability
+    new ModbusRegister(60009, 1, RegisterDataType.UINT16, 0.01, 'measure_percentage.bat_cap_min'),
 ];
 
 const spha: ModbusDeviceDefinition = {

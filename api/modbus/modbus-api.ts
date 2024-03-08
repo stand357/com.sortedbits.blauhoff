@@ -1,5 +1,4 @@
 import ModbusRTU from 'modbus-serial';
-import { getIsSupported } from 'homey-helpers';
 import { IBaseLogger } from '../../helpers/log';
 import { ModbusRegister } from './models/modbus-register';
 import { ModbusDeviceDefinition } from './models/modbus-device-registers';
@@ -141,7 +140,7 @@ export class ModbusAPI {
                 const input = await this.client.readInputRegisters(register.address, register.length);
                 const result = this.deviceDefinition.inputRegisterResultConversion(this.log, input, register);
 
-                if (this.onDataReceived && getIsSupported()) {
+                if (this.onDataReceived) {
                     await this.onDataReceived(result, register);
                 }
             } catch (error) {
@@ -158,7 +157,7 @@ export class ModbusAPI {
                 const input = await this.client.readHoldingRegisters(register.address, register.length);
                 const result = this.deviceDefinition.holdingRegisterResultConversion(this.log, input, register);
 
-                if (this.onDataReceived && getIsSupported()) {
+                if (this.onDataReceived) {
                     await this.onDataReceived(result, register);
                 }
             } catch (error) {
