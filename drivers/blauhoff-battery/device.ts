@@ -1,5 +1,5 @@
 import Homey from 'homey';
-import { addCapabilityIfNotExists, deprecateCapability } from 'homey-helpers';
+import { addCapabilityIfNotExists, capabilityChange, deprecateCapability } from 'homey-helpers';
 
 import { DateTime } from 'luxon';
 import { API, BlauHoffDevice } from '../../api/blauhoff';
@@ -206,10 +206,9 @@ class BlauhoffBattery extends Homey.Device {
 
           const date = DateTime.fromMillis(Number(value));
           const newDate = date.setZone(localTimezone);
-
-          await this.setCapabilityValue(id, newDate.toFormat('HH:mm:ss'));
+          await capabilityChange(this, id, newDate.toFormat('HH:mm:ss'));
         } else {
-          await this.setCapabilityValue(id, value);
+          await capabilityChange(this, id, value);
         }
       }
     }
