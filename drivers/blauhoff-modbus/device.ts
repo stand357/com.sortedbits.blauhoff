@@ -1,5 +1,5 @@
 import Homey from 'homey';
-import { addCapabilityIfNotExists, deprecateCapability } from 'homey-helpers';
+import { addCapabilityIfNotExists, capabilityChange, deprecateCapability } from 'homey-helpers';
 import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { ModbusRegister } from '../../api/modbus/models/modbus-register';
 import { ModbusDeviceDefinition } from '../../api/modbus/models/modbus-device-registers';
@@ -45,11 +45,12 @@ class ModbusDevice extends Homey.Device {
   private onDataReceived = async (value: any, register: ModbusRegister) => {
     const result = register.calculateValue(value);
     this.log(register.capabilityId, result);
-    await this.setCapabilityValue(register.capabilityId, result);
+
+    await capabilityChange(this, register.capabilityId, result);
 
     if (!this.reachable) {
       this.reachable = true;
-      await this.setCapabilityValue('readable_boolean.device_status', true);
+      await capabilityChange(this, 'readable_boolean.device_status', true);
     }
   }
 
@@ -64,8 +65,7 @@ class ModbusDevice extends Homey.Device {
   private onError = async (error: unknown, register: ModbusRegister) => {
     if (error && (error as any)['name'] && (error as any)['name'] === 'TransactionTimedOutError') {
       this.reachable = false;
-
-      await this.setCapabilityValue('readable_boolean.device_status', false);
+      await capabilityChange(this, 'readable_boolean.device_status', false);
     } else {
       this.error('Request failed', error);
     }
@@ -138,6 +138,8 @@ class ModbusDevice extends Homey.Device {
     await deprecateCapability(this, 'status_code.device_online');
     await addCapabilityIfNotExists(this, 'readable_boolean.device_status');
     await addCapabilityIfNotExists(this, 'date.record');
+
+    this.log('onInit', DateTime.now().toMillis());
 
     await this.connect();
   }

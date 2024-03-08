@@ -39,8 +39,8 @@
             "en": "Update interval",
             "nl": "Update interval"
         },
-        "min": 10,
-        "value": 60,
+        "min": 1,
+        "value": 10,
         "max": 120,
         "hint": {
             "en": "Time in seconds used to query device details"
