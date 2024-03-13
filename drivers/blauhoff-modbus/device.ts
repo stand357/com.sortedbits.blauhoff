@@ -159,7 +159,7 @@ class ModbusDevice extends Homey.Device {
     const date = DateTime.now();
     const localDate = date.setZone(localTimezone);
 
-    await this.setCapabilityValue('date.record', localDate.toFormat('HH:mm:ss'));
+    await capabilityChange(this, 'date.record', localDate.toFormat('HH:mm:ss'));
 
     this.log('Reading registers for ', this.getName());
     await this.api.readRegisters();

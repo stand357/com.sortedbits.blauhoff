@@ -110,31 +110,3 @@ Three phase Growatt string inverters with MODBUS interface.
 | 23| 5| STRING| | 0| serial| Serial number |
 
 # DEYE
-# KSTAR
-## Kstar Hybrid Inverter
-Kstar Hybrid inverters with MODBUS interface
-
-### Input Registers
-| Address | Length | Data Type | Unit | Scale | Capability ID | Capability name |
-| ------- | ------ | --------- | ---- | ----- | ------------- | --------------- |
-| 3000| 2| UINT16| V| 0.1| measure_voltage.pv1| PV1 voltage |
-| 3001| 2| UINT16| V| 0.1| measure_voltage.pv2| PV2 voltage |
-| 3012| 2| INT16| A| 0.01| measure_current.pv1| PV1 current |
-| 3013| 2| INT16| A| 0.01| measure_current.pv2| PV2 current |
-| 3024| 2| INT16| W| 1| measure_power.pv1| PV1 power |
-| 3025| 2| INT16| W| 1| measure_power.pv2| PV2 power |
-| 3036| 2| UINT16| kWh| 0.1| meter_power.today| Energy today |
-| 3041| 4| UINT32| kWh| 0.1| meter_power| Energy |
-| 3046| 2| UINT16| | 0| status_code.run_mode| Run mode |
-| 3066| 2| UINT16| %| 0.1| measure_percentage.bat_soc| State of charge |
-| 3067| 2| UINT16| °C| 0.1| measure_temperature.battery_high| Battery temperature high |
-| 3075| 2| UINT16| %| 0.1| measure_percentage.bat_soh| State of health |
-| 3114| 4| UINT32| kWh| 0.1| meter_power.total_from_grid| Total from grid |
-| 3121| 4| UINT32| kWh| 0.1| meter_power.total_to_grid| Total to grid |
-| 3292| 4| UINT32| kWh| 0.1| meter_power.battery_total_discharge| Battery total discharge |
-| 3299| 4| UINT32| kWh| 0.1| meter_power.battery_total_charge| Battery total charge |
-
-### Holding Registers
-| Address | Length | Data Type | Unit | Scale | Capability ID | Capability name |
-| ------- | ------ | --------- | ---- |----- | ------------- | --------------- |
-
