@@ -12,8 +12,8 @@ export const getBrand = (brandName: string): Brand | undefined => {
             return Brand.Blauhoff;
         case 'growatt':
             return Brand.Growatt;
-        case 'kstar':
-            return Brand.Kstar;
+        case 'afore':
+            return Brand.Afore;
         case 'deye':
             return Brand.Deye;
         default:
@@ -49,7 +49,7 @@ export const iconForBrand = (brandName: Brand): string => {
     switch (brandName) {
         case Brand.Blauhoff:
         case Brand.Growatt:
-        case Brand.Kstar:
+        case Brand.Afore:
         case Brand.Deye:
             return `${brandName}-device.svg`;
         default:

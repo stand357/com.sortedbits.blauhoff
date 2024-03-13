@@ -6,7 +6,7 @@ import { DeviceModel } from '../../models/device-model';
 import { defaultValueConverter } from '../_shared/default-value-converter';
 
 /**
- * This is the list of registers for the Blauhoff Modbus device.
+ * This is the list of registers for the Growatt Modbus device.
  *
  * Field 1: Address
  * Field 2: Length
