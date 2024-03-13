@@ -25,7 +25,7 @@ describe('brand-name', () => {
         expect(blauhoff).toBe('Unknown Blauhoff device');
 
         const kstar = getDeviceModelName(Brand.Afore, 'non existing model');
-        expect(kstar).toBe('Unknown Kstar device');
+        expect(kstar).toBe('Unknown Afore device');
     });
 
     test('icon-for-brand', async () => {
@@ -33,7 +33,7 @@ describe('brand-name', () => {
         expect(blauhoff).toBe('blauhoff-device.svg');
 
         const kstar = iconForBrand(Brand.Afore);
-        expect(kstar).toBe('kstar-device.svg');
+        expect(kstar).toBe('afore-device.svg');
 
         const deye = iconForBrand(Brand.Deye);
         expect(deye).toBe('deye-device.svg');
