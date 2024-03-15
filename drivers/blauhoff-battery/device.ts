@@ -1,5 +1,5 @@
 import Homey from 'homey';
-import { addCapabilityIfNotExists, capabilityChange, deprecateCapability } from 'homey-helpers';
+import { addCapabilityIfNotExists, capabilityChange, deprecateCapability, Device } from 'homey-helpers';
 
 import { DateTime } from 'luxon';
 import { API, BlauHoffDevice } from '../../api/blauhoff';
@@ -7,7 +7,7 @@ import { BlauHoffDeviceStatus } from '../../api/blauhoff/models/blauhoff-device-
 import { deviceInfoMapping } from './helpers/device-info-mapping';
 import { QueryResponse } from '../../api/blauhoff/models/responses/query-response';
 
-class BlauhoffBattery extends Homey.Device {
+class BlauhoffBattery extends Device {
 
   api = new API(this);
   device: BlauHoffDevice | undefined;

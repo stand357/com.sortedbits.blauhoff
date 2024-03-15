@@ -1,4 +1,5 @@
 import Homey from 'homey';
+
 import { addCapabilityIfNotExists, capabilityChange, deprecateCapability } from 'homey-helpers';
 import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { ModbusRegister } from '../../api/modbus/models/modbus-register';
@@ -7,8 +8,9 @@ import { getBrand } from '../../api/modbus/helpers/brand-name';
 import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-registers';
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
 import { DateTime } from 'luxon';
+import { Device } from 'homey-helpers';
 
-class ModbusDevice extends Homey.Device {
+class ModbusDevice extends Device {
 
   private api?: ModbusAPI;
   private reachable: boolean = false;
@@ -133,6 +135,9 @@ class ModbusDevice extends Homey.Device {
    * onInit is called when the device is initialized.
    */
   async onInit() {
+
+    await super.onInit();
+
     this.log('ModbusDevice has been initialized');
 
     await deprecateCapability(this, 'status_code.device_online');
