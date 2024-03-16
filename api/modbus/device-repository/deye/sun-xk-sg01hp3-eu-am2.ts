@@ -19,6 +19,14 @@ const inputRegisters: ModbusRegister[] = [
 ];
 
 const holdingRegisters: ModbusRegister[] = [
+    new ModbusRegister(500, 1, RegisterDataType.UINT16, 0, 'status_code.run_mode'),
+    new ModbusRegister(586, 1, RegisterDataType.UINT16, 0.1, 'measure_temperature.battery'),
+    new ModbusRegister(588, 1, RegisterDataType.UINT16, 0.1, 'measure_percentage.bat_soc'),
+    new ModbusRegister(590, 1, RegisterDataType.UINT16, 0.1, 'measure_power.eps'),
+
+    new ModbusRegister(598, 1, RegisterDataType.UINT16, 0.1, 'measure_voltage.l1'),
+    new ModbusRegister(599, 1, RegisterDataType.UINT16, 0.1, 'measure_voltage.l2'),
+    new ModbusRegister(600, 1, RegisterDataType.UINT16, 0.1, 'measure_voltage.l3'),
 ];
 
 // eslint-disable-next-line camelcase

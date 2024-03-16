@@ -61,7 +61,7 @@ export class ModbusAPI {
      * @returns A promise that resolves to a boolean indicating whether the connection was successful.
      */
     connect = async (): Promise<boolean> => {
-        this.log.log('Connecting to Modbus host:', this.host, 'port:', this.port, 'unitId:', this.unitId);
+        this.log.filteredLog('Connecting to Modbus host:', this.host, 'port:', this.port, 'unitId:', this.unitId);
         this.disconnecting = false;
 
         try {
@@ -75,16 +75,16 @@ export class ModbusAPI {
             this.client.setTimeout(1000);
 
             this.client.on('close', () => {
-                this.log.log('Modbus connection closed');
+                this.log.filteredLog('Modbus connection closed');
 
                 this.onApiDisconnect().then(() => {
-                    this.log.log('Modbus connection re-established');
+                    this.log.filteredLog('Modbus connection re-established');
                 }).catch((error) => {
                     this.log.error('Failed to re-establish Modbus connection', error);
                 });
             });
 
-            this.log.log('Modbus connection established', this.client.isOpen);
+            this.log.filteredLog('Modbus connection established', this.client.isOpen);
 
             return this.client.isOpen;
         } catch (error) {
@@ -138,16 +138,17 @@ export class ModbusAPI {
         for (const register of this.deviceDefinition.inputRegisters) {
             try {
                 const input = await this.client.readInputRegisters(register.address, register.length);
+                this.log.filteredLog('Read input registers', input);
                 const result = this.deviceDefinition.inputRegisterResultConversion(this.log, input, register);
+                this.log.filteredLog('Conversion result', result);
 
                 if (this.onDataReceived) {
                     await this.onDataReceived(result, register);
                 }
             } catch (error) {
+                this.log.error('Failed to readInputRegisters', error, register);
                 if (this.onError) {
                     await this.onError(error, register);
-                } else {
-                    this.log.error('Failed to readInputRegisters', error, register);
                 }
             }
         }
@@ -169,7 +170,7 @@ export class ModbusAPI {
             }
         }
 
-        this.log.log('Finished reading registers');
+        this.log.filteredLog('Finished reading registers');
     }
 
 }

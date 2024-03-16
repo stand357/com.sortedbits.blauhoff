@@ -33,6 +33,10 @@ class ModbusDriver extends Homey.Driver {
   pairingDeviceModelId: string | undefined;
   modbusDeviceInformation: ModbusDeviceInformation | undefined;
 
+  public filteredLog(...args: any[]) {
+    this.log(args);
+  }
+
   /**
    * onInit is called when the driver is initialized.
    */

@@ -13,6 +13,11 @@ class BlauhoffBattery extends Device {
   device: BlauHoffDevice | undefined;
   private timeout: NodeJS.Timeout | undefined;
 
+  public filteredLog(...args: any[]) {
+    this.log(args);
+  }
+
+
   /**
    * Fetches the user token using the provided access ID and access secret.
    * @param accessId The access ID.
