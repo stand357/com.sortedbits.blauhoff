@@ -22,6 +22,11 @@ class BlauhoffDriver extends Homey.Driver {
   userToken: string = '';
 
   devices: BlauHoffDevice[] = [];
+
+  public filteredLog(...args: any[]) {
+    this.log(args);
+  }
+
   /**
    * onInit is called when the driver is initialized.
    */

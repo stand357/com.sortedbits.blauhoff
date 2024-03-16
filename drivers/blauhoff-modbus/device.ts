@@ -9,12 +9,21 @@ import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-regi
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
 import { DateTime } from 'luxon';
 import { Device } from 'homey-helpers';
+import { DeviceModel } from '../../api/modbus/models/device-model';
+import { Brand } from '../../api/modbus/models/brand';
 
 class ModbusDevice extends Device {
 
   private api?: ModbusAPI;
   private reachable: boolean = false;
   private readRegisterTimeout: NodeJS.Timeout | undefined;
+  private device!: DeviceModel;
+
+  public filteredLog(...args: any[]) {
+    if (this.device.brand === Brand.Deye) {
+      this.log(args);
+    }
+  }
 
   private onDisconnect = async () => {
     if (this.readRegisterTimeout) {
@@ -46,7 +55,10 @@ class ModbusDevice extends Device {
    */
   private onDataReceived = async (value: any, register: ModbusRegister) => {
     const result = register.calculateValue(value);
-    this.log(register.capabilityId, result);
+
+    if (this.device.brand === Brand.Deye) {
+      this.filteredLog(register.capabilityId, result);
+    }
 
     await capabilityChange(this, register.capabilityId, result);
 
@@ -104,22 +116,9 @@ class ModbusDevice extends Device {
 
     this.log('ModbusDevice', host, port, unitId, deviceType, modelId);
 
-    const brand = getBrand(deviceType);
-    if (!brand) {
-      this.error('Unknown device type', deviceType);
-      throw new Error('Unknown device type');
-    }
+    await this.initializeCapabilities(this.device.definition);
 
-    const device = DeviceRepository.getDeviceByBrandAndModel(brand, modelId);
-
-    if (!device?.definition) {
-      this.error('Unknown device type', deviceType);
-      throw new Error('Unknown device type');
-    }
-
-    await this.initializeCapabilities(device.definition);
-
-    this.api = new ModbusAPI(this, host, port, unitId, device.definition);
+    this.api = new ModbusAPI(this, host, port, unitId, this.device.definition);
     this.api.onDataReceived = this.onDataReceived;
     this.api.onError = this.onError;
     this.api.onDisconnect = this.onDisconnect;
@@ -135,16 +134,30 @@ class ModbusDevice extends Device {
    * onInit is called when the device is initialized.
    */
   async onInit() {
-
     await super.onInit();
 
-    this.log('ModbusDevice has been initialized');
+    const { deviceType, modelId } = this.getData();
+
+    const brand = getBrand(deviceType);
+    if (!brand) {
+      this.error('Unknown device type', deviceType);
+      throw new Error('Unknown device type');
+    }
+
+    const result = DeviceRepository.getDeviceByBrandAndModel(brand, modelId);
+
+    if (!result || !result?.definition) {
+      this.error('Unknown device type', deviceType);
+      throw new Error('Unknown device type');
+    }
+
+    this.device = result;
+
+    this.filteredLog('ModbusDevice has been initialized');
 
     await deprecateCapability(this, 'status_code.device_online');
     await addCapabilityIfNotExists(this, 'readable_boolean.device_status');
     await addCapabilityIfNotExists(this, 'date.record');
-
-    this.log('onInit', DateTime.now().toMillis());
 
     await this.connect();
   }
@@ -166,12 +179,12 @@ class ModbusDevice extends Device {
 
     await capabilityChange(this, 'date.record', localDate.toFormat('HH:mm:ss'));
 
-    this.log('Reading registers for ', this.getName());
+    this.filteredLog('Reading registers for ', this.getName());
     await this.api.readRegisters();
 
     const { refreshInterval } = this.getSettings();
 
-    this.log('Setting timeout', refreshInterval, this.reachable);
+    this.filteredLog('Setting timeout', refreshInterval, this.reachable);
     const interval = this.reachable ? refreshInterval * 1000 : 60000;
 
     this.readRegisterTimeout = await this.homey.setTimeout(this.readRegisters.bind(this), interval);
@@ -181,7 +194,7 @@ class ModbusDevice extends Device {
    * onAdded is called when the user adds the device, called just after pairing.
    */
   async onAdded() {
-    this.log('ModbusDevice has been added');
+    this.filteredLog('ModbusDevice has been added');
   }
 
   /**
@@ -201,7 +214,7 @@ class ModbusDevice extends Device {
     newSettings: { [key: string]: boolean | string | number | undefined | null };
     changedKeys: string[];
   }): Promise<string | void> {
-    this.log('ModbusDevice settings where changed');
+    this.filteredLog('ModbusDevice settings where changed');
 
     if (this.readRegisterTimeout) {
       clearTimeout(this.readRegisterTimeout);
@@ -220,14 +233,14 @@ class ModbusDevice extends Device {
    * @param {string} name The new name
    */
   async onRenamed(name: string) {
-    this.log('ModbusDevice was renamed');
+    this.filteredLog('ModbusDevice was renamed');
   }
 
   /**
    * onDeleted is called when the user deleted the device.
    */
   async onDeleted() {
-    this.log('ModbusDevice has been deleted');
+    this.filteredLog('ModbusDevice has been deleted');
 
     if (this.readRegisterTimeout) {
       clearTimeout(this.readRegisterTimeout);

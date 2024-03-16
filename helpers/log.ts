@@ -9,11 +9,18 @@ export interface IBaseLogger {
      * @param {...*} args
      */
     error(...args: any[]): void;
+
+    filteredLog(...args: any[]): void;
 }
 
 export class Logger implements IBaseLogger {
 
     log(...args: any[]): void {
+        // eslint-disable-next-line no-console
+        console.log(...args);
+    }
+
+    filteredLog(...args: any[]): void {
         // eslint-disable-next-line no-console
         console.log(...args);
     }
