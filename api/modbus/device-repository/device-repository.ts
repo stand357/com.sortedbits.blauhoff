@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
 import { Brand } from '../models/brand';
 import { DeviceModel } from '../models/device-model';
 import { aforeAFXKTH } from './afore/af-xk-th-three-phase-hybrid';
@@ -13,7 +20,7 @@ export class DeviceRepository {
         growattTL,
         growattTL3,
         deyeSunXKSG01HP3,
-        aforeAFXKTH
+        aforeAFXKTH,
     ];
 
     public static getDevices(): DeviceModel[] {

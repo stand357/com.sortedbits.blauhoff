@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
 export enum RegisterDataType {
     UINT16 = 'UINT16',
     UINT32 = 'UINT32',

@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
 import ModbusRTU from 'modbus-serial';
 import { IBaseLogger } from '../../helpers/log';
 import { ModbusRegister } from './models/modbus-register';

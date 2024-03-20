@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
 /**
  * Returns the unit symbol for a given capability.
  * @param capabilityId - The capability ID.

@@ -1,32 +1,67 @@
-import { RegisterDataType } from '../../models/register-datatype';
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
 import { ModbusRegister } from '../../models/modbus-register';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
 import { Brand } from '../../models/brand';
-import { DeviceModel } from '../../models/device-model';
 import { defaultValueConverter } from '../_shared/default-value-converter';
+import { DeviceModel } from '../../models/device-model';
+import { RegisterDataType } from '../../models/register-datatype';
 
-/**
- * This is the list of registers for the Deye Modbus device.
- *
- * Field 1: Address
- * Field 2: Length
- * Field 3: Data Type
- * Field 4: Scale
- * Field 5: Capability ID
- * Field 6: Calculation that needs to be performed on the value
- */
 const inputRegisters: ModbusRegister[] = [
 ];
 
 const holdingRegisters: ModbusRegister[] = [
-    new ModbusRegister(500, 1, RegisterDataType.UINT16, 0, 'status_code.run_mode'),
-    new ModbusRegister(586, 1, RegisterDataType.UINT16, 0.1, 'measure_temperature.battery'),
-    new ModbusRegister(588, 1, RegisterDataType.UINT16, 0.1, 'measure_percentage.bat_soc'),
-    new ModbusRegister(590, 1, RegisterDataType.UINT16, 0.1, 'measure_power.eps'),
+    ModbusRegister.default('status_code.run_mode', 500, 1, RegisterDataType.UINT16),
+    ModbusRegister.default('serial', 3, 5, RegisterDataType.STRING),
+    ModbusRegister.default('status_code.modbus_protocol', 2, 1, RegisterDataType.UINT16),
 
-    new ModbusRegister(598, 1, RegisterDataType.UINT16, 0.1, 'measure_voltage.l1'),
-    new ModbusRegister(599, 1, RegisterDataType.UINT16, 0.1, 'measure_voltage.l2'),
-    new ModbusRegister(600, 1, RegisterDataType.UINT16, 0.1, 'measure_voltage.l3'),
+    ModbusRegister.transform('status_code.run_mode_name', 500, 1, RegisterDataType.UINT16, (value) => {
+        switch (value) {
+            case 0:
+                return 'Standby';
+            case 1:
+                return 'Self-check';
+            case 2:
+                return 'Normal';
+            case 3:
+                return 'Alarm';
+            case 4:
+                return 'Fault';
+            default:
+                return 'In activation';
+        }
+    }),
+
+    ModbusRegister.default('measure_power.pv1', 672, 1, RegisterDataType.UINT16),
+
+    ModbusRegister.scale('measure_voltage.pv1', 676, 1, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_current.pv1', 677, 1, RegisterDataType.UINT16, 0.1),
+
+    ModbusRegister.default('measure_power.pv2', 673, 1, RegisterDataType.UINT16),
+
+    ModbusRegister.scale('measure_voltage.pv2', 678, 1, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_current.pv2', 679, 1, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('meter_power.pv', 534, 2, RegisterDataType.UINT16, 0.1),
+
+    ModbusRegister.default('measure_power.total_to_grid', 625, 1, RegisterDataType.UINT16),
+
+    ModbusRegister.scale('measure_voltage.phase1', 598, 1, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_voltage.phase2', 599, 1, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_voltage.phase3', 600, 1, RegisterDataType.UINT16, 0.1),
+
+    ModbusRegister.transform('measure_temperature.dc', 540, 1, RegisterDataType.UINT16, (value) => {
+        return (value * 0.1) - 1000;
+    }),
+
+    ModbusRegister.scale('meter_power.battery_total_charge', 516, 2, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('meter_power.battery_total_discharge', 518, 2, RegisterDataType.UINT16, 0.1),
+
+    ModbusRegister.scale('measure_power.load', 653, 1, RegisterDataType.INT16, 0),
 ];
 
 // eslint-disable-next-line camelcase
@@ -43,5 +78,5 @@ export const deyeSunXKSG01HP3: DeviceModel = {
     name: 'Deye Sun *K SG01HP3 EU AM2 Series',
     description: 'Deye Sun *K SG01HP3 EU AM2 Series with modbus interface',
     debug: true,
-    definition: definition,
+    definition,
 };

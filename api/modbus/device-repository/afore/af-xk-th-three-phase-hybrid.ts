@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
 import { RegisterDataType } from '../../models/register-datatype';
 import { ModbusRegister } from '../../models/modbus-register';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
@@ -16,22 +23,22 @@ import { defaultValueConverter } from '../_shared/default-value-converter';
  * Field 6: Calculation that needs to be performed on the value
  */
 const inputRegisters = [
-    new ModbusRegister(2500, 2, RegisterDataType.UINT16, 0, 'status_code.run_mode'),
+    ModbusRegister.default('status_code.run_mode', 2500, 2, RegisterDataType.UINT16),
 
-    new ModbusRegister(555, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.pv1'),
-    new ModbusRegister(558, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.pv2'),
+    ModbusRegister.scale('measure_voltage.pv1', 555, 2, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_voltage.pv2', 558, 2, RegisterDataType.UINT16, 0.1),
 
-    new ModbusRegister(557, 2, RegisterDataType.UINT16, 0.1, 'measure_power.pv1'),
-    new ModbusRegister(560, 2, RegisterDataType.UINT16, 0.1, 'measure_power.pv2'),
+    ModbusRegister.scale('measure_power.pv1', 557, 2, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_power.pv2', 560, 2, RegisterDataType.UINT16, 0.1),
 
-    new ModbusRegister(553, 4, RegisterDataType.UINT32, 0.1, 'measure_power'),
+    ModbusRegister.scale('measure_power', 553, 4, RegisterDataType.UINT32, 0.1),
 
-    new ModbusRegister(507, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.phase1'),
-    new ModbusRegister(508, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.phase2'),
-    new ModbusRegister(509, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.phase3'),
+    ModbusRegister.scale('measure_voltage.phase1', 507, 2, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_voltage.phase2', 508, 2, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_voltage.phase3', 509, 2, RegisterDataType.UINT16, 0.1),
 
-    new ModbusRegister(1000, 2, RegisterDataType.UINT16, 0.1, 'meter_power.today'),
-    new ModbusRegister(1014, 4, RegisterDataType.UINT32, 0.1, 'meter_power'),
+    ModbusRegister.scale('meter_power.today', 1000, 2, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('meter_power', 1014, 4, RegisterDataType.UINT32, 0.1),
 ];
 
 const holdingRegisters: ModbusRegister[] = [
@@ -51,5 +58,5 @@ export const aforeAFXKTH: DeviceModel = {
     name: 'Afore AF XK-TH Three Phase Hybrid Inverter',
     description: 'Afore AF XK-TH Three Phase Hybrid Inverter Series with modbus interface',
     debug: true,
-    definition: definition,
+    definition,
 };

@@ -1,5 +1,16 @@
-import Homey from 'homey';
-import { addCapabilityIfNotExists, capabilityChange, deprecateCapability, Device } from 'homey-helpers';
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
+import {
+  addCapabilityIfNotExists,
+  capabilityChange,
+  deprecateCapability,
+  Device,
+} from 'homey-helpers';
 
 import { DateTime } from 'luxon';
 import { API, BlauHoffDevice } from '../../api/blauhoff';
@@ -16,7 +27,6 @@ class BlauhoffBattery extends Device {
   public filteredLog(...args: any[]) {
     this.log(args);
   }
-
 
   /**
    * Fetches the user token using the provided access ID and access secret.

@@ -133,7 +133,25 @@
             "title": {
                 "en": "AC voltage"
             },
-            "decimals": 0
+            "decimals": 1
+        },
+        "measure_voltage.l1": {
+            "title": {
+                "en": "L1 voltage"
+            },
+            "decimals": 1
+        },
+        "measure_voltage.l2": {
+            "title": {
+                "en": "L2 voltage"
+            },
+            "decimals": 1
+        },
+        "measure_voltage.l3": {
+            "title": {
+                "en": "L3 voltage"
+            },
+            "decimals": 1
         },
         "measure_current.ac": {
             "title": {

@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
 import path from 'path';
 import fs from 'fs';
 import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-registers';

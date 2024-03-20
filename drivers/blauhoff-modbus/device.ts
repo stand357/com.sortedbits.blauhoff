@@ -1,14 +1,20 @@
-import Homey from 'homey';
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
 
-import { addCapabilityIfNotExists, capabilityChange, deprecateCapability } from 'homey-helpers';
+import {
+ addCapabilityIfNotExists, capabilityChange, deprecateCapability, Device,
+} from 'homey-helpers';
+import { DateTime } from 'luxon';
 import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { ModbusRegister } from '../../api/modbus/models/modbus-register';
 import { ModbusDeviceDefinition } from '../../api/modbus/models/modbus-device-registers';
 import { getBrand } from '../../api/modbus/helpers/brand-name';
 import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-registers';
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
-import { DateTime } from 'luxon';
-import { Device } from 'homey-helpers';
 import { DeviceModel } from '../../api/modbus/models/device-model';
 import { Brand } from '../../api/modbus/models/brand';
 
@@ -20,7 +26,7 @@ class ModbusDevice extends Device {
   private device!: DeviceModel;
 
   public filteredLog(...args: any[]) {
-    if (this.device.brand === Brand.Deye) {
+    if (this.device.brand === Brand.Growatt) {
       this.log(args);
     }
   }
@@ -152,12 +158,20 @@ class ModbusDevice extends Device {
     }
 
     this.device = result;
-
     this.filteredLog('ModbusDevice has been initialized');
 
     await deprecateCapability(this, 'status_code.device_online');
     await addCapabilityIfNotExists(this, 'readable_boolean.device_status');
     await addCapabilityIfNotExists(this, 'date.record');
+
+    const deprecated = this.device.definition.deprecatedCapabilities;
+    this.log('Deprecated capabilities', deprecated);
+    if (deprecated) {
+      for (const capability of deprecated) {
+        this.log('Deprecating capability', capability);
+        await deprecateCapability(this, capability);
+      }
+    }
 
     await this.connect();
   }

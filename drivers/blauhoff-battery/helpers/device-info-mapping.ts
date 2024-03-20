@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
 interface CapabilityDefinition {
     title: { [key: string]: string },
     id: string;
@@ -153,8 +160,6 @@ export const deviceInfoMapping: { [key: string]: CapabilityDefinition } = {
         id: 'measure_voltamperage.meter',
         valueMultiplier: 100,
     }, // VA
-    // meter_power_factor, // 0.01
-
     bat_v: {
         title: { en: 'Battery voltage' },
         id: 'measure_voltage.battery',

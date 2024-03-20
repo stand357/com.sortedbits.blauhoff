@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
 import { RegisterDataType } from '../../models/register-datatype';
 import { ModbusRegister } from '../../models/modbus-register';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
@@ -5,32 +12,23 @@ import { Brand } from '../../models/brand';
 import { DeviceModel } from '../../models/device-model';
 import { defaultValueConverter } from '../_shared/default-value-converter';
 
-/**
- * This is the list of registers for the Growatt Modbus device.
- *
- * Field 1: Address
- * Field 2: Length
- * Field 3: Data Type
- * Field 4: Scale
- * Field 5: Capability ID
- * Field 6: Calculation that needs to be performed on the value
- */
 const inputRegisters = [
-    new ModbusRegister(0, 2, RegisterDataType.UINT16, 0, 'status_code.run_mode'),
-    new ModbusRegister(3, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.pv1'),
-    new ModbusRegister(7, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.pv2'),
-    new ModbusRegister(1, 2, RegisterDataType.UINT32, 0.1, 'measure_power.ac'),
-    new ModbusRegister(5, 2, RegisterDataType.UINT32, 0.1, 'measure_power.pv1'),
-    new ModbusRegister(9, 2, RegisterDataType.UINT32, 0.1, 'measure_power.pv2'),
-    new ModbusRegister(35, 2, RegisterDataType.UINT32, 0.1, 'measure_power'),
+    ModbusRegister.default('status_code.run_mode', 0, 2, RegisterDataType.UINT16),
 
-    new ModbusRegister(38, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.phase1'),
-    new ModbusRegister(53, 2, RegisterDataType.UINT32, 0.1, 'meter_power.today'),
-    new ModbusRegister(55, 2, RegisterDataType.UINT32, 0.1, 'meter_power'),
+    ModbusRegister.scale('measure_voltage.pv1', 3, 2, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_voltage.pv2', 7, 2, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_power.ac', 1, 2, RegisterDataType.UINT32, 0.1),
+    ModbusRegister.scale('measure_power.pv1', 5, 2, RegisterDataType.UINT32, 0.1),
+    ModbusRegister.scale('measure_power.pv2', 9, 2, RegisterDataType.UINT32, 0.1),
+    ModbusRegister.scale('measure_power', 35, 2, RegisterDataType.UINT32, 0.1),
+
+    ModbusRegister.scale('measure_voltage.phase1', 38, 2, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('meter_power.today', 53, 2, RegisterDataType.UINT32, 0.1),
+    ModbusRegister.scale('meter_power', 55, 2, RegisterDataType.UINT32, 0.1),
 ];
 
 const holdingRegisters: ModbusRegister[] = [
-    new ModbusRegister(23, 5, RegisterDataType.STRING, 0, 'serial'),
+    ModbusRegister.default('serial', 23, 5, RegisterDataType.STRING),
 ];
 
 // eslint-disable-next-line camelcase
@@ -39,6 +37,11 @@ export const mod_tl_registers: ModbusDeviceDefinition = {
     holdingRegisters,
     inputRegisterResultConversion: defaultValueConverter,
     holdingRegisterResultConversion: defaultValueConverter,
+    deprecatedCapabilities: [
+        'measure_power.l1',
+        'measure_power.l2',
+        'measure_power.l3',
+    ],
 };
 
 export const growattTL: DeviceModel = {
