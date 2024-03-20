@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
 import { RegisterDataType } from '../../models/register-datatype';
 import { ModbusRegister } from '../../models/modbus-register';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
@@ -10,12 +17,13 @@ import { Brand } from '../../models/brand';
 const mod_tl3_registers: ModbusDeviceDefinition = {
     inputRegisters: [
         ...mod_tl_registers.inputRegisters,
-        new ModbusRegister(42, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.phase2'),
-        new ModbusRegister(46, 2, RegisterDataType.UINT16, 0.1, 'measure_voltage.phase3'),
+        ModbusRegister.scale('measure_voltage.phase2', 42, 2, RegisterDataType.UINT16, 0.1),
+        ModbusRegister.scale('measure_voltage.phase3', 46, 2, RegisterDataType.UINT16, 0.1),
     ],
     holdingRegisters: mod_tl_registers.holdingRegisters,
     inputRegisterResultConversion: mod_tl_registers.inputRegisterResultConversion,
     holdingRegisterResultConversion: mod_tl_registers.holdingRegisterResultConversion,
+    deprecatedCapabilities: mod_tl_registers.deprecatedCapabilities,
 };
 
 export const growattTL3: DeviceModel = {

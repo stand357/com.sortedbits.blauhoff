@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
 /* eslint-disable no-console */
 import { DateTime } from 'luxon';
 import { convertDeviceInfoToBlauhoffDeviceStatus } from '../../api/blauhoff/helpers/device-info-to-blauhoff-device-status';

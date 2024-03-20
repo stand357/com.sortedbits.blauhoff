@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
 import { DeviceRepository } from '../device-repository/device-repository';
 import { Brand } from '../models/brand';
 

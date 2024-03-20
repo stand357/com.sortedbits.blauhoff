@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Mar 20 2024
+ * Copyright © 2024 Wim Haanstra
+ *
+ * Non-commercial use only
+ */
+
 export interface IBaseLogger {
     /**
      * Log a message to the console (stdout)
@@ -17,17 +24,17 @@ export class Logger implements IBaseLogger {
 
     log(...args: any[]): void {
         // eslint-disable-next-line no-console
-        console.log(...args);
+        // console.log(...args);
     }
 
     filteredLog(...args: any[]): void {
         // eslint-disable-next-line no-console
-        console.log(...args);
+        // console.log(...args);
     }
 
     error(...args: any[]): void {
         // eslint-disable-next-line no-console
-        console.error(...args);
+        // console.error(...args);
     }
 
 }
