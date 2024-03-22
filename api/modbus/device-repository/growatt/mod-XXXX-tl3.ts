@@ -15,15 +15,16 @@ import { Brand } from '../../models/brand';
 
 // eslint-disable-next-line camelcase
 const mod_tl3_registers: ModbusDeviceDefinition = {
-    inputRegisters: [
-        ...mod_tl_registers.inputRegisters,
-        ModbusRegister.scale('measure_voltage.phase2', 42, 2, RegisterDataType.UINT16, 0.1),
-        ModbusRegister.scale('measure_voltage.phase3', 46, 2, RegisterDataType.UINT16, 0.1),
-    ],
-    holdingRegisters: mod_tl_registers.holdingRegisters,
-    inputRegisterResultConversion: mod_tl_registers.inputRegisterResultConversion,
-    holdingRegisterResultConversion: mod_tl_registers.holdingRegisterResultConversion,
-    deprecatedCapabilities: mod_tl_registers.deprecatedCapabilities,
+  inputRegisters: [
+    ...mod_tl_registers.inputRegisters,
+    ModbusRegister.scale('measure_voltage.grid_l2', 42, 2, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_voltage.grid_l3', 46, 2, RegisterDataType.UINT16, 0.1),
+  ],
+  holdingRegisters: mod_tl_registers.holdingRegisters,
+  inputRegisterResultConversion: mod_tl_registers.inputRegisterResultConversion,
+  holdingRegisterResultConversion:
+    mod_tl_registers.holdingRegisterResultConversion,
+  deprecatedCapabilities: mod_tl_registers.deprecatedCapabilities,
 };
 
 export const growattTL3: DeviceModel = {
