@@ -46,6 +46,16 @@
                 "en": "EMS version"
             }
         },
+        "status_code.modbus_protocol": {
+            "title": {
+                "en": "Modbus version"
+            }
+        },
+        "status_code.modbus_address": {
+            "title": {
+                "en": "Modbus address"
+            }
+        },
         "status_code.run_mode": {
             "title": {
                 "en": "Run mode"
@@ -54,6 +64,16 @@
         "status_code.work_mode": {
             "title": {
                 "en": "Work mode"
+            }
+        },
+        "status_code.max_sell_power": {
+            "title": {
+                "en": "Max selling power"
+            }
+        },
+        "status_code.selling_enable": {
+            "title": {
+                "en": "Selling enable"
             }
         },
         "status_code.bat_basic_status": {
@@ -71,55 +91,100 @@
                 "en": "Battery error code"
             }
         },
-        "measure_voltage.phase1": {
+        "measure_voltage.grid_l1": {
             "title": {
-                "en": "Phase 1 voltage"
+                "en": "Grid L1 voltage"
             },
             "decimals": 0
         },
-        "measure_voltage.phase2": {
+        "measure_voltage.grid_l2": {
             "title": {
-                "en": "Phase 2 voltage"
+                "en": "Grid L2 voltage"
             },
             "decimals": 0
         },
-        "measure_voltage.phase3": {
+        "measure_voltage.grid_l3": {
             "title": {
-                "en": "Phase 3 voltage"
+                "en": "Grid L3 voltage"
             },
             "decimals": 0
+        },
+        "measure_power.meter": {
+            "title": {
+                "en": "Meter power"
+            }
+        },
+        "measure_power.grid": {
+            "title": {
+                "en": "Grid output power"
+            }
+        },
+        "measure_power.grid_int_ctl1": {
+            "title": {
+                "en": "Grid power int CT L1"
+            }
+        },
+        "measure_power.grid_int_ctl2": {
+            "title": {
+                "en": "Grid power int CT L2"
+            }
+        },
+        "measure_power.grid_int_ctl3": {
+            "title": {
+                "en": "Grid power int CT L3"
+            }
+        },
+        "measure_power.grid_ext_ctl1": {
+            "title": {
+                "en": "Grid power ext CT L1"
+            }
+        },
+        "measure_power.grid_ext_ctl2": {
+            "title": {
+                "en": "Grid power ext CT L2"
+            }
+        },
+        "measure_power.grid_ext_ctl3": {
+            "title": {
+                "en": "Grid power ext CT L3"
+            }
+        },
+        "measure_power.total_active_in_power": {
+            "title": {
+                "en": "Meter power total active in"
+            }
         },
         "measure_voltage.pv1": {
             "title": {
-                "en": "PV1 voltage"
+                "en": "PV 1 voltage"
             },
             "decimals": 0
         },
         "measure_current.pv1": {
             "title": {
-                "en": "PV1 current"
+                "en": "PV 1 current"
             }
         },
         "measure_voltage.pv2": {
             "title": {
-                "en": "PV2 voltage"
+                "en": "PV 2 voltage"
             },
             "decimals": 0
         },
         "measure_current.pv2": {
             "title": {
-                "en": "PV2 current"
+                "en": "PV 2 current"
             }
         },
         "measure_power.pv1": {
             "title": {
-                "en": "PV1 power"
+                "en": "PV 1 power"
             },
             "decimals": 0
         },
         "measure_power.pv2": {
             "title": {
-                "en": "PV2 power"
+                "en": "PV 2 power"
             },
             "decimals": 0
         },
@@ -133,25 +198,7 @@
             "title": {
                 "en": "AC voltage"
             },
-            "decimals": 1
-        },
-        "measure_voltage.l1": {
-            "title": {
-                "en": "L1 voltage"
-            },
-            "decimals": 1
-        },
-        "measure_voltage.l2": {
-            "title": {
-                "en": "L2 voltage"
-            },
-            "decimals": 1
-        },
-        "measure_voltage.l3": {
-            "title": {
-                "en": "L3 voltage"
-            },
-            "decimals": 1
+            "decimals": 0
         },
         "measure_current.ac": {
             "title": {
@@ -189,14 +236,109 @@
                 "en": "EPS power"
             }
         },
-        "measure_power.grid_output": {
+        "measure_power.grid_output": {          
             "title": {
                 "en": "Grid output power"
             }
-        },
+        },        
         "measure_power.dsp": {
             "title": {
                 "en": "DSP power"
+            }
+        },
+        "measure_temperature.ac": {
+            "title": {
+                "en": "AC temperature"
+            }
+        },
+        "measure_temperature.dc": {
+            "title": {
+                "en": "DC temperature"
+            }
+        },
+        "measure_power.load": {
+            "title": {
+                "en": "load power"
+            }
+        },
+        "measure_power.load_l1": {
+            "title": {
+                "en": "Load L1 power"
+            }
+        },
+        "measure_power.load_l2": {
+            "title": {
+                "en": "Load L2 power"
+            }
+        },
+        "measure_power.load_l3": {
+            "title": {
+                "en": "Load L3 power"
+            }
+        },
+        "measure_voltage.load_l1": {
+            "title": {
+                "en": "Load L1 voltage"
+            }
+        },
+        "measure_voltage.load_l2": {
+            "title": {
+                "en": "Load L2 voltage"
+            }
+        },
+        "measure_voltage.load_l3": {
+            "title": {
+                "en": "Load L3 voltage"
+            }
+        },
+        "measure_power.inverter": {
+            "title": {
+                "en": "Inverter power"
+            }
+        },
+        "measure_power.inverter_l1": {
+            "title": {
+                "en": "Inverter L1 power"
+            }
+        },
+        "measure_power.inverter_l2": {
+            "title": {
+                "en": "Inverter L2 power"
+            }
+        },
+        "measure_power.inverter_l3": {
+            "title": {
+                "en": "Inverter L3 power"
+            }
+        },
+        "measure_current.inverter_l1": {
+            "title": {
+                "en": "Inverter L1 current"
+            }
+        },
+        "measure_current.inverter_l2": {
+            "title": {
+                "en": "Inverter L2 current"
+            }
+        },
+        "measure_current.inverter_l3": {
+            "title": {
+                "en": "Inverter L3 current"
+            }
+        },
+        "measure_voltage.inverter_l1": {
+            "title": {
+                "en": "Inverter L1 voltage"
+            }
+        },
+        "measure_voltage.inverter_l2": {
+            "title": {
+                "en": "Inverter L2 voltage"
+            }
+        },
+        "measure_voltage.inverter_l3": {
+            "title": {
+                "en": "Inverter L3 voltage"
             }
         },
         "measure_voltamperage.eps": {
@@ -219,11 +361,6 @@
                 "en": "Meter frequency"
             }
         },
-        "measure_power.meter": {
-            "title": {
-                "en": "Meter power"
-            }
-        },
         "measure_voltamperage.meter": {
             "title": {
                 "en": "Meter voltamperage"
@@ -232,6 +369,16 @@
         "measure_voltage.battery": {
             "title": {
                 "en": "Battery voltage"
+            }
+        },
+        "measure_voltage.battery1": {
+            "title": {
+                "en": "Battery 1 voltage"
+            }
+        },
+        "measure_voltage.battery2": {
+            "title": {
+                "en": "Battery 2 voltage"
             }
         },
         "measure_current.battery": {
@@ -244,9 +391,39 @@
                 "en": "Battery power"
             }
         },
+        "measure_power.battery1": {
+            "title": {
+                "en": "Battery 1 power"
+            }
+        },
+        "measure_power.battery2": {
+            "title": {
+                "en": "Battery 2 power"
+            }
+        },
+        "measure_current.battery1": {
+            "title": {
+                "en": "Battery 1 current"
+            }
+        },
+        "measure_current.battery2": {
+            "title": {
+                "en": "Battery 2 current"
+            }
+        },
         "measure_percentage.bat_soc": {
             "title": {
-                "en": "State of charge"
+                "en": "Battery SOC"
+            }
+        },
+        "measure_percentage.bat1_soc": {
+            "title": {
+                "en": "Battery 1 SOC"
+            }
+        },
+        "measure_percentage.bat2_soc": {
+            "title": {
+                "en": "Battery 2 SOC"
             }
         },
         "measure_percentage.bat_soh": {
@@ -275,24 +452,64 @@
                 "en": "Battery temperature low"
             }
         },
-        "meter_power.battery_total_charge": {
+        "measure_temperature.battery1": {
             "title": {
-                "en": "Battery total charge"
+                "en": "Battery 1 temperature"
             }
         },
-        "meter_power.battery_total_discharge": {
+        "measure_temperature.battery2": {
             "title": {
-                "en": "Battery total discharge"
+                "en": "Battery 2 temperature"
+            }
+        },
+        "meter_power.total_battery_charge": {
+            "title": {
+                "en": "Total battery charge"
+            }
+        },
+        "meter_power.daily_battery_charge": {
+            "title": {
+                "en": "Daily battery charge"
+            }
+        },
+        "meter_power.total_battery_discharge": {
+            "title": {
+                "en": "Total battery discharge"
+            }
+        },
+        "meter_power.daily_battery_discharge": {
+            "title": {
+                "en": "Daily battery discharge"
             }
         },
         "meter_power.pv": {
             "title": {
-                "en": "PV total"
+                "en": "Total PV"
             }
         },
-        "meter_power.today": {
+        "meter_power.total_pv": {
             "title": {
-                "en": "Energy today"
+                "en": "Total PV"
+            }
+        },
+        "meter_power.daily_pv": {
+            "title": {
+                "en": "Daily PV"
+            }
+        },
+        "meter_power.daily": {
+            "title": {
+                "en": "Daily Energy"
+            }
+        },
+        "meter_power.total_to_load": {
+            "title": {
+                "en": "Total to load"
+            }
+        },
+        "meter_power.daily_to_load": {
+            "title": {
+                "en": "Daily to load"
             }
         },
         "meter_power.total_to_grid": {
@@ -300,14 +517,24 @@
                 "en": "Total to grid"
             }
         },
+        "meter_power.daily_to_grid": {
+            "title": {
+                "en": "Daily to grid"
+            }
+        },
         "meter_power.total_from_grid": {
             "title": {
                 "en": "Total from grid"
             }
         },
+        "meter_power.daily_from_grid": {
+            "title": {
+                "en": "Daily from grid"
+            }
+        },
         "meter_power.total_to_grid_pv": {
             "title": {
-                "en": "PV total to grid"
+                "en": "Total PV to grid"
             }
         }
     },

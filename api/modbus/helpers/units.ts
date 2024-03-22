@@ -12,7 +12,7 @@
  */
 export const unitForCapability = (capabilityId: string): string => {
     const parts = capabilityId.split('.');
-    if (parts.length === 0) {
+    if (parts.length < 2) {
         return '';
     }
 

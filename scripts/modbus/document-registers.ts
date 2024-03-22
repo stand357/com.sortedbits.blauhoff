@@ -51,29 +51,31 @@ brands.forEach((brand) => {
         const registers = model.definition;
 
         output += '### Input Registers\n';
-        output += '| Address | Length | Data Type | Unit | Scale | Capability ID | Capability name |\n';
-        output += '| ------- | ------ | --------- | ---- | ----- | ------------- | --------------- |\n';
+        output += '| Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |\n';
+        output += '| ------- | ------ | --------- | ---- | ----- | ------------- | ------------- | --------------- |\n';
         orderModbusRegisters(registers.inputRegisters).forEach((register) => {
             const unit = unitForCapability(register.capabilityId);
             output += `| ${register.address}`;
             output += `| ${register.length}`;
             output += `| ${register.dataType.toString()}`;
             output += `| ${unit}`;
-            output += `| ${register.scale}`;
+            output += `| ${register.scale ?? '-'}`;
+            output += `| ${register.transformation ? 'Yes' : 'No'}`;
             output += `| ${register.capabilityId}`;
             output += `| ${capabilitiesOptions[register.capabilityId]} |\n`;
         });
 
         output += '\n### Holding Registers\n';
-        output += '| Address | Length | Data Type | Unit | Scale | Capability ID | Capability name |\n';
-        output += '| ------- | ------ | --------- | ---- |----- | ------------- | --------------- |\n';
+        output += '| Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |\n';
+        output += '| ------- | ------ | --------- | ---- |----- | -------------- | ------------- | --------------- |\n';
         orderModbusRegisters(registers.holdingRegisters).forEach((register) => {
             const unit = unitForCapability(register.capabilityId);
             output += `| ${register.address}`;
             output += `| ${register.length}`;
             output += `| ${register.dataType.toString()}`;
             output += `| ${unit}`;
-            output += `| ${register.scale}`;
+            output += `| ${register.scale ?? '-'}`;
+            output += `| ${register.transformation ? 'Yes' : 'No'}`;
             output += `| ${register.capabilityId}`;
             output += `| ${capabilitiesOptions[register.capabilityId]} |\n`;
         });
