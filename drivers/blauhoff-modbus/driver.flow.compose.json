@@ -1,0 +1,68 @@
+{
+  "actions": [
+    {
+      "id": "disable_solar_selling",
+      "title": {
+        "en": "Disable solar selling"
+      }
+    },
+    {
+      "id": "enable_solar_selling",
+      "title": {
+        "en": "Enable solar selling"
+      }
+    },
+    {
+      "id": "set_mode_2_modbus",
+      "title": {
+        "en": "Set mode2"
+      },
+      "titleFormatted": {
+        "en": "Direct charge (mode2) with [[batPower]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
+      },
+      "args": [
+        {
+          "type": "range",
+          "name": "batPower",
+          "title": {
+            "en": "Battery power"
+          },
+          "placeholder": {
+            "en": "Wattage between -6000 and 0W"
+          },
+          "min": -6000,
+          "max": 0,
+          "labelDecimals": 0,
+          "label": "W"
+        },
+        {
+          "type": "range",
+          "name": "batCapMin",
+          "title": {
+            "en": "Battery capacity minimum"
+          },
+          "placeholder": {
+            "en": "Percentage between 10 and 100"
+          },
+          "min": 10,
+          "max": 100,
+          "labelDecimals": 0,
+          "label": "%"
+        },
+        {
+          "type": "range",
+          "name": "timeout",
+          "title": {
+            "en": "Duration"
+          },
+          "placeholder": {
+            "en": "Time between 0 and 80 minutes"
+          },
+          "min": 0,
+          "max": 80,
+          "labelDecimals": 0
+        }
+      ]
+    }
+  ]
+}

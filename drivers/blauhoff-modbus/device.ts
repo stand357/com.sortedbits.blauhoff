@@ -17,6 +17,7 @@ import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-regi
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
 import { DeviceModel } from '../../api/modbus/models/device-model';
 import { Brand } from '../../api/modbus/models/brand';
+import { DeviceAction } from '../../api/modbus/helpers/set-modes';
 
 class ModbusDevice extends Device {
 
@@ -26,7 +27,7 @@ class ModbusDevice extends Device {
   private device!: DeviceModel;
 
   public filteredLog(...args: any[]) {
-    if (this.device.brand === Brand.Growatt) {
+    if (this.device.brand === Brand.Deye) {
       this.log(args);
     }
   }
@@ -263,6 +264,12 @@ class ModbusDevice extends Device {
     if (this.api?.isOpen) {
       await this.api?.disconnect();
     }
+  }
+
+  callAction = async (action: DeviceAction, args: any) => {
+    this.log('callAction', this.device.name, action);
+
+    await this.api?.callAction(action, args);
   }
 
 }
