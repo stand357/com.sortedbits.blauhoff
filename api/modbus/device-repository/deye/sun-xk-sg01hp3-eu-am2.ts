@@ -4,15 +4,16 @@
  *
  * Non-commercial use only
  */
+import ModbusRTU from 'modbus-serial';
 import { RegisterDataType } from '../../models/register-datatype';
 import { ModbusRegister } from '../../models/modbus-register';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
 import { Brand } from '../../models/brand';
 import { DeviceModel } from '../../models/device-model';
 import { defaultValueConverter } from '../_shared/default-value-converter';
+import { IBaseLogger } from '../../../../helpers/log';
 
-const inputRegisters: ModbusRegister[] = [
-];
+const inputRegisters: ModbusRegister[] = [];
 
 const holdingRegisters: ModbusRegister[] = [
     // settings
@@ -20,6 +21,10 @@ const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.default('status_code.modbus_address', 1, 1, RegisterDataType.UINT16),
     ModbusRegister.default('status_code.modbus_protocol', 2, 1, RegisterDataType.UINT16),
     ModbusRegister.default('serial', 3, 5, RegisterDataType.STRING),
+
+    ModbusRegister.transform('status_text.sell_solar', 145, 1, RegisterDataType.UINT16, (value) => {
+        return value === 1 ? 'Yes' : 'No';
+    }),
 
     // ModbusRegister.scale('status_code.max_sell_power', 143, 1, RegisterDataType.UINT16, 10),//max sell power
     // ModbusRegister.scale('status_code.selling_enable', 146, 1, RegisterDataType.UINT16, 0),//selling enable 254=0n  126=off more settings possible see doc
@@ -103,12 +108,76 @@ const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.scale('measure_voltage.load_l3', 646, 1, RegisterDataType.UINT16, 0.1),
 ];
 
+const enableSellSolar = async (origin: IBaseLogger, args: any, client: ModbusRTU): Promise<void> => {
+    /*
+     * These values come from the `driver.flow.compose.json` file, where for the `set_mode_1` action
+     * the following values are defined:
+     * maxFeedInLimit (percentage between 0 and 100)
+     * batCapMin (percentage between 10 and 100)
+     */
+
+    // const { maxFeedInLimit, batCapMin } = args;
+
+    /* Based on these values we should SET the registers to a specific value. */
+
+    /*
+     * This is when 2 addresses need to be written that are not consecutive.
+     *
+     * await client.writeRegister(address-here, batCapMin);
+     * await client.writeRegister(address-2-here, maxFeedInLimit);
+     */
+
+    /*
+     * This is when 2 addresses need to be written that are consecutive.
+     *
+     * await client.writeRegisters(address-here, [batCapMin, maxFeedInLimit]);
+     */
+
+    origin.filteredLog('Writing register 145: 0x01');
+
+    try {
+        const result = await client.writeRegisters(145, [1]);
+        origin.filteredLog('Output', result.address);
+    } catch (error) {
+        origin.error('Error enabling solar selling', error);
+    }
+};
+
+const disableSellSolar = async (origin: IBaseLogger, args: any, client: ModbusRTU): Promise<void> => {
+    /*
+     * These values come from the `driver.flow.compose.json` file, where for the `set_mode_2` action
+     *
+     * the following values are defined:
+     * batPower (percentage between -6000 and 0)
+     * batCapMin (percentage between 10 and 100)
+     * timeout (percentage between 0 and 80)
+     */
+
+    // const { batPower, batCapMin, timeout } = args;
+    const buffer = Buffer.from([0]);
+
+    origin.filteredLog('Buffer length', buffer.byteLength);
+    origin.filteredLog('Writing register 145: 0x00');
+
+    try {
+        await client.writeFC16(1, 145, [1], () => {
+            origin.filteredLog('Done!');
+        });
+    } catch (error) {
+        origin.error('Error disabling solar selling', error);
+    }
+};
+
 // eslint-disable-next-line camelcase
 const definition: ModbusDeviceDefinition = {
     inputRegisters,
     holdingRegisters,
     inputRegisterResultConversion: defaultValueConverter,
     holdingRegisterResultConversion: defaultValueConverter,
+    actions: {
+        enableSellSolar,
+        disableSellSolar,
+    },
 };
 
 export const deyeSunXKSG01HP3: DeviceModel = {

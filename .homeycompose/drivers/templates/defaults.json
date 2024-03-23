@@ -536,6 +536,11 @@
             "title": {
                 "en": "Total PV to grid"
             }
+        },
+        "status_text.sell_solar": {
+            "title": {
+                "en": "Sell solar"
+            }
         }
     },
     "energy": {
