@@ -133,10 +133,13 @@ const enableSellSolar = async (origin: IBaseLogger, args: any, client: ModbusRTU
      * await client.writeRegisters(address-here, [batCapMin, maxFeedInLimit]);
      */
 
-    origin.filteredLog('Writing register 145: 0x01');
+    const buffer = Buffer.alloc(2);
+    buffer.writeInt16BE(0x1, 0);
+
+    origin.filteredLog('Writing register 145: ', buffer, buffer.byteLength);
 
     try {
-        const result = await client.writeRegisters(145, [1]);
+        const result = await client.writeRegisters(145, buffer);
         origin.filteredLog('Output', result.address);
     } catch (error) {
         origin.error('Error enabling solar selling', error);
@@ -154,15 +157,13 @@ const disableSellSolar = async (origin: IBaseLogger, args: any, client: ModbusRT
      */
 
     // const { batPower, batCapMin, timeout } = args;
-    const buffer = Buffer.from([0]);
+    const buffer = Buffer.alloc(2);
+    buffer.writeInt16BE(0, 0);
 
-    origin.filteredLog('Buffer length', buffer.byteLength);
-    origin.filteredLog('Writing register 145: 0x00');
+    origin.filteredLog('Writing register 145: ', buffer, buffer.byteLength);
 
     try {
-        await client.writeFC16(1, 145, [1], () => {
-            origin.filteredLog('Done!');
-        });
+        await client.writeRegisters(145, buffer);
     } catch (error) {
         origin.error('Error disabling solar selling', error);
     }

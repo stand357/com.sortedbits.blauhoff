@@ -20,40 +20,37 @@ const unitId = 1;
 const log = new Logger();
 
 const registerAddress = 145;
-const valueToWrite = 0x00;
 
 const valueResolved = async (value: any, register: ModbusRegister) => {
-  const result = register.calculateValue(value);
-  log.log(register.capabilityId, result);
+    const result = register.calculateValue(value);
+    log.log(register.capabilityId, result);
 };
 
-const device = DeviceRepository.getDeviceByBrandAndModel(
-  Brand.Deye,
-  'deye-sun-xk-sg01hp3-eu-am2',
-);
+const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Deye, 'deye-sun-xk-sg01hp3-eu-am2');
 
-const addressInfo = ModbusRegister.default(
-  '',
-  registerAddress,
-  1,
-  RegisterDataType.INT16,
-);
+const addressInfo = ModbusRegister.default('', registerAddress, 1, RegisterDataType.INT16);
 
 const api = new ModbusAPI(log, host, port, unitId, device!.definition);
 
 const perform = async (): Promise<void> => {
-  api.onDataReceived = valueResolved;
+    api.onDataReceived = valueResolved;
 
-  await api.readAddress(addressInfo);
-  await api.callAction(DeviceAction.disableSellSolar, {});
-  await api.readAddress(addressInfo);
+    await api.connect();
+
+    log.filteredLog('Reading current value', addressInfo.address);
+    //    const currentValue = await api.readAddress(addressInfo);
+    //    log.filteredLog('Current value', currentValue);
+    await api.callAction(DeviceAction.enableSellSolar, {});
+    //    const newValue = await api.readAddress(addressInfo);
+
+    //    log.filteredLog('Values', currentValue, newValue);
 };
 
 perform()
-  .then(() => {
-    log.log('Performed test');
-  })
-  .catch(log.error)
-  .finally(() => {
-    api.disconnect();
-  });
+    .then(() => {
+        log.log('Performed test');
+    })
+    .catch(log.error)
+    .finally(() => {
+        api.disconnect();
+    });

@@ -12,7 +12,7 @@ import { Brand } from '../../api/modbus/models/brand';
 // import { mod_tl3_registers } from '../../drivers/blauhoff-modbus/devices/growatt/mod-XXXX-tl3';
 import { Logger } from '../../helpers/log';
 
-const host = '10.210.5.12';
+const host = '88.159.155.195';
 const port = 502;
 const unitId = 1;
 const log = new Logger();
@@ -22,24 +22,28 @@ const valueResolved = async (value: any, register: ModbusRegister) => {
     log.log(register.capabilityId, result);
 };
 
-const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Growatt, 'growatt-tl3');
+const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Deye, 'deye-sun-xk-sg01hp3-eu-am2');
 
 if (!device) {
     log.error('Device not found');
-} else {
-    const api = new ModbusAPI(log, host, port, unitId, device!.definition);
-
-    api.connect().then((result) => {
-        api.onDataReceived = valueResolved;
-
-        api.readRegisters().then(() => {
-            log.log('readRegisters done');
-            api.disconnect();
-        }).catch((error) => {
-            log.error('error', error);
-        });
-    }).catch((error) => {
-        log.error('error', error);
-    }).finally(() => {
-    });
+    process.exit(1);
 }
+
+const api = new ModbusAPI(log, host, port, unitId, device!.definition);
+
+const perform = async (): Promise<void> => {
+    api.onDataReceived = valueResolved;
+
+    await api.connect();
+
+    await api.readRegisters();
+};
+
+perform()
+    .then(() => {
+        log.log('Performed test');
+    })
+    .catch(log.error)
+    .finally(() => {
+        api.disconnect();
+    });
