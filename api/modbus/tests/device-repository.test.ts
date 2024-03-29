@@ -3,7 +3,7 @@ import { Brand } from '../models/brand';
 
 describe('device-repository', () => {
     test('get models for brand', async () => {
-        const response = DeviceRepository.getDevicesByBrand(Brand.Blauhoff);
+        const response = DeviceRepository.getDevicesByBrand(Brand.BlauHoff);
         expect(response).toBeDefined();
         expect(response.length).toBe(1);
 
@@ -24,18 +24,18 @@ describe('device-repository', () => {
     });
 
     test('getDeviceModel with existing model', async () => {
-        const response = DeviceRepository.getDevicesByBrand(Brand.Blauhoff);
+        const response = DeviceRepository.getDevicesByBrand(Brand.BlauHoff);
         expect(response.length).toBeGreaterThan(0);
         const model = response[0];
 
-        const queryModel = DeviceRepository.getDeviceByBrandAndModel(Brand.Blauhoff, model.id);
+        const queryModel = DeviceRepository.getDeviceByBrandAndModel(Brand.BlauHoff, model.id);
 
         expect(queryModel).toBeDefined();
         expect(queryModel).toEqual(model);
     });
 
     test('getDeviceModel with non existing model', async () => {
-        const model = DeviceRepository.getDeviceByBrandAndModel(Brand.Blauhoff, 'non-existing-model');
+        const model = DeviceRepository.getDeviceByBrandAndModel(Brand.BlauHoff, 'non-existing-model');
         expect(model).toBeUndefined();
     });
 

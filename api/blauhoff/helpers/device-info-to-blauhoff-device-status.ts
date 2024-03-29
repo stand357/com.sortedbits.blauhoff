@@ -9,7 +9,7 @@ import { QueryDeviceResponse } from '../models/responses/query-device.response';
  * @param deviceInfo - The device information response.
  * @returns An array of arrays representing the BlauHoff device status.
  */
-export const convertDeviceInfoToBlauhoffDeviceStatus = (log: IBaseLogger, deviceInfo: QueryDeviceResponse): BlauHoffDeviceStatus[][] => {
+export const convertDeviceInfoToBlauHoffDeviceStatus = (log: IBaseLogger, deviceInfo: QueryDeviceResponse): BlauHoffDeviceStatus[][] => {
     // These fields should contain the same amount of items
     if (deviceInfo.data.columns.length !== deviceInfo.data.metadata.length) {
         log.error('deviceInfo.data.columns.length !== deviceInfo.data.metadata.length', deviceInfo.data.columns.length, deviceInfo.data.metadata.length);

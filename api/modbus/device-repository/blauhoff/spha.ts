@@ -13,7 +13,7 @@ import { DeviceModel } from '../../models/device-model';
 import { defaultValueConverter } from '../_shared/default-value-converter';
 
 /**
- * This is the list of registers for the Blauhoff Modbus device.
+ * This is the list of registers for the BlauHoff Modbus device.
  *
  * Field 1: Address
  * Field 2: Length
@@ -80,9 +80,9 @@ const spha: ModbusDeviceDefinition = {
 
 export const blauhoffSPHA: DeviceModel = {
     id: 'blauhoff-1',
-    brand: Brand.Blauhoff,
-    name: 'Blauhoff SPHA',
-    description: 'Blauhoff SPHA series of string inverters with MODBUS interface.',
+    brand: Brand.BlauHoff,
+    name: 'BlauHoff SPHA',
+    description: 'BlauHoff SPHA series of string inverters with MODBUS interface.',
     debug: false,
     definition: spha,
 };
