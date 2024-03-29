@@ -1,6 +1,5 @@
 <script type="application/javascript">
     function submitForm() {
-
         var button = document.getElementById('submit-button');
         button.classList.add('is-loading');
 
@@ -10,7 +9,7 @@
             deviceType: device_type,
         };
 
-        Homey.emit("device_type_selected", data).then(function (result) {
+        Homey.emit('device_type_selected', data).then(function (result) {
             button.classList.remove('is-loading');
 
             if (!result.success) {
@@ -42,57 +41,42 @@
         <div class="modbus-device-types">
             <div class="homey-form-group">
                 <label class="homey-form-radio">
-                    <input class="homey-form-radio-input" type="radio" name="device_type" id="device_type"
-                        value="blauhoff" />
+                    <input class="homey-form-radio-input" type="radio" name="device_type" id="device_type" value="blauhoff" />
                     <span class="homey-form-radio-checkmark"></span>
-                    <span class="homey-form-radio-text">Blauhoff</span>
+                    <span class="homey-form-radio-text">BlauHoff</span>
                 </label>
                 <div class="device-description">
-                    Using a Blauhoff marked device, select this option. You can recognize a Blauhoff device by the
-                    Blauhoff logo on the front.
+                    Using a BlauHoff marked device, select this option. You can recognize a BlauHoff device by the BlauHoff logo on the front.
                 </div>
             </div>
 
             <div class="homey-form-group">
                 <label class="homey-form-radio">
-                    <input class="homey-form-radio-input" type="radio" name="device_type" id="device_type" value="deye"
-                        selected="selected" />
+                    <input class="homey-form-radio-input" type="radio" name="device_type" id="device_type" value="deye" selected="selected" />
                     <span class="homey-form-radio-checkmark"></span>
                     <span class="homey-form-radio-text">Deye</span>
                 </label>
-                <div class="device-description">
-                    Deye branded devices, select this option. You can recognize a Deye device by the Deye logo on the
-                    front.
-                </div>
+                <div class="device-description">Deye branded devices, select this option. You can recognize a Deye device by the Deye logo on the front.</div>
             </div>
 
             <div class="homey-form-group">
                 <label class="homey-form-radio">
-                    <input class="homey-form-radio-input" type="radio" name="device_type" id="device_type" value="afore"
-                        selected="selected" />
+                    <input class="homey-form-radio-input" type="radio" name="device_type" id="device_type" value="afore" selected="selected" />
                     <span class="homey-form-radio-checkmark"></span>
                     <span class="homey-form-radio-text">Afore</span>
                 </label>
-                <div class="device-description">
-                    Afore branded devices, select this option. You can recognize a Deye device by the Deye logo on the
-                    front.
-                </div>
+                <div class="device-description">Afore branded devices, select this option. You can recognize a Deye device by the Deye logo on the front.</div>
             </div>
 
             <div class="homey-form-group">
                 <label class="homey-form-radio">
-                    <input class="homey-form-radio-input" type="radio" name="device_type" id="device_type"
-                        value="growatt" selected="selected" />
+                    <input class="homey-form-radio-input" type="radio" name="device_type" id="device_type" value="growatt" selected="selected" />
                     <span class="homey-form-radio-checkmark"></span>
                     <span class="homey-form-radio-text">Growatt</span>
                 </label>
-                <div class="device-description">
-                    Only used for testing purposes, should be removed
-                </div>
+                <div class="device-description">Only used for testing purposes, should be removed</div>
             </div>
         </div>
     </div>
-    <button id="submit-button" type="button" onclick="submitForm()" class="homey-button-primary-full"
-        data-i18n="device_select.submit">
-    </button>
+    <button id="submit-button" type="button" onclick="submitForm()" class="homey-button-primary-full" data-i18n="device_select.submit"></button>
 </form>

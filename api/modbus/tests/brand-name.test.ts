@@ -4,7 +4,7 @@ import { Brand } from '../models/brand';
 describe('brand-name', () => {
     test('get-brand with existing name', async () => {
         const blauhoff = getBrand('blauhoff');
-        expect(blauhoff).toBe(Brand.Blauhoff);
+        expect(blauhoff).toBe(Brand.BlauHoff);
 
         const growatt = getBrand('growatt');
         expect(growatt).toBe(Brand.Growatt);
@@ -16,20 +16,20 @@ describe('brand-name', () => {
     });
 
     test('get-device-model-name with existing model', async () => {
-        const model = getDeviceModelName(Brand.Blauhoff, 'blauhoff-1');
-        expect(model).toBe('Blauhoff SPHA');
+        const model = getDeviceModelName(Brand.BlauHoff, 'blauhoff-1');
+        expect(model).toBe('BlauHoff SPHA');
     });
 
     test('get-device-model-name with non existing model', async () => {
-        const blauhoff = getDeviceModelName(Brand.Blauhoff, 'non existing model');
-        expect(blauhoff).toBe('Unknown Blauhoff device');
+        const blauhoff = getDeviceModelName(Brand.BlauHoff, 'non existing model');
+        expect(blauhoff).toBe('Unknown BlauHoff device');
 
         const kstar = getDeviceModelName(Brand.Afore, 'non existing model');
         expect(kstar).toBe('Unknown Afore device');
     });
 
     test('icon-for-brand', async () => {
-        const blauhoff = iconForBrand(Brand.Blauhoff);
+        const blauhoff = iconForBrand(Brand.BlauHoff);
         expect(blauhoff).toBe('blauhoff-device.svg');
 
         const kstar = iconForBrand(Brand.Afore);

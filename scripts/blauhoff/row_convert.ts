@@ -7,7 +7,7 @@
 
 /* eslint-disable no-console */
 import { DateTime } from 'luxon';
-import { convertDeviceInfoToBlauhoffDeviceStatus } from '../../api/blauhoff/helpers/device-info-to-blauhoff-device-status';
+import { convertDeviceInfoToBlauHoffDeviceStatus } from '../../api/blauhoff/helpers/device-info-to-blauhoff-device-status';
 import { createQueryResponse } from '../../api/blauhoff/helpers/is-valid-response';
 import { Logger } from '../../helpers/log';
 import { BlauHoffDeviceStatus } from '../../api/blauhoff/models/blauhoff-device-status';
@@ -24,7 +24,7 @@ fs.readFile('example.json', 'utf8', (err: Error, data: any) => {
         return result;
     }
 
-    result.data = convertDeviceInfoToBlauhoffDeviceStatus(log, json!);
+    result.data = convertDeviceInfoToBlauHoffDeviceStatus(log, json!);
 
     if (result.data) {
         const column = 'time';

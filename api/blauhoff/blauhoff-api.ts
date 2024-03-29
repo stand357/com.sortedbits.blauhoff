@@ -7,14 +7,12 @@ import { GetUserTokenResponse } from './models/responses/get-user-token-response
 import { GetDeviceListResponse } from './models/responses/get-device-list-response';
 import { GetRatePowerResponse, Rates } from './models/responses/get-rate-power-response';
 import { BindDeviceResponse } from './models/responses/bind-device.response';
-import { convertDeviceInformationToBlauhoffDevice } from './helpers/device-information-to-blauhoff-device';
+import { convertDeviceInformationToBlauHoffDevice } from './helpers/device-information-to-blauhoff-device';
 import { createQueryBooleanResponse, createQueryResponse, isValidResponse } from './helpers/is-valid-response';
 import { QueryDeviceResponse } from './models/responses/query-device.response';
-import { convertDeviceInfoToBlauhoffDeviceStatus } from './helpers/device-info-to-blauhoff-device-status';
+import { convertDeviceInfoToBlauHoffDeviceStatus } from './helpers/device-info-to-blauhoff-device-status';
 import { QueryDeviceOptions } from './models/options/query-device.options';
-import {
-    Mode1, Mode2, Mode3, Mode4, Mode5, Mode6, Mode7,
-} from './models/options/set-mode.options';
+import { Mode1, Mode2, Mode3, Mode4, Mode5, Mode6, Mode7 } from './models/options/set-mode.options';
 import { isNotInRange } from './helpers/number';
 import { QueryResponse } from './models/responses/query-response';
 
@@ -25,10 +23,9 @@ const INVALID_PARAMETER_RESPONSE = {
 };
 
 /**
- * Represents the API class for interacting with the Blauhoff API.
+ * Represents the API class for interacting with the BlauHoff API.
  */
 export class BlauHoffAPI {
-
     private baseUrl: string = 'https://api-vpp-au.weiheng-tech.com/api/vpp';
     private accessId: string = 'XXX';
     private accessSecret: string = 'XXX';
@@ -48,12 +45,12 @@ export class BlauHoffAPI {
      * Retrieves the authentication information.
      * @returns An object containing the access ID and access secret.
      */
-    getAuthenticationInfo = (): { accessId: string, accessSecret: string } => {
+    getAuthenticationInfo = (): { accessId: string; accessSecret: string } => {
         return {
             accessId: this.accessId,
             accessSecret: this.accessSecret,
         };
-    }
+    };
 
     /**
      * Sets the authentication information for the API.
@@ -65,7 +62,7 @@ export class BlauHoffAPI {
         this.accessSecret = accessSecret;
 
         this.userToken = '';
-    }
+    };
 
     /**
      * Sets the user token.
@@ -74,7 +71,7 @@ export class BlauHoffAPI {
      */
     setUserToken = (userToken: string) => {
         this.userToken = userToken;
-    }
+    };
 
     /**
      * Retrieves the user token.
@@ -83,7 +80,7 @@ export class BlauHoffAPI {
      */
     getUserToken = (): string => {
         return this.userToken;
-    }
+    };
 
     /**
      * Validates the user token by querying devices. Dumb way to do it, but it works.
@@ -96,12 +93,12 @@ export class BlauHoffAPI {
             code: response.code,
             data: response.success,
         };
-    }
+    };
 
     /**
-     * Updates the settings for the Blauhoff API.
+     * Updates the settings for the BlauHoff API.
      *
-     * @param baseUrl - The base URL of the Blauhoff API.
+     * @param baseUrl - The base URL of the BlauHoff API.
      * @param accessId - The access ID for authentication.
      * @param accessSecret - The access secret for authentication.
      * @param refreshInterval - The refresh interval in milliseconds.
@@ -110,7 +107,7 @@ export class BlauHoffAPI {
     updateSettings = async (accessId: string, accessSecret: string): Promise<QueryResponse<boolean>> => {
         this.setAuthenticationInfo(accessId, accessSecret);
         return this.fetchUserToken();
-    }
+    };
 
     /**
      * Retrieves the list of BlauHoff devices.
@@ -129,21 +126,21 @@ export class BlauHoffAPI {
         }
 
         page1!.data.data.forEach((item) => {
-            devices.push(convertDeviceInformationToBlauhoffDevice(item));
+            devices.push(convertDeviceInformationToBlauHoffDevice(item));
         });
 
         for (let pageNr = 2; pageNr <= page1!.data.totalPages; pageNr++) {
             const page = await this.queryDeviceListPage(pageNr, pageSize);
             if (isValidResponse(page)) {
                 page!.data.data.forEach((item) => {
-                    devices.push(convertDeviceInformationToBlauhoffDevice(item));
+                    devices.push(convertDeviceInformationToBlauHoffDevice(item));
                 });
             }
         }
 
         result.data = devices;
         return result;
-    }
+    };
 
     /**
      * Retrieves the status of a BlauHoff device.
@@ -167,10 +164,10 @@ export class BlauHoffAPI {
             return result;
         }
 
-        result.data = convertDeviceInfoToBlauhoffDeviceStatus(this.log, response!);
+        result.data = convertDeviceInfoToBlauHoffDeviceStatus(this.log, response!);
 
         return result;
-    }
+    };
 
     /**
      * Binds a device to the hub.
@@ -182,9 +179,7 @@ export class BlauHoffAPI {
         const path = '/v1/hub/device/bind';
 
         const params = {
-            deviceSnList: [
-                serial,
-            ],
+            deviceSnList: [serial],
         };
 
         const response = await this.performRequest<BindDeviceResponse>(path, 'post', params);
@@ -196,7 +191,7 @@ export class BlauHoffAPI {
         }
 
         return result;
-    }
+    };
 
     /**
      * Queries the rate power of a BlauHoff device.
@@ -219,7 +214,7 @@ export class BlauHoffAPI {
 
         result.data = response!.data;
         return result;
-    }
+    };
 
     /**
      * Sets the mode1 for a BlauHoffDevice.
@@ -249,7 +244,7 @@ export class BlauHoffAPI {
         };
 
         return this.genericSetMode(1, path, params);
-    }
+    };
 
     /**
      * Sets the mode2 of the BlauHoff device.
@@ -287,7 +282,7 @@ export class BlauHoffAPI {
         };
 
         return this.genericSetMode(2, path, params);
-    }
+    };
 
     /**
      * Sets the mode3 of the BlauHoff device.
@@ -324,7 +319,7 @@ export class BlauHoffAPI {
         };
 
         return this.genericSetMode(3, path, params);
-    }
+    };
 
     /**
      * Sets the mode4 of the BlauHoff device.
@@ -361,7 +356,7 @@ export class BlauHoffAPI {
         };
 
         return this.genericSetMode(4, path, params);
-    }
+    };
 
     /**
      * Sets the mode5 of the BlauHoff device.
@@ -398,7 +393,7 @@ export class BlauHoffAPI {
         };
 
         return this.genericSetMode(5, path, params);
-    }
+    };
 
     /**
      * Sets the mode6 of the BlauHoff device.
@@ -409,9 +404,7 @@ export class BlauHoffAPI {
      * @returns A promise that resolves to a boolean indicating whether the mode6 was set successfully.
      */
     setMode6 = async (device: BlauHoffDevice, options: Mode6): Promise<QueryResponse<boolean>> => {
-        const {
-            batPower, batPowerInvLimit, batCapMin, timeout,
-        } = options;
+        const { batPower, batPowerInvLimit, batCapMin, timeout } = options;
 
         if (isNotInRange(batPower, 0, 6000)) {
             this.log.error('batPower must be between 0 and 6000');
@@ -442,7 +435,7 @@ export class BlauHoffAPI {
         };
 
         return this.genericSetMode(6, path, params);
-    }
+    };
 
     /**
      * Sets the mode7 of the BlauHoff device.
@@ -479,7 +472,7 @@ export class BlauHoffAPI {
         };
 
         return this.genericSetMode(7, path, params);
-    }
+    };
 
     /**
      * Retrieves the user token from the server.
@@ -505,7 +498,7 @@ export class BlauHoffAPI {
 
         this.userToken = response!.data;
         return result;
-    }
+    };
 
     private genericSetMode = async (mode: number, path: string, params: any): Promise<QueryResponse<boolean>> => {
         const response = await this.performRequest<BaseResponse>(path, 'post', params);
@@ -520,7 +513,7 @@ export class BlauHoffAPI {
         this.log.log(`setMode${mode} response: ${JSON.stringify(response)}`);
         result.data = true;
         return result;
-    }
+    };
 
     /**
      * Retrieves a page of BlauHoff devices.
@@ -539,7 +532,7 @@ export class BlauHoffAPI {
         const data = await this.performRequest<GetDeviceListResponse>(path, 'post', params);
 
         return data;
-    }
+    };
 
     /**
      * Returns the authorization header for API requests.
@@ -551,7 +544,7 @@ export class BlauHoffAPI {
             Accept: '*/*',
             Authorization: this.userToken,
         };
-    }
+    };
 
     /**
      * Performs a request to the specified path using the specified method.
@@ -565,23 +558,20 @@ export class BlauHoffAPI {
      * @param {Headers} [headers] - The headers to include in the request.
      * @returns {Promise<Type>} - A promise that resolves to the response data.
      */
-    performRequest = async <Type>(
-        path: string,
-        method: 'get' | 'post',
-        params: any | undefined = undefined,
-        headers?: any,
-    ): Promise<Type | undefined> => {
+    performRequest = async <Type>(path: string, method: 'get' | 'post', params: any | undefined = undefined, headers?: any): Promise<Type | undefined> => {
         this.log.log(`Performing request to ${path} with params: ${JSON.stringify(params)}`);
         const header = headers ?? this.authorizationHeader();
 
-        const options = params ? {
-            method,
-            headers: header,
-            body: JSON.stringify(params),
-        } : {
-            method,
-            headers: header,
-        };
+        const options = params
+            ? {
+                  method,
+                  headers: header,
+                  body: JSON.stringify(params),
+              }
+            : {
+                  method,
+                  headers: header,
+              };
 
         try {
             const response = await fetch(this.baseUrl + path, options);
@@ -591,7 +581,7 @@ export class BlauHoffAPI {
                 return undefined;
             }
 
-            const data = await response.json() as BaseResponse;
+            const data = (await response.json()) as BaseResponse;
 
             this.log.log(`Response for ${path} was ${JSON.stringify(data).length} bytes`);
 
@@ -600,6 +590,5 @@ export class BlauHoffAPI {
             this.log.error(`Error performing request to ${path}: ${error}`);
             return undefined;
         }
-    }
-
+    };
 }
