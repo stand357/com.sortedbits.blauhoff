@@ -12,6 +12,13 @@ import { ModbusRegister } from './models/modbus-register';
 import { ModbusDeviceDefinition } from './models/modbus-device-registers';
 import { DeviceAction } from './helpers/set-modes';
 import { Socket } from 'net';
+import { createRegisterBatches } from './helpers/register-batches';
+import { ReadRegisterResult } from 'modbus-serial/ModbusRTU';
+
+enum RegisterType {
+    Input,
+    Holding,
+}
 
 /**
  * Represents a Modbus API.
@@ -151,14 +158,36 @@ export class ModbusAPI {
     };
 
     readAddress = async (register: ModbusRegister): Promise<any> => {
-        const input = await this.client.readHoldingRegisters(register.address, register.length);
+        const input = await this.client.readInputRegisters(register.address, register.length);
 
         this.log.filteredLog('Read input registers', input);
+        this.log.filteredLog('Data', input.data);
+        this.log.filteredLog('Buffer', input.buffer);
 
-        const result = this.deviceDefinition.inputRegisterResultConversion(this.log, input, register);
+        const result = this.deviceDefinition.inputRegisterResultConversion(this.log, input.buffer, register);
         this.log.filteredLog('Conversion result', result);
 
         return result;
+    };
+
+    readRegistersInBatch = async () => {
+        if (!this.onDataReceived) {
+            this.log.error('No valueResolved function set');
+        }
+
+        const inputBatches = createRegisterBatches(this.log, this.deviceDefinition.inputRegisters);
+        for (const batch of inputBatches) {
+            this.log.log(
+                'Addresses in batch',
+                batch.map((x) => x.address),
+            );
+            await this.readBatch(batch, RegisterType.Input);
+        }
+
+        const holdingBatches = createRegisterBatches(this.log, this.deviceDefinition.holdingRegisters);
+        for (const batch of holdingBatches) {
+            await this.readBatch(batch, RegisterType.Holding);
+        }
     };
 
     /**
@@ -172,38 +201,11 @@ export class ModbusAPI {
         }
 
         for (const register of this.deviceDefinition.inputRegisters) {
-            try {
-                const input = await this.client.readInputRegisters(register.address, register.length);
-                this.log.filteredLog('Read input registers', input);
-                const result = this.deviceDefinition.inputRegisterResultConversion(this.log, input, register);
-                this.log.filteredLog('Conversion result', result);
-
-                if (this.onDataReceived) {
-                    await this.onDataReceived(result, register);
-                }
-            } catch (error) {
-                this.log.error('Failed to readInputRegisters', error, register);
-                if (this.onError) {
-                    await this.onError(error, register);
-                }
-            }
+            await this.readBatch([register], RegisterType.Input);
         }
 
         for (const register of this.deviceDefinition.holdingRegisters) {
-            try {
-                const input = await this.client.readHoldingRegisters(register.address, register.length);
-                const result = this.deviceDefinition.holdingRegisterResultConversion(this.log, input, register);
-
-                if (this.onDataReceived) {
-                    await this.onDataReceived(result, register);
-                }
-            } catch (error) {
-                if (this.onError) {
-                    await this.onError(error, register);
-                } else {
-                    this.log.error('Failed to readHoldingRegisters', error, register);
-                }
-            }
+            await this.readBatch([register], RegisterType.Holding);
         }
 
         this.log.filteredLog('Finished reading registers');
@@ -215,6 +217,43 @@ export class ModbusAPI {
             await this.deviceDefinition.actions[mode](this.log, args, this.client);
         } else {
             this.log.error('No setMode function found for', this.host, mode);
+        }
+    };
+
+    readBatch = async (batch: ModbusRegister[], registerType: RegisterType) => {
+        if (batch.length === 0) {
+            return;
+        }
+
+        const firstRegister = batch[0];
+        const lastRegister = batch[batch.length - 1];
+
+        const length = batch.length > 1 ? lastRegister.address + lastRegister.length - firstRegister.address : batch[0].length;
+
+        try {
+            const results =
+                registerType === RegisterType.Input
+                    ? await this.client.readInputRegisters(firstRegister.address, length)
+                    : await this.client.readHoldingRegisters(firstRegister.address, length);
+
+            let startOffset = 0;
+            for (const register of batch) {
+                const end = startOffset + register.length * 2;
+                const buffer = batch.length > 1 ? results.buffer.subarray(startOffset, end) : results.buffer;
+
+                //const value = conversionFunction(this.log, buffer, register);
+                const value =
+                    registerType === RegisterType.Input
+                        ? this.deviceDefinition.inputRegisterResultConversion(this.log, buffer, register)
+                        : this.deviceDefinition.holdingRegisterResultConversion(this.log, buffer, register);
+
+                if (this.onDataReceived) {
+                    await this.onDataReceived(value, register);
+                }
+                startOffset = end;
+            }
+        } catch (error) {
+            this.log.error('Error reading batch', error);
         }
     };
 }

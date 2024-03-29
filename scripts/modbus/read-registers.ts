@@ -12,6 +12,7 @@ import { Brand } from '../../api/modbus/models/brand';
 // import { mod_tl3_registers } from '../../drivers/blauhoff-modbus/devices/growatt/mod-XXXX-tl3';
 import { Logger } from '../../helpers/log';
 
+//const host = '10.210.5.12';
 const host = '88.159.155.195';
 const port = 502;
 const unitId = 1;
@@ -23,6 +24,7 @@ const valueResolved = async (value: any, register: ModbusRegister) => {
 };
 
 const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Deye, 'deye-sun-xk-sg01hp3-eu-am2');
+//const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Growatt, 'growatt-tl3');
 
 if (!device) {
     log.error('Device not found');
@@ -36,7 +38,8 @@ const perform = async (): Promise<void> => {
 
     await api.connect();
 
-    await api.readRegisters();
+    await api.readRegistersInBatch();
+    //    await api.readRegisters();
 };
 
 perform()

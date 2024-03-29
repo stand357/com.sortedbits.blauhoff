@@ -1833,6 +1833,17 @@
           "hint": {
             "en": "Time in seconds used to query device details"
           }
+        },
+        {
+          "id": "readInBatch",
+          "type": "checkbox",
+          "label": {
+            "en": "Read in batches (experimental)"
+          },
+          "value": false,
+          "hint": {
+            "en": "Determines if the registers should be read in batches"
+          }
         }
       ]
     }
