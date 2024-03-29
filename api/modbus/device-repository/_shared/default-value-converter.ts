@@ -14,24 +14,26 @@ import { RegisterDataType } from '../../models/register-datatype';
  * Converts the value read from a Modbus register based on the register's data type.
  *
  * @param log - The logger instance.
- * @param readRegisterResult - The result of reading the register.
+ * @param buffer - The buffer containing the value.
  * @param register - The Modbus register.
  * @returns The converted value.
  */
-export const defaultValueConverter = (log: IBaseLogger, readRegisterResult: ReadRegisterResult, register: ModbusRegister): any => {
+export const defaultValueConverter = (log: IBaseLogger, buffer: Buffer, register: ModbusRegister): any => {
     switch (register.dataType) {
+        case RegisterDataType.UINT8:
+            return buffer.readUInt8();
         case RegisterDataType.UINT16:
-            return readRegisterResult.buffer.readUInt16BE();
+            return buffer.readUInt16BE();
         case RegisterDataType.UINT32:
-            return readRegisterResult.buffer.readUInt32BE();
+            return buffer.readUInt32BE();
         case RegisterDataType.INT16:
-            return readRegisterResult.buffer.readInt16BE();
+            return buffer.readInt16BE();
         case RegisterDataType.INT32:
-            return readRegisterResult.buffer.readInt32BE();
+            return buffer.readInt32BE();
         case RegisterDataType.FLOAT32:
-            return readRegisterResult.buffer.readFloatBE();
+            return buffer.readFloatBE();
         case RegisterDataType.STRING:
-            return readRegisterResult.buffer.toString('utf8');
+            return buffer.toString('utf8');
         default:
             log.error('Unknown data type', register.dataType);
             return undefined;
