@@ -9,7 +9,7 @@ import Homey from 'homey';
 import { PairSession } from 'homey/lib/Driver';
 import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { getBrand, iconForBrand, getDeviceModelName } from '../../api/modbus/helpers/brand-name';
-import { Brand } from '../../api/modbus/models/brand';
+import { Brand } from '../../api/modbus/models/enum/brand';
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
 import { DeviceAction } from '../../api/modbus/helpers/set-modes';
 
@@ -53,6 +53,19 @@ class ModbusDriver extends Homey.Driver {
         this.homey.flow.getActionCard('enable_solar_selling').registerRunListener(async (args) => {
             this.log('enable_solar_selling');
             await args.device.callAction(DeviceAction.enableSellSolar, args);
+        });
+
+        this.homey.flow.getActionCard('write_value_to_register').registerRunListener(async (args) => {
+            const { device, value, registerType, register } = args;
+
+            this.log('write_value_to_register', value, registerType, register);
+
+            if (!device || !value || !registerType || !register) {
+                this.log('Wait, something is missing', value, registerType, register);
+                return;
+            }
+
+            await device.writeRegisterByAddress(register.address, registerType, value);
         });
     };
 

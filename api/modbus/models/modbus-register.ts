@@ -5,29 +5,44 @@
  * Non-commercial use only
  */
 
-import { RegisterDataType } from './register-datatype';
+import { AccessMode } from './enum/access-mode';
+import { RegisterDataType } from './enum/register-datatype';
 
 export type Transformation = (value: any) => any;
 
 export class ModbusRegister {
-
     address: number;
-    length: number
+    length: number;
     dataType: RegisterDataType;
     scale?: number;
     capabilityId: string;
     transformation?: Transformation;
+    accessMode: AccessMode;
 
-    static default(capabilityId: string, address: number, length: number, dataType: RegisterDataType) {
-        return new ModbusRegister(capabilityId, address, length, dataType);
+    static default(capabilityId: string, address: number, length: number, dataType: RegisterDataType, accessMode: AccessMode = AccessMode.ReadOnly) {
+        return new ModbusRegister(capabilityId, address, length, dataType, accessMode);
     }
 
-    static transform(capabilityId: string, address: number, length: number, dataType: RegisterDataType, transformation: Transformation) {
-        return new ModbusRegister(capabilityId, address, length, dataType, undefined, transformation);
+    static transform(
+        capabilityId: string,
+        address: number,
+        length: number,
+        dataType: RegisterDataType,
+        transformation: Transformation,
+        accessMode: AccessMode = AccessMode.ReadOnly,
+    ) {
+        return new ModbusRegister(capabilityId, address, length, dataType, accessMode, undefined, transformation);
     }
 
-    static scale(capabilityId: string, address: number, length: number, dataType: RegisterDataType, scale: number) {
-        return new ModbusRegister(capabilityId, address, length, dataType, scale);
+    static scale(
+        capabilityId: string,
+        address: number,
+        length: number,
+        dataType: RegisterDataType,
+        scale: number,
+        accessMode: AccessMode = AccessMode.ReadOnly,
+    ) {
+        return new ModbusRegister(capabilityId, address, length, dataType, accessMode, scale);
     }
 
     constructor(
@@ -35,6 +50,7 @@ export class ModbusRegister {
         address: number,
         length: number,
         dataType: RegisterDataType,
+        accessMode: AccessMode,
         scale?: number,
         transformation?: Transformation,
     ) {
@@ -44,10 +60,11 @@ export class ModbusRegister {
         this.capabilityId = capabilityId;
         this.scale = scale;
         this.transformation = transformation;
+        this.accessMode = accessMode;
     }
 
     calculateValue(value: any): any {
-        let result = (Number(value) && this.scale) ? value * this.scale : value;
+        let result = Number(value) && this.scale ? value * this.scale : value;
 
         if (this.transformation) {
             result = this.transformation(result);
@@ -55,5 +72,4 @@ export class ModbusRegister {
 
         return result;
     }
-
 }

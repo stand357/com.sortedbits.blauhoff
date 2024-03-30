@@ -5,10 +5,10 @@
  * Non-commercial use only
  */
 
-import { RegisterDataType } from '../../models/register-datatype';
+import { RegisterDataType } from '../../models/enum/register-datatype';
 import { ModbusRegister } from '../../models/modbus-register';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
-import { Brand } from '../../models/brand';
+import { Brand } from '../../models/enum/brand';
 import { DeviceModel } from '../../models/device-model';
 import { defaultValueConverter } from '../_shared/default-value-converter';
 

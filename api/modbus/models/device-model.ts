@@ -6,7 +6,7 @@
  */
 
 import { ModbusDeviceDefinition } from './modbus-device-registers';
-import { Brand } from './brand';
+import { Brand } from './enum/brand';
 
 export interface DeviceModel {
     id: string;

@@ -5,7 +5,7 @@
  * Non-commercial use only
  */
 
-import { Brand } from '../models/brand';
+import { Brand } from '../models/enum/brand';
 import { DeviceModel } from '../models/device-model';
 import { aforeAFXKTH } from './afore/af-xk-th-three-phase-hybrid';
 import { blauhoffSPHA } from './blauhoff/spha';
@@ -14,14 +14,7 @@ import { growattTL } from './growatt/mod-XXXX-tl';
 import { growattTL3 } from './growatt/mod-XXXX-tl3';
 
 export class DeviceRepository {
-
-    private static devices: DeviceModel[] = [
-        blauhoffSPHA,
-        growattTL,
-        growattTL3,
-        deyeSunXKSG01HP3,
-        aforeAFXKTH,
-    ];
+    private static devices: DeviceModel[] = [blauhoffSPHA, growattTL, growattTL3, deyeSunXKSG01HP3, aforeAFXKTH];
 
     public static getDevices(): DeviceModel[] {
         return this.devices;
@@ -38,5 +31,4 @@ export class DeviceRepository {
     public static getDeviceByBrandAndModel(brand: Brand, model: string): DeviceModel | undefined {
         return this.devices.find((device) => device.brand === brand && device.id === model);
     }
-
 }

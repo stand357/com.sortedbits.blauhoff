@@ -211,6 +211,24 @@ class ModbusDevice extends Device {
         this.readRegisterTimeout = await this.homey.setTimeout(this.readRegisters.bind(this), interval);
     };
 
+    async writeRegisterByAddress(address: number, registerType: 'input' | 'holding', value: number) {
+        this.log('writeRegisterByAddress', address, registerType, value);
+        const registers = registerType === 'input' ? this.device.definition.inputRegisters : this.device.definition.holdingRegisters;
+        const register = registers.find((r) => r.address === address);
+
+        if (!register || register.accessMode === 'ReadOnly') {
+            this.error('Register not found or read only', address);
+            return;
+        }
+
+        if (!this.api) {
+            this.error('ModbusAPI is not initialized');
+            return;
+        }
+
+        await this.api.writeRegister(register, value);
+    }
+
     /**
      * onAdded is called when the user adds the device, called just after pairing.
      */
