@@ -8,7 +8,7 @@
 import { ReadRegisterResult } from 'modbus-serial/ModbusRTU';
 import { IBaseLogger } from '../../../../helpers/log';
 import { ModbusRegister } from '../../models/modbus-register';
-import { RegisterDataType } from '../../models/register-datatype';
+import { RegisterDataType } from '../../models/enum/register-datatype';
 
 /**
  * Converts the value read from a Modbus register based on the register's data type.

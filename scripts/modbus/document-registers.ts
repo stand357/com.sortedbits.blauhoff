@@ -8,7 +8,7 @@
 import path from 'path';
 import fs from 'fs';
 import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-registers';
-import { brands } from '../../api/modbus/models/brand';
+import { brands } from '../../api/modbus/models/enum/brand';
 import { unitForCapability } from '../../api/modbus/helpers/units';
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
 import { findFile } from './helpers/fs-helpers';

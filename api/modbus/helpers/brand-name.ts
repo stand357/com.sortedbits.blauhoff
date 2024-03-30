@@ -6,7 +6,7 @@
  */
 
 import { DeviceRepository } from '../device-repository/device-repository';
-import { Brand } from '../models/brand';
+import { Brand } from '../models/enum/brand';
 
 /**
  * Returns the corresponding Brand based on the provided brandName string.

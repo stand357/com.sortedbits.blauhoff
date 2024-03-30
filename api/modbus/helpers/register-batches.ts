@@ -1,13 +1,16 @@
 import { ModbusRegister } from '../models/modbus-register';
 import { orderModbusRegisters } from './order-modbus-registers';
 import { IBaseLogger } from '../../../helpers/log';
+import { AccessMode } from '../models/enum/access-mode';
 
 export const createRegisterBatches = (log: IBaseLogger, registers: ModbusRegister[]): ModbusRegister[][] => {
-    if (registers.length === 0) {
+    const filteredRegisters = registers.filter((register) => register.accessMode !== AccessMode.WriteOnly);
+
+    if (filteredRegisters.length === 0) {
         return [];
     }
 
-    const ordered = orderModbusRegisters(registers);
+    const ordered = orderModbusRegisters(filteredRegisters);
     const batches: ModbusRegister[][] = [];
 
     const firstAddress = ordered[0].address;

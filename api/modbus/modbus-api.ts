@@ -14,6 +14,8 @@ import { DeviceAction } from './helpers/set-modes';
 import { Socket } from 'net';
 import { createRegisterBatches } from './helpers/register-batches';
 import { ReadRegisterResult } from 'modbus-serial/ModbusRTU';
+import { AccessMode } from './models/enum/access-mode';
+import { validateValue } from './helpers/validate-value';
 
 enum RegisterType {
     Input,
@@ -101,13 +103,17 @@ export class ModbusAPI {
             this.client.on('close', () => {
                 this.log.filteredLog('Modbus connection closed');
 
-                this.onApiDisconnect()
-                    .then(() => {
-                        this.log.filteredLog('Modbus connection re-established');
-                    })
-                    .catch((error) => {
-                        this.log.error('Failed to re-establish Modbus connection', error);
-                    });
+                if (!this.disconnecting) {
+                    this.onApiDisconnect()
+                        .then(() => {
+                            this.log.filteredLog('Modbus connection re-established');
+                        })
+                        .catch((error) => {
+                            this.log.error('Failed to re-establish Modbus connection', error);
+                        });
+                }
+
+                this.disconnecting = false;
             });
 
             this.log.filteredLog('Modbus connection established', this.client.isOpen);
@@ -158,6 +164,10 @@ export class ModbusAPI {
     };
 
     readAddress = async (register: ModbusRegister): Promise<any> => {
+        if (register.accessMode === AccessMode.WriteOnly) {
+            return undefined;
+        }
+
         const input = await this.client.readInputRegisters(register.address, register.length);
 
         this.log.filteredLog('Read input registers', input);
@@ -177,10 +187,6 @@ export class ModbusAPI {
 
         const inputBatches = createRegisterBatches(this.log, this.deviceDefinition.inputRegisters);
         for (const batch of inputBatches) {
-            this.log.log(
-                'Addresses in batch',
-                batch.map((x) => x.address),
-            );
             await this.readBatch(batch, RegisterType.Input);
         }
 
@@ -188,6 +194,29 @@ export class ModbusAPI {
         for (const batch of holdingBatches) {
             await this.readBatch(batch, RegisterType.Holding);
         }
+    };
+
+    writeRegister = async (register: ModbusRegister, value: any): Promise<boolean> => {
+        if (register.accessMode === AccessMode.ReadOnly) {
+            return false;
+        }
+
+        if (!validateValue(value, register.dataType)) {
+            this.log.error('Invalid value', value, 'for register', register.address, register.dataType);
+            return false;
+        }
+
+        this.log.log('Writing to register', register.address, value, typeof value);
+
+        try {
+            const result = await this.client.writeRegisters(register.address, [value]);
+            this.log.filteredLog('Output', result.address);
+        } catch (error) {
+            this.log.error('Error writing to register', error);
+            return false;
+        }
+
+        return true;
     };
 
     /**
@@ -200,11 +229,11 @@ export class ModbusAPI {
             this.log.error('No valueResolved function set');
         }
 
-        for (const register of this.deviceDefinition.inputRegisters) {
+        for (const register of this.deviceDefinition.inputRegisters.filter((x) => x.accessMode !== AccessMode.WriteOnly)) {
             await this.readBatch([register], RegisterType.Input);
         }
 
-        for (const register of this.deviceDefinition.holdingRegisters) {
+        for (const register of this.deviceDefinition.holdingRegisters.filter((x) => x.accessMode !== AccessMode.WriteOnly)) {
             await this.readBatch([register], RegisterType.Holding);
         }
 

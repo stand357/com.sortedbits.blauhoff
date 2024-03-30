@@ -1,0 +1,54 @@
+{
+    "actions": [
+        {
+            "id": "disable_solar_selling",
+            "title": {
+                "en": "Disable solar selling"
+            }
+        },
+        {
+            "id": "enable_solar_selling",
+            "title": {
+                "en": "Enable solar selling"
+            }
+        },
+
+        {
+            "id": "write_value_to_register",
+            "title": {
+                "en": "Write value to register"
+            },
+            "titleFormatted": {
+                "en": "Write [[value]] to [[registerType]] register [[register]]",
+                "nl": "Schrijf [[value]] naar [[registerType]] register [[register]]"
+            },
+            "args": [
+                {
+                    "type": "number",
+                    "name": "value",
+                    "title": { "en": "Value" },
+                    "placeholder": { "en": "Value to write" }
+                },
+                {
+                    "type": "dropdown",
+                    "name": "registerType",
+                    "title": { "en": "The register type where to write to" },
+                    "values": [
+                        { "id": "input", "title": { "en": "input" } },
+                        { "id": "holding", "title": { "en": "holding" } }
+                    ]
+                },
+                {
+                    "type": "autocomplete",
+                    "name": "register",
+                    "title": {
+                        "en": "Register"
+                    },
+                    "placeholder": {
+                        "en": "Register address"
+                    }
+                }
+            ]
+        }
+    ]
+}
