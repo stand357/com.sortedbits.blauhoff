@@ -51,8 +51,8 @@ const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.scale('meter_power.total_battery_charge', 516, 2, RegisterDataType.UINT16, 0.1), // total batt charge
     ModbusRegister.scale('meter_power.total_battery_discharge', 518, 2, RegisterDataType.UINT16, 0.1), // total batt discharge
     // pv
-    ModbusRegister.default('measure_power.pv1', 672, 1, RegisterDataType.UINT16),
-    ModbusRegister.default('measure_power.pv2', 673, 1, RegisterDataType.UINT16),
+    ModbusRegister.scale('measure_power.pv1', 672, 1, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_power.pv2', 673, 1, RegisterDataType.UINT16, 0.1),
 
     ModbusRegister.scale('measure_current.pv1', 677, 1, RegisterDataType.UINT16, 0.1),
     ModbusRegister.scale('measure_current.pv2', 679, 1, RegisterDataType.UINT16, 0.1),

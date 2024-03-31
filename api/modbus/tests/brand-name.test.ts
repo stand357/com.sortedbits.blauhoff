@@ -22,7 +22,7 @@ describe('brand-name', () => {
 
     test('get-device-model-name with non existing model', async () => {
         const blauhoff = getDeviceModelName(Brand.BlauHoff, 'non existing model');
-        expect(blauhoff).toBe('Unknown BlauHoff device');
+        expect(blauhoff).toBe('Unknown Blauhoff device');
 
         const kstar = getDeviceModelName(Brand.Afore, 'non existing model');
         expect(kstar).toBe('Unknown Afore device');
