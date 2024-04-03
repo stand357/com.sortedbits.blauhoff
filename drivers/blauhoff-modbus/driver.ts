@@ -60,7 +60,7 @@ class ModbusDriver extends Homey.Driver {
 
             this.log('write_value_to_register', value, registerType, register);
 
-            if (!device || !value || !registerType || !register) {
+            if (!device || value === undefined || registerType === undefined || !register) {
                 this.log('Wait, something is missing', value, registerType, register);
                 return;
             }

@@ -14,8 +14,8 @@ import { Logger } from '../../helpers/log';
 import { RegisterDataType } from '../../api/modbus/models/enum/register-datatype';
 import { DeviceAction } from '../../api/modbus/helpers/set-modes';
 
-const host = '10.210.5.12';
-//const host = '88.159.155.195';
+//const host = '10.210.5.12';
+const host = '88.159.155.195';
 const port = 502;
 const unitId = 1;
 const log = new Logger();
@@ -27,8 +27,8 @@ const valueResolved = async (value: any, register: ModbusRegister) => {
     log.log(register.capabilityId, result);
 };
 
-const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Growatt, 'growatt-tl3');
-//const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Deye, 'deye-sun-xk-sg01hp3-eu-am2');
+// const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Growatt, 'growatt-tl3');
+const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Deye, 'deye-sun-xk-sg01hp3-eu-am2');
 
 const addressInfo = ModbusRegister.default('', registerAddress, 1, RegisterDataType.INT16);
 
@@ -39,13 +39,21 @@ const perform = async (): Promise<void> => {
 
     await api.connect();
 
-    log.filteredLog('Reading current value', addressInfo.address);
-    const currentValue = await api.readAddress(addressInfo);
-    log.filteredLog('Current value', currentValue);
-    await api.callAction(DeviceAction.enableSellSolar, {});
-    const newValue = await api.readAddress(addressInfo);
+    const address = device?.definition.holdingRegisters.find((r) => r.address === 142);
 
-    log.filteredLog('Values', currentValue, newValue);
+    if (!address) {
+        log.error('Address not found');
+        process.exit(1);
+        return;
+    }
+
+    log.filteredLog('Reading current value', addressInfo.address);
+    //    const currentValue = await api.readAddress(address);
+
+    await api.writeRegister(addressInfo, 0);
+    //    log.filteredLog('Current value', currentValue);
+
+    await api.writeRegister(addressInfo, 0);
 };
 
 perform()
