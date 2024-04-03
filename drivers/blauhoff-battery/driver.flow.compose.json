@@ -6,7 +6,7 @@
                 "en": "Set mode1"
             },
             "titleFormatted": {
-                "en": "Self consumption (mode1) with [[maxFeedInLimit]] limit, keeping the battery level above [[batCapMin]]."
+                "en": "Set self consumption mode with [[maxFeedInLimit]] limit, keeping the battery level above [[batCapMin]]."
             },
             "args": [
                 {
@@ -45,7 +45,7 @@
                 "en": "Set mode2"
             },
             "titleFormatted": {
-                "en": "Direct charge (mode2) with [[batPower]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
+                "en": "Set direct charge mode with [[batPower]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
             },
             "args": [
                 {
@@ -97,7 +97,7 @@
                 "en": "Set mode3"
             },
             "titleFormatted": {
-                "en": "Direct discharge at specified power level (mode3) with [[batPower]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
+                "en": "Set direct discharge mode at [[batPower]] power limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
             },
             "args": [
                 {
@@ -149,7 +149,7 @@
                 "en": "Set mode4"
             },
             "titleFormatted": {
-                "en": "Discharge only to the load, avoid charging (mode4) with [[maxFeedInLimit]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
+                "en": "Set discharge only mode to the load, avoid charging with [[maxFeedInLimit]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
             },
             "args": [
                 {
@@ -201,7 +201,7 @@
                 "en": "Set mode5"
             },
             "titleFormatted": {
-                "en": "Charge only，no discharging (mode5) with [[maxFeedInLimit]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
+                "en": "Set charge only mode, no discharging with [[maxFeedInLimit]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
             },
             "args": [
                 {
@@ -253,7 +253,7 @@
                 "en": "Set mode6"
             },
             "titleFormatted": {
-                "en": "Inverter outputs at specified power (mode6) with [[batPower]], inverter limit at [[batPowerInvLimit]], keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
+                "en": "Set inverter outputs at [[batPower]], inverter limit at [[batPowerInvLimit]], keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
             },
             "args": [
                 {
@@ -319,7 +319,7 @@
                 "en": "Set mode7"
             },
             "titleFormatted": {
-                "en": "Inverter operates at the specified power (mode7) with [[batPower]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
+                "en": "Set inverter mode, operating at [[batPower]] limit, keeping the battery level above [[batCapMin]], for [[timeout]] minutes."
             },
             "args": [
                 {
