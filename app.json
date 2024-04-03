@@ -575,6 +575,16 @@
             "en": "Modbus address"
           }
         },
+        "status_text.run_mode": {
+          "title": {
+            "en": "Run mode"
+          }
+        },
+        "status_text.work_mode": {
+          "title": {
+            "en": "Work mode"
+          }
+        },
         "status_code.run_mode": {
           "title": {
             "en": "Run mode"
@@ -1255,6 +1265,16 @@
         "status_code.modbus_address": {
           "title": {
             "en": "Modbus address"
+          }
+        },
+        "status_text.run_mode": {
+          "title": {
+            "en": "Run mode"
+          }
+        },
+        "status_text.work_mode": {
+          "title": {
+            "en": "Work mode"
           }
         },
         "status_code.run_mode": {

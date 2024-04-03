@@ -23,16 +23,16 @@ export interface IBaseLogger {
 export class Logger implements IBaseLogger {
     log(...args: any[]): void {
         // eslint-disable-next-line no-console
-        //    console.log(...args);
+        console.log(...args);
     }
 
     filteredLog(...args: any[]): void {
         // eslint-disable-next-line no-console
-        //    console.log(...args);
+        console.log(...args);
     }
 
     error(...args: any[]): void {
         // eslint-disable-next-line no-console
-        //  console.error(...args);
+        console.error(...args);
     }
 }

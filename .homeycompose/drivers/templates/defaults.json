@@ -56,6 +56,16 @@
                 "en": "Modbus address"
             }
         },
+        "status_text.run_mode": {
+            "title": {
+                "en": "Run mode"
+            }
+        },
+        "status_text.work_mode": {
+            "title": {
+                "en": "Work mode"
+            }
+        },
         "status_code.run_mode": {
             "title": {
                 "en": "Run mode"
@@ -236,11 +246,11 @@
                 "en": "EPS power"
             }
         },
-        "measure_power.grid_output": {          
+        "measure_power.grid_output": {
             "title": {
                 "en": "Grid output power"
             }
-        },        
+        },
         "measure_power.dsp": {
             "title": {
                 "en": "DSP power"
@@ -546,12 +556,8 @@
     "energy": {
         "cumulative": true
     },
-    "platforms": [
-        "local"
-    ],
-    "connectivity": [
-        "lan"
-    ],
+    "platforms": ["local"],
+    "connectivity": ["lan"],
     "images": {
         "small": "{{driverAssetsPath}}/images/small.png",
         "large": "{{driverAssetsPath}}/images/large.png",

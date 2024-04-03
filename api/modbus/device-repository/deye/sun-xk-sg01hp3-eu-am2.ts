@@ -18,9 +18,10 @@ const inputRegisters: ModbusRegister[] = [];
 
 const holdingRegisters: ModbusRegister[] = [
     // settings
-    ModbusRegister.default('status_code.run_mode', 500, 1, RegisterDataType.UINT16),
     ModbusRegister.default('status_code.modbus_address', 1, 1, RegisterDataType.UINT16),
     ModbusRegister.default('status_code.modbus_protocol', 2, 1, RegisterDataType.UINT16),
+    ModbusRegister.scale('status_code.max_sell_power', 143, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
+
     ModbusRegister.default('serial', 3, 5, RegisterDataType.STRING),
 
     ModbusRegister.transform(
@@ -34,8 +35,40 @@ const holdingRegisters: ModbusRegister[] = [
         AccessMode.ReadWrite,
     ),
 
-    // ModbusRegister.scale('status_code.max_sell_power', 143, 1, RegisterDataType.UINT16, 10),//max sell power
-    // ModbusRegister.scale('status_code.selling_enable', 146, 1, RegisterDataType.UINT16, 0),//selling enable 254=0n  126=off more settings possible see doc
+    ModbusRegister.transform(
+        'status_text.work_mode',
+        142,
+        1,
+        RegisterDataType.UINT16,
+        (value) => {
+            if (value === 0) {
+                return 'Selling First';
+            } else if (value === 1) {
+                return 'Zero Export To Load';
+            } else if (value === 2) {
+                return 'Zero Export To CT';
+            } else {
+                return 'Unknown'; // Je kunt hier ook een andere fallback waarde kiezen
+            }
+        },
+        AccessMode.ReadWrite,
+    ),
+
+    ModbusRegister.transform('status_text.run_mode', 500, 1, RegisterDataType.UINT16, (value) => {
+        if (value === 0) {
+            return 'Standby';
+        } else if (value === 1) {
+            return 'Selftest';
+        } else if (value === 2) {
+            return 'Normal';
+        } else if (value === 3) {
+            return 'Alarm';
+        } else if (value === 4) {
+            return 'Fault';
+        } else {
+            return 'Unknown'; // Je kunt hier ook een andere fallback waarde kiezen
+        }
+    }),
 
     // meters
     ModbusRegister.scale('meter_power.daily_from_grid', 520, 1, RegisterDataType.UINT16, 0.1), // day gridbuy
@@ -153,6 +186,7 @@ const definition: ModbusDeviceDefinition = {
         enableSellSolar,
         disableSellSolar,
     },
+    deprecatedCapabilities: ['status_code.work_mode', 'status_code.run_mode'],
 };
 
 export const deyeSunXKSG01HP3: DeviceModel = {
