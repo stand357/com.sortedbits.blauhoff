@@ -429,6 +429,90 @@
             "labelDecimals": 0
           }
         ]
+      },
+      {
+        "id": "disable_solar_selling",
+        "title": {
+          "en": "Disable solar selling"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus"
+          }
+        ]
+      },
+      {
+        "id": "enable_solar_selling",
+        "title": {
+          "en": "Enable solar selling"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus"
+          }
+        ]
+      },
+      {
+        "id": "write_value_to_register",
+        "title": {
+          "en": "Write value to register"
+        },
+        "titleFormatted": {
+          "en": "Write [[value]] to [[registerType]] register [[register]]",
+          "nl": "Schrijf [[value]] naar [[registerType]] register [[register]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus"
+          },
+          {
+            "type": "number",
+            "name": "value",
+            "title": {
+              "en": "Value"
+            },
+            "placeholder": {
+              "en": "Value to write"
+            }
+          },
+          {
+            "type": "dropdown",
+            "name": "registerType",
+            "title": {
+              "en": "The register type where to write to"
+            },
+            "values": [
+              {
+                "id": "input",
+                "title": {
+                  "en": "input"
+                }
+              },
+              {
+                "id": "holding",
+                "title": {
+                  "en": "holding"
+                }
+              }
+            ]
+          },
+          {
+            "type": "autocomplete",
+            "name": "register",
+            "title": {
+              "en": "Register"
+            },
+            "placeholder": {
+              "en": "Register address"
+            }
+          }
+        ]
       }
     ]
   },
@@ -1121,6 +1205,665 @@
           "hint": {
             "en": "The base URL for the API, update this only if you know what you are doing.",
             "nl": "De basis URL voor de API, pas dit alleen aan als je weet wat je doet."
+          }
+        }
+      ]
+    },
+    {
+      "class": "solarpanel",
+      "capabilitiesOptions": {
+        "date.record": {
+          "title": {
+            "en": "Last status update"
+          }
+        },
+        "readable_boolean.device_status": {
+          "title": {
+            "en": "Device online"
+          }
+        },
+        "status_code.device_type": {
+          "title": {
+            "en": "Device type"
+          }
+        },
+        "manufacturer": {
+          "title": {
+            "en": "Manufacturer"
+          }
+        },
+        "serial": {
+          "title": {
+            "en": "Serial number"
+          }
+        },
+        "version.dsp1": {
+          "title": {
+            "en": "DSP 1 version"
+          }
+        },
+        "version.dsp2": {
+          "title": {
+            "en": "DSP 2 version"
+          }
+        },
+        "version.bms": {
+          "title": {
+            "en": "BMS version"
+          }
+        },
+        "version.ems": {
+          "title": {
+            "en": "EMS version"
+          }
+        },
+        "status_code.modbus_protocol": {
+          "title": {
+            "en": "Modbus version"
+          }
+        },
+        "status_code.modbus_address": {
+          "title": {
+            "en": "Modbus address"
+          }
+        },
+        "status_text.run_mode": {
+          "title": {
+            "en": "Run mode"
+          }
+        },
+        "status_text.work_mode": {
+          "title": {
+            "en": "Work mode"
+          }
+        },
+        "status_code.run_mode": {
+          "title": {
+            "en": "Run mode"
+          }
+        },
+        "status_code.work_mode": {
+          "title": {
+            "en": "Work mode"
+          }
+        },
+        "status_code.max_sell_power": {
+          "title": {
+            "en": "Max selling power"
+          }
+        },
+        "status_code.selling_enable": {
+          "title": {
+            "en": "Selling enable"
+          }
+        },
+        "status_code.bat_basic_status": {
+          "title": {
+            "en": "Battery status"
+          }
+        },
+        "status_code.sys_error_code": {
+          "title": {
+            "en": "Error code"
+          }
+        },
+        "status_code.sys_bat_error_code": {
+          "title": {
+            "en": "Battery error code"
+          }
+        },
+        "measure_voltage.grid_l1": {
+          "title": {
+            "en": "Grid L1 voltage"
+          },
+          "decimals": 0
+        },
+        "measure_voltage.grid_l2": {
+          "title": {
+            "en": "Grid L2 voltage"
+          },
+          "decimals": 0
+        },
+        "measure_voltage.grid_l3": {
+          "title": {
+            "en": "Grid L3 voltage"
+          },
+          "decimals": 0
+        },
+        "measure_power.meter": {
+          "title": {
+            "en": "Meter power"
+          }
+        },
+        "measure_power.grid": {
+          "title": {
+            "en": "Grid output power"
+          }
+        },
+        "measure_power.grid_int_ctl1": {
+          "title": {
+            "en": "Grid power int CT L1"
+          }
+        },
+        "measure_power.grid_int_ctl2": {
+          "title": {
+            "en": "Grid power int CT L2"
+          }
+        },
+        "measure_power.grid_int_ctl3": {
+          "title": {
+            "en": "Grid power int CT L3"
+          }
+        },
+        "measure_power.grid_ext_ctl1": {
+          "title": {
+            "en": "Grid power ext CT L1"
+          }
+        },
+        "measure_power.grid_ext_ctl2": {
+          "title": {
+            "en": "Grid power ext CT L2"
+          }
+        },
+        "measure_power.grid_ext_ctl3": {
+          "title": {
+            "en": "Grid power ext CT L3"
+          }
+        },
+        "measure_power.total_active_in_power": {
+          "title": {
+            "en": "Meter power total active in"
+          }
+        },
+        "measure_voltage.pv1": {
+          "title": {
+            "en": "PV 1 voltage"
+          },
+          "decimals": 0
+        },
+        "measure_current.pv1": {
+          "title": {
+            "en": "PV 1 current"
+          }
+        },
+        "measure_voltage.pv2": {
+          "title": {
+            "en": "PV 2 voltage"
+          },
+          "decimals": 0
+        },
+        "measure_current.pv2": {
+          "title": {
+            "en": "PV 2 current"
+          }
+        },
+        "measure_power.pv1": {
+          "title": {
+            "en": "PV 1 power"
+          },
+          "decimals": 0
+        },
+        "measure_power.pv2": {
+          "title": {
+            "en": "PV 2 power"
+          },
+          "decimals": 0
+        },
+        "measure_power.pv": {
+          "title": {
+            "en": "PV power"
+          },
+          "decimals": 0
+        },
+        "measure_voltage.ac": {
+          "title": {
+            "en": "AC voltage"
+          },
+          "decimals": 0
+        },
+        "measure_current.ac": {
+          "title": {
+            "en": "AC current"
+          }
+        },
+        "measure_frequency.ac": {
+          "title": {
+            "en": "AC frequency"
+          }
+        },
+        "measure_power.ac": {
+          "title": {
+            "en": "AC power"
+          },
+          "decimals": 0
+        },
+        "measure_voltamperage.ac": {
+          "title": {
+            "en": "AC voltamperage"
+          }
+        },
+        "measure_voltage.eps": {
+          "title": {
+            "en": "EPS voltage"
+          }
+        },
+        "measure_current.eps": {
+          "title": {
+            "en": "EPS current"
+          }
+        },
+        "measure_power.eps": {
+          "title": {
+            "en": "EPS power"
+          }
+        },
+        "measure_power.grid_output": {
+          "title": {
+            "en": "Grid output power"
+          }
+        },
+        "measure_power.dsp": {
+          "title": {
+            "en": "DSP power"
+          }
+        },
+        "measure_temperature.ac": {
+          "title": {
+            "en": "AC temperature"
+          }
+        },
+        "measure_temperature.dc": {
+          "title": {
+            "en": "DC temperature"
+          }
+        },
+        "measure_power.load": {
+          "title": {
+            "en": "load power"
+          }
+        },
+        "measure_power.load_l1": {
+          "title": {
+            "en": "Load L1 power"
+          }
+        },
+        "measure_power.load_l2": {
+          "title": {
+            "en": "Load L2 power"
+          }
+        },
+        "measure_power.load_l3": {
+          "title": {
+            "en": "Load L3 power"
+          }
+        },
+        "measure_voltage.load_l1": {
+          "title": {
+            "en": "Load L1 voltage"
+          }
+        },
+        "measure_voltage.load_l2": {
+          "title": {
+            "en": "Load L2 voltage"
+          }
+        },
+        "measure_voltage.load_l3": {
+          "title": {
+            "en": "Load L3 voltage"
+          }
+        },
+        "measure_power.inverter": {
+          "title": {
+            "en": "Inverter power"
+          }
+        },
+        "measure_power.inverter_l1": {
+          "title": {
+            "en": "Inverter L1 power"
+          }
+        },
+        "measure_power.inverter_l2": {
+          "title": {
+            "en": "Inverter L2 power"
+          }
+        },
+        "measure_power.inverter_l3": {
+          "title": {
+            "en": "Inverter L3 power"
+          }
+        },
+        "measure_current.inverter_l1": {
+          "title": {
+            "en": "Inverter L1 current"
+          }
+        },
+        "measure_current.inverter_l2": {
+          "title": {
+            "en": "Inverter L2 current"
+          }
+        },
+        "measure_current.inverter_l3": {
+          "title": {
+            "en": "Inverter L3 current"
+          }
+        },
+        "measure_voltage.inverter_l1": {
+          "title": {
+            "en": "Inverter L1 voltage"
+          }
+        },
+        "measure_voltage.inverter_l2": {
+          "title": {
+            "en": "Inverter L2 voltage"
+          }
+        },
+        "measure_voltage.inverter_l3": {
+          "title": {
+            "en": "Inverter L3 voltage"
+          }
+        },
+        "measure_voltamperage.eps": {
+          "title": {
+            "en": "EPS voltamperage"
+          }
+        },
+        "measure_voltage.meter": {
+          "title": {
+            "en": "Meter voltage"
+          }
+        },
+        "measure_current.meter": {
+          "title": {
+            "en": "Meter current"
+          }
+        },
+        "measure_frequency.meter": {
+          "title": {
+            "en": "Meter frequency"
+          }
+        },
+        "measure_voltamperage.meter": {
+          "title": {
+            "en": "Meter voltamperage"
+          }
+        },
+        "measure_voltage.battery": {
+          "title": {
+            "en": "Battery voltage"
+          }
+        },
+        "measure_voltage.battery1": {
+          "title": {
+            "en": "Battery 1 voltage"
+          }
+        },
+        "measure_voltage.battery2": {
+          "title": {
+            "en": "Battery 2 voltage"
+          }
+        },
+        "measure_current.battery": {
+          "title": {
+            "en": "Battery current"
+          }
+        },
+        "measure_power.battery": {
+          "title": {
+            "en": "Battery power"
+          }
+        },
+        "measure_power.battery1": {
+          "title": {
+            "en": "Battery 1 power"
+          }
+        },
+        "measure_power.battery2": {
+          "title": {
+            "en": "Battery 2 power"
+          }
+        },
+        "measure_current.battery1": {
+          "title": {
+            "en": "Battery 1 current"
+          }
+        },
+        "measure_current.battery2": {
+          "title": {
+            "en": "Battery 2 current"
+          }
+        },
+        "measure_percentage.bat_soc": {
+          "title": {
+            "en": "Battery SOC"
+          }
+        },
+        "measure_percentage.bat1_soc": {
+          "title": {
+            "en": "Battery 1 SOC"
+          }
+        },
+        "measure_percentage.bat2_soc": {
+          "title": {
+            "en": "Battery 2 SOC"
+          }
+        },
+        "measure_percentage.bat_soh": {
+          "title": {
+            "en": "State of health"
+          },
+          "icon": "/assets/capabilities/sharp-light-battery-three-quarters-circle-info.svg"
+        },
+        "measure_voltage.battery_high": {
+          "title": {
+            "en": "Battery voltage high"
+          }
+        },
+        "measure_voltage.battery_low": {
+          "title": {
+            "en": "Battery voltage low"
+          }
+        },
+        "measure_temperature.battery_high": {
+          "title": {
+            "en": "Battery temperature high"
+          }
+        },
+        "measure_temperature.battery_low": {
+          "title": {
+            "en": "Battery temperature low"
+          }
+        },
+        "measure_temperature.battery1": {
+          "title": {
+            "en": "Battery 1 temperature"
+          }
+        },
+        "measure_temperature.battery2": {
+          "title": {
+            "en": "Battery 2 temperature"
+          }
+        },
+        "meter_power.total_battery_charge": {
+          "title": {
+            "en": "Total battery charge"
+          }
+        },
+        "meter_power.daily_battery_charge": {
+          "title": {
+            "en": "Daily battery charge"
+          }
+        },
+        "meter_power.total_battery_discharge": {
+          "title": {
+            "en": "Total battery discharge"
+          }
+        },
+        "meter_power.daily_battery_discharge": {
+          "title": {
+            "en": "Daily battery discharge"
+          }
+        },
+        "meter_power.pv": {
+          "title": {
+            "en": "Total PV"
+          }
+        },
+        "meter_power.total_pv": {
+          "title": {
+            "en": "Total PV"
+          }
+        },
+        "meter_power.daily_pv": {
+          "title": {
+            "en": "Daily PV"
+          }
+        },
+        "meter_power.daily": {
+          "title": {
+            "en": "Daily Energy"
+          }
+        },
+        "meter_power.total_to_load": {
+          "title": {
+            "en": "Total to load"
+          }
+        },
+        "meter_power.daily_to_load": {
+          "title": {
+            "en": "Daily to load"
+          }
+        },
+        "meter_power.total_to_grid": {
+          "title": {
+            "en": "Total to grid"
+          }
+        },
+        "meter_power.daily_to_grid": {
+          "title": {
+            "en": "Daily to grid"
+          }
+        },
+        "meter_power.total_from_grid": {
+          "title": {
+            "en": "Total from grid"
+          }
+        },
+        "meter_power.daily_from_grid": {
+          "title": {
+            "en": "Daily from grid"
+          }
+        },
+        "meter_power.total_to_grid_pv": {
+          "title": {
+            "en": "Total PV to grid"
+          }
+        },
+        "status_text.sell_solar": {
+          "title": {
+            "en": "Sell solar"
+          }
+        }
+      },
+      "energy": {
+        "cumulative": true
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/blauhoff-modbus/assets/images/small.jpg",
+        "large": "/drivers/blauhoff-modbus/assets/images/large.jpg",
+        "xlarge": "/drivers/blauhoff-modbus/assets/images/xlarge.jpg"
+      },
+      "name": {
+        "en": "Modbus TCP device"
+      },
+      "capabilities": [
+        "readable_boolean.device_status"
+      ],
+      "pair": [
+        {
+          "id": "device_type"
+        },
+        {
+          "id": "device_model"
+        },
+        {
+          "id": "modbus_information"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "blauhoff-modbus",
+      "settings": [
+        {
+          "id": "host",
+          "type": "text",
+          "label": {
+            "en": "Host"
+          },
+          "value": "",
+          "hint": {
+            "en": "IP address of the Modbus device"
+          }
+        },
+        {
+          "id": "port",
+          "type": "number",
+          "label": {
+            "en": "Port"
+          },
+          "value": 502,
+          "hint": {
+            "en": "The port number of the Modbus device"
+          }
+        },
+        {
+          "id": "unitId",
+          "type": "number",
+          "label": {
+            "en": "Unit ID"
+          },
+          "value": 1,
+          "hint": {
+            "en": "The unit ID of the Modbus device"
+          }
+        },
+        {
+          "id": "refreshInterval",
+          "type": "number",
+          "label": {
+            "en": "Update interval",
+            "nl": "Update interval"
+          },
+          "min": 1,
+          "value": 10,
+          "max": 120,
+          "hint": {
+            "en": "Time in seconds used to query device details"
+          }
+        },
+        {
+          "id": "readInBatch",
+          "type": "checkbox",
+          "label": {
+            "en": "Read in batches (experimental)"
+          },
+          "value": false,
+          "hint": {
+            "en": "Determines if the registers should be read in batches"
           }
         }
       ]
