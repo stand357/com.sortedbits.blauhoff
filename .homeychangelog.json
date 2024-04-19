@@ -7,5 +7,8 @@
   },
   "1.1.0": {
     "en": "Adding BlauHoff modbus support"
+  },
+  "1.1.1": {
+    "en": "Better Deye support"
   }
 }
