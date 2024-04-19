@@ -23,8 +23,8 @@ const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.default('serial', 3, 5, RegisterDataType.STRING),
     ModbusRegister.scale('status_code.zero_export_power', 104, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
     ModbusRegister.scale('status_code.max_sell_power', 143, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
-        //time of use, we have to discuss a way how to handle these
-    ModbusRegister.default('status_code.grid_tou_time1', 148, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),// 6 o'clock is shown as 600
+    //time of use, we have to discuss a way how to handle these
+    ModbusRegister.default('status_code.grid_tou_time1', 148, 1, RegisterDataType.UINT16, AccessMode.ReadWrite), // 6 o'clock is shown as 600
     ModbusRegister.default('status_code.grid_tou_time2', 149, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
     ModbusRegister.default('status_code.grid_tou_time3', 150, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
     ModbusRegister.default('status_code.grid_tou_time4', 151, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
@@ -36,15 +36,16 @@ const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.scale('status_code.grid_tou_power4', 157, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
     ModbusRegister.scale('status_code.grid_tou_power5', 158, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
     ModbusRegister.scale('status_code.grid_tou_power6', 159, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_capacity1', 165, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
     ModbusRegister.default('status_code.grid_tou_capacity1', 166, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_capacity1', 167, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_capacity1', 168, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_capacity1', 169, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_capacity1', 170, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-        //
+    ModbusRegister.default('status_code.grid_tou_capacity2', 167, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_capacity3', 168, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_capacity4', 169, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_capacity5', 170, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_capacity6', 171, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    //
 
     ModbusRegister.scale('status_code.grid_peak_shaving_power', 191, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
+    ModbusRegister.scale('status_code.max_solar_power', 340, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
 
     ModbusRegister.transform(
         'status_text.energie_management_model',
@@ -111,64 +112,63 @@ const holdingRegisters: ModbusRegister[] = [
         AccessMode.ReadWrite,
     ),
 
-//repeat for addresse 172/177
+    //repeat for addresse 172/177
     ModbusRegister.transform(
         'status_text.tou_grid_charge',
-            172,
-            1,
-            RegisterDataType.UINT16,
-            (value) => {
-                const firstBit = (value & 1); // read 1th bit                      
-                if (firstBit === 0) {
-                    return 'Grid charge off';
-                } else if (firstBit === 1) {
-                    return 'Grid charge on';
-                } else {
-                    return 'Unknown'; 
-                }
-            },
-            AccessMode.ReadWrite,
+        172,
+        1,
+        RegisterDataType.UINT16,
+        (value) => {
+            const firstBit = value & 1; // read 1th bit
+            if (firstBit === 0) {
+                return 'Grid charge off';
+            } else if (firstBit === 1) {
+                return 'Grid charge on';
+            } else {
+                return 'Unknown';
+            }
+        },
+        AccessMode.ReadWrite,
     ),
-
 
     //repeat for addresse 172/177
     ModbusRegister.transform(
         'status_text.tou_gen_charge',
-            172,
-            1,
-            RegisterDataType.UINT16,
-            (value) => {
-                const secondBit = (value & 2); // read 2th bit                      
-                if (secondBit === 0) {
-                    return 'Gen charge off';
-                } else if (secondBit === 1) {
-                    return 'Gen charge on';
-                } else {
-                    return 'Unknown'; 
-                }
-            },
-            AccessMode.ReadWrite,
+        172,
+        1,
+        RegisterDataType.UINT16,
+        (value) => {
+            const secondBit = value & 2; // read 2th bit
+            if (secondBit === 0) {
+                return 'Gen charge off';
+            } else if (secondBit === 1) {
+                return 'Gen charge on';
+            } else {
+                return 'Unknown';
+            }
+        },
+        AccessMode.ReadWrite,
     ),
 
     //add to default
     ModbusRegister.transform(
         'status_text.grid_peak_shaving',
-            178,
-            1,
-            RegisterDataType.UINT16,
-            (value) => {
-                const fourthBit = (value & 8) >> 3; // read 4th bit
-                const fifthBit = (value & 16) >> 4; // read 5th bit
-                        
-                if (fourthBit === 1 && fifthBit === 0) {
-                    return ' peak shaving disable';
-                } else if (fourthBit === 1 && fifthBit === 1) {
-                    return ' peak shaving enable';
-                } else {
-                    return 'Unknown'; 
-                }
-            },
-            AccessMode.ReadWrite,
+        178,
+        1,
+        RegisterDataType.UINT16,
+        (value) => {
+            const fourthBit = (value & 8) >> 3; // read 4th bit
+            const fifthBit = (value & 16) >> 4; // read 5th bit
+
+            if (fourthBit === 1 && fifthBit === 0) {
+                return ' peak shaving disable';
+            } else if (fourthBit === 1 && fifthBit === 1) {
+                return ' peak shaving enable';
+            } else {
+                return 'Unknown';
+            }
+        },
+        AccessMode.ReadWrite,
     ),
 
     ModbusRegister.transform('status_text.run_mode', 500, 1, RegisterDataType.UINT16, (value) => {
@@ -187,10 +187,6 @@ const holdingRegisters: ModbusRegister[] = [
         }
     }),
 
-
-        
-        
-
     // meters
     ModbusRegister.scale('meter_power.daily_from_grid', 520, 1, RegisterDataType.UINT16, 0.1), // day gridbuy
     ModbusRegister.scale('meter_power.daily_to_grid', 521, 1, RegisterDataType.UINT16, 0.1), // day gridsell
@@ -204,10 +200,10 @@ const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.scale('meter_power.daily_battery_discharge', 515, 1, RegisterDataType.UINT16, 0.1), // day batt discharge
     ModbusRegister.scale('meter_power.total_battery_charge', 516, 2, RegisterDataType.UINT16, 0.1), // total batt charge
     ModbusRegister.scale('meter_power.total_battery_discharge', 518, 2, RegisterDataType.UINT16, 0.1), // total batt discharge
-    
+
     // pv
-    ModbusRegister.scale('measure_power.pv1', 672, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.scale('measure_power.pv2', 673, 1, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_power.pv1', 672, 1, RegisterDataType.UINT16, 10),
+    ModbusRegister.scale('measure_power.pv2', 673, 1, RegisterDataType.UINT16, 10),
 
     //ModbusRegister.scale('measure_current.pv1', 677, 1, RegisterDataType.UINT16, 0.1),
     //ModbusRegister.scale('measure_current.pv2', 679, 1, RegisterDataType.UINT16, 0.1),
@@ -230,7 +226,6 @@ const holdingRegisters: ModbusRegister[] = [
 
     // generator
     // ModbusRegister.scale('measure_power.gen_port', 667, 1, RegisterDataType.UINT16, 0),
-
 
     // inverter
     ModbusRegister.default('measure_power.inverter', 636, 1, RegisterDataType.INT16),
@@ -273,7 +268,7 @@ const holdingRegisters: ModbusRegister[] = [
     //ModbusRegister.scale('measure_voltage.load_l3', 646, 1, RegisterDataType.UINT16, 0.1),
 
     // ups
-    ModbusRegister.default('measure_power.ups', 643, 1, RegisterDataType.UINT16),//gives a low random value when nothing is connected
+    ModbusRegister.default('measure_power.ups', 643, 1, RegisterDataType.UINT16), //gives a low random value when nothing is connected
     //ModbusRegister.default('measure_power.ups_l1', 640, 1, RegisterDataType.UINT16),
     //ModbusRegister.default('measure_power.ups_l2', 641, 1, RegisterDataType.UINT16),
     //ModbusRegister.default('measure_power.ups_l3', 642, 1, RegisterDataType.UINT16),
