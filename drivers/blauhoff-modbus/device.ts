@@ -24,7 +24,7 @@ class ModbusDevice extends Device {
     private device!: DeviceModel;
 
     public filteredLog(...args: any[]) {
-        if (this.device.brand === Brand.Deye) {
+        if (this.device.brand === Brand.Growatt) {
             this.log(args);
         }
     }
