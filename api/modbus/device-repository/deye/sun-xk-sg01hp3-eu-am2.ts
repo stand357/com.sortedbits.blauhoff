@@ -20,17 +20,45 @@ const holdingRegisters: ModbusRegister[] = [
     // settings
     ModbusRegister.default('status_code.modbus_address', 1, 1, RegisterDataType.UINT16),
     ModbusRegister.default('status_code.modbus_protocol', 2, 1, RegisterDataType.UINT16),
-    ModbusRegister.scale('status_code.max_sell_power', 143, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
-
     ModbusRegister.default('serial', 3, 5, RegisterDataType.STRING),
+    ModbusRegister.scale('status_code.zero_export_power', 104, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
+    ModbusRegister.scale('status_code.max_sell_power', 143, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
+        //time of use, we have to discuss a way how to handle these
+    ModbusRegister.default('status_code.grid_tou_time1', 148, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),// 6 o'clock is shown as 600
+    ModbusRegister.default('status_code.grid_tou_time2', 149, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_time3', 150, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_time4', 151, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_time5', 152, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_time6', 153, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.scale('status_code.grid_tou_power1', 154, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
+    ModbusRegister.scale('status_code.grid_tou_power2', 155, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
+    ModbusRegister.scale('status_code.grid_tou_power3', 156, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
+    ModbusRegister.scale('status_code.grid_tou_power4', 157, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
+    ModbusRegister.scale('status_code.grid_tou_power5', 158, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
+    ModbusRegister.scale('status_code.grid_tou_power6', 159, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_capacity1', 165, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_capacity1', 166, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_capacity1', 167, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_capacity1', 168, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_capacity1', 169, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.grid_tou_capacity1', 170, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+        //
+
+    ModbusRegister.scale('status_code.grid_peak_shaving_power', 191, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
 
     ModbusRegister.transform(
-        'status_text.sell_solar',
-        145,
+        'status_text.energie_management_model',
+        141,
         1,
         RegisterDataType.UINT16,
         (value) => {
-            return value === 1 ? 'Yes' : 'No';
+            if (value === 0) {
+                return 'Battery First';
+            } else if (value === 1) {
+                return 'Load First';
+            } else {
+                return 'Unknown';
+            }
         },
         AccessMode.ReadWrite,
     ),
@@ -48,10 +76,99 @@ const holdingRegisters: ModbusRegister[] = [
             } else if (value === 2) {
                 return 'Zero Export To CT';
             } else {
-                return 'Unknown'; // Je kunt hier ook een andere fallback waarde kiezen
+                return 'Unknown';
             }
         },
         AccessMode.ReadWrite,
+    ),
+
+    ModbusRegister.transform(
+        'status_text.sell_solar',
+        145,
+        1,
+        RegisterDataType.UINT16,
+        (value) => {
+            return value === 1 ? 'Yes' : 'No';
+        },
+        AccessMode.ReadWrite,
+    ),
+
+    //more states are possible to choose days of week
+    ModbusRegister.transform(
+        'status_text.time_of_use',
+        146,
+        1,
+        RegisterDataType.UINT16,
+        (value) => {
+            if (value === 0) {
+                return 'time of use, off';
+            } else if (value === 255) {
+                return 'time of use, all days on';
+            } else {
+                return 'Unknown';
+            }
+        },
+        AccessMode.ReadWrite,
+    ),
+
+//repeat for addresse 172/177
+    ModbusRegister.transform(
+        'status_text.tou_grid_charge',
+            172,
+            1,
+            RegisterDataType.UINT16,
+            (value) => {
+                const firstBit = (value & 1); // read 1th bit                      
+                if (firstBit === 0) {
+                    return 'Grid charge off';
+                } else if (firstBit === 1) {
+                    return 'Grid charge on';
+                } else {
+                    return 'Unknown'; 
+                }
+            },
+            AccessMode.ReadWrite,
+    ),
+
+
+    //repeat for addresse 172/177
+    ModbusRegister.transform(
+        'status_text.tou_gen_charge',
+            172,
+            1,
+            RegisterDataType.UINT16,
+            (value) => {
+                const secondBit = (value & 2); // read 2th bit                      
+                if (secondBit === 0) {
+                    return 'Gen charge off';
+                } else if (secondBit === 1) {
+                    return 'Gen charge on';
+                } else {
+                    return 'Unknown'; 
+                }
+            },
+            AccessMode.ReadWrite,
+    ),
+
+    //add to default
+    ModbusRegister.transform(
+        'status_text.grid_peak_shaving',
+            178,
+            1,
+            RegisterDataType.UINT16,
+            (value) => {
+                const fourthBit = (value & 8) >> 3; // read 4th bit
+                const fifthBit = (value & 16) >> 4; // read 5th bit
+                        
+                if (fourthBit === 1 && fifthBit === 0) {
+                    return ' peak shaving disable';
+                } else if (fourthBit === 1 && fifthBit === 1) {
+                    return ' peak shaving enable';
+                } else {
+                    return 'Unknown'; 
+                }
+            },
+            AccessMode.ReadWrite,
     ),
 
     ModbusRegister.transform('status_text.run_mode', 500, 1, RegisterDataType.UINT16, (value) => {
@@ -66,9 +183,13 @@ const holdingRegisters: ModbusRegister[] = [
         } else if (value === 4) {
             return 'Fault';
         } else {
-            return 'Unknown'; // Je kunt hier ook een andere fallback waarde kiezen
+            return 'Unknown';
         }
     }),
+
+
+        
+        
 
     // meters
     ModbusRegister.scale('meter_power.daily_from_grid', 520, 1, RegisterDataType.UINT16, 0.1), // day gridbuy
@@ -83,24 +204,25 @@ const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.scale('meter_power.daily_battery_discharge', 515, 1, RegisterDataType.UINT16, 0.1), // day batt discharge
     ModbusRegister.scale('meter_power.total_battery_charge', 516, 2, RegisterDataType.UINT16, 0.1), // total batt charge
     ModbusRegister.scale('meter_power.total_battery_discharge', 518, 2, RegisterDataType.UINT16, 0.1), // total batt discharge
+    
     // pv
     ModbusRegister.scale('measure_power.pv1', 672, 1, RegisterDataType.UINT16, 0.1),
     ModbusRegister.scale('measure_power.pv2', 673, 1, RegisterDataType.UINT16, 0.1),
 
-    ModbusRegister.scale('measure_current.pv1', 677, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.scale('measure_current.pv2', 679, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.scale('measure_voltage.pv1', 676, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.scale('measure_voltage.pv2', 678, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_current.pv1', 677, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_current.pv2', 679, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.pv1', 676, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.pv2', 678, 1, RegisterDataType.UINT16, 0.1),
 
     // grid
     ModbusRegister.default('measure_power.grid', 625, 1, RegisterDataType.UINT16),
-    ModbusRegister.default('measure_power.total_active_in_power', 607, 1, RegisterDataType.INT16),
-    ModbusRegister.default('measure_power.grid_int_ctl1', 604, 1, RegisterDataType.INT16),
-    ModbusRegister.default('measure_power.grid_int_ctl2', 605, 1, RegisterDataType.INT16),
-    ModbusRegister.default('measure_power.grid_int_ctl3', 606, 1, RegisterDataType.INT16),
-    ModbusRegister.default('measure_power.grid_ext_ctl1', 616, 1, RegisterDataType.INT16),
-    ModbusRegister.default('measure_power.grid_ext_ctl2', 617, 1, RegisterDataType.INT16),
-    ModbusRegister.default('measure_power.grid_ext_ctl3', 618, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.total_active_in_power', 607, 1, RegisterDataType.INT16), //irrelevant?
+    //ModbusRegister.default('measure_power.grid_int_ctl1', 604, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.grid_int_ctl2', 605, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.grid_int_ctl3', 606, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.grid_ext_ctl1', 616, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.grid_ext_ctl2', 617, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.grid_ext_ctl3', 618, 1, RegisterDataType.INT16),
 
     ModbusRegister.scale('measure_voltage.grid_l1', 598, 1, RegisterDataType.UINT16, 0.1),
     ModbusRegister.scale('measure_voltage.grid_l2', 599, 1, RegisterDataType.UINT16, 0.1),
@@ -108,45 +230,53 @@ const holdingRegisters: ModbusRegister[] = [
 
     // generator
     // ModbusRegister.scale('measure_power.gen_port', 667, 1, RegisterDataType.UINT16, 0),
+
+
     // inverter
     ModbusRegister.default('measure_power.inverter', 636, 1, RegisterDataType.INT16),
-    ModbusRegister.default('measure_power.inverter_l1', 633, 1, RegisterDataType.INT16),
-    ModbusRegister.default('measure_power.inverter_l2', 634, 1, RegisterDataType.INT16),
-    ModbusRegister.default('measure_power.inverter_l3', 635, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.inverter_l1', 633, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.inverter_l2', 634, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.inverter_l3', 635, 1, RegisterDataType.INT16),
 
-    ModbusRegister.scale('measure_current.inverter_l1', 630, 1, RegisterDataType.INT16, 0.01),
-    ModbusRegister.scale('measure_current.inverter_l2', 631, 1, RegisterDataType.INT16, 0.01),
-    ModbusRegister.scale('measure_current.inverter_l3', 632, 1, RegisterDataType.INT16, 0.01),
-    ModbusRegister.scale('measure_voltage.inverter_l1', 627, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.scale('measure_voltage.inverter_l2', 628, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.scale('measure_voltage.inverter_l3', 629, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.scale('measure_temperature.ac', 541, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_current.inverter_l1', 630, 1, RegisterDataType.INT16, 0.01),
+    //ModbusRegister.scale('measure_current.inverter_l2', 631, 1, RegisterDataType.INT16, 0.01),
+    //ModbusRegister.scale('measure_current.inverter_l3', 632, 1, RegisterDataType.INT16, 0.01),
+    //ModbusRegister.scale('measure_voltage.inverter_l1', 627, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.inverter_l2', 628, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.inverter_l3', 629, 1, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_temperature.ac', 541, 1, RegisterDataType.UINT16, 0.01),
 
     // battery
-    ModbusRegister.default('measure_power.battery1', 590, 1, RegisterDataType.INT16),
-    ModbusRegister.default('measure_power.battery2', 595, 1, RegisterDataType.INT16),
+    ModbusRegister.scale('measure_power.battery1', 590, 1, RegisterDataType.INT16, 10),
+    //ModbusRegister.scale('measure_power.battery2', 595, 1, RegisterDataType.INT16, 10),
 
     ModbusRegister.scale('measure_current.battery1', 591, 1, RegisterDataType.INT16, 0.01),
-    ModbusRegister.scale('measure_current.battery2', 594, 1, RegisterDataType.INT16, 0.01),
+    //ModbusRegister.scale('measure_current.battery2', 594, 1, RegisterDataType.INT16, 0.01),
     ModbusRegister.scale('measure_voltage.battery1', 587, 1, RegisterDataType.INT16, 0.1),
-    ModbusRegister.scale('measure_voltage.battery2', 593, 1, RegisterDataType.INT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.battery2', 593, 1, RegisterDataType.INT16, 0.1),
 
     ModbusRegister.default('measure_percentage.battery1', 588, 1, RegisterDataType.UINT16), // SOC
-    ModbusRegister.default('measure_percentage.battery2', 589, 1, RegisterDataType.UINT16), // SOC
+    //ModbusRegister.default('measure_percentage.battery2', 589, 1, RegisterDataType.UINT16), // SOC
 
-    ModbusRegister.scale('measure_temperature.battery1', 586, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.scale('measure_temperature.battery2', 596, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.scale('measure_temperature.dc', 540, 1, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.scale('measure_temperature.battery1', 586, 1, RegisterDataType.UINT16, 0.01),
+    //ModbusRegister.scale('measure_temperature.battery2', 596, 1, RegisterDataType.UINT16, 0.01),
+    ModbusRegister.scale('measure_temperature.dc', 540, 1, RegisterDataType.UINT16, 0.01),
 
     // load
     ModbusRegister.default('measure_power.load', 653, 1, RegisterDataType.INT16),
-    ModbusRegister.default('measure_power.load_l1', 650, 1, RegisterDataType.INT16),
-    ModbusRegister.default('measure_power.load_l2', 651, 1, RegisterDataType.INT16),
-    ModbusRegister.default('measure_power.load_l3', 652, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.load_l1', 650, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.load_l2', 651, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.load_l3', 652, 1, RegisterDataType.INT16),
 
-    ModbusRegister.scale('measure_voltage.load_l1', 644, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.scale('measure_voltage.load_l2', 645, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.scale('measure_voltage.load_l3', 646, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.load_l1', 644, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.load_l2', 645, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.load_l3', 646, 1, RegisterDataType.UINT16, 0.1),
+
+    // ups
+    ModbusRegister.default('measure_power.ups', 643, 1, RegisterDataType.UINT16),//gives a low random value when nothing is connected
+    //ModbusRegister.default('measure_power.ups_l1', 640, 1, RegisterDataType.UINT16),
+    //ModbusRegister.default('measure_power.ups_l2', 641, 1, RegisterDataType.UINT16),
+    //ModbusRegister.default('measure_power.ups_l3', 642, 1, RegisterDataType.UINT16),
 ];
 
 const enableSellSolar = async (origin: IBaseLogger, args: any, client: ModbusRTU): Promise<void> => {
