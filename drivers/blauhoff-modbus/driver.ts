@@ -11,7 +11,6 @@ import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { getBrand, iconForBrand, getDeviceModelName } from '../../api/modbus/helpers/brand-name';
 import { Brand } from '../../api/modbus/models/enum/brand';
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
-import { DeviceAction } from '../../api/modbus/helpers/set-modes';
 
 interface DeviceTypeFormData {
     deviceType: string;
@@ -45,27 +44,20 @@ class ModbusDriver extends Homey.Driver {
     }
 
     private registerActionCards = async (): Promise<void> => {
-        this.homey.flow.getActionCard('disable_solar_selling').registerRunListener(async (args) => {
-            this.log('disable_solar_selling');
-            await args.device.callAction(DeviceAction.disableSellSolar, args);
+        this.homey.flow.getActionCard('set_max_solar_power').registerRunListener(async (args) => {
+            await args.device.callAction('set_max_solar_power', args);
         });
 
-        this.homey.flow.getActionCard('enable_solar_selling').registerRunListener(async (args) => {
-            this.log('enable_solar_selling');
-            await args.device.callAction(DeviceAction.enableSellSolar, args);
+        this.homey.flow.getActionCard('set_solar_sell').registerRunListener(async (args) => {
+            await args.device.callAction('set_solar_sell', args);
         });
 
         this.homey.flow.getActionCard('write_value_to_register').registerRunListener(async (args) => {
-            const { device, value, registerType, register } = args;
+            await args.device.callAction('write_value_to_register', args);
+        });
 
-            this.log('write_value_to_register', value, registerType, register);
-
-            if (!device || value === undefined || registerType === undefined || !register) {
-                this.log('Wait, something is missing', value, registerType, register);
-                return;
-            }
-
-            await device.writeRegisterByAddress(register.address, registerType, value);
+        this.homey.flow.getActionCard('set_energy_pattern').registerRunListener(async (args) => {
+            await args.device.callAction('set_energy_pattern', args);
         });
     };
 
