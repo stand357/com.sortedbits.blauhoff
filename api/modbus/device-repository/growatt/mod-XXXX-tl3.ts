@@ -13,6 +13,9 @@ import { mod_tl_registers } from './mod-XXXX-tl';
 import { DeviceModel } from '../../models/device-model';
 import { Brand } from '../../models/enum/brand';
 import { AccessMode } from '../../models/enum/access-mode';
+import { IBaseLogger } from '../../../../helpers/log';
+import { ModbusAPI } from '../../modbus-api';
+import { DeviceRepository } from '../device-repository';
 
 // eslint-disable-next-line camelcase
 const mod_tl3_registers: ModbusDeviceDefinition = {
@@ -27,6 +30,24 @@ const mod_tl3_registers: ModbusDeviceDefinition = {
     deprecatedCapabilities: mod_tl_registers.deprecatedCapabilities,
 };
 
+const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const { value } = args;
+};
+const setSolarSell = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const { value } = args;
+};
+const writeValueToRegister = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    client.writeValueToRegister(origin, args);
+};
+const setEnergyPattern = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const { value } = args;
+};
+const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const { value } = args;
+};
+
+const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {};
+
 export const growattTL3: DeviceModel = {
     id: 'growatt-tl3',
     brand: Brand.Growatt,
@@ -34,4 +55,14 @@ export const growattTL3: DeviceModel = {
     description: 'Three phase Growatt string inverters with MODBUS interface.',
     debug: true,
     definition: mod_tl3_registers,
+    supportedFlows: {
+        actions: {
+            set_max_solar_power: setMaxSolarPower,
+            set_solar_sell: setSolarSell,
+            write_value_to_register: writeValueToRegister,
+            set_energy_pattern: setEnergyPattern,
+            set_grid_peak_shaving_on: setGridPeakShavingOn,
+            set_grid_peak_shaving_off: setGridPeakShavingOff,
+        },
+    },
 };

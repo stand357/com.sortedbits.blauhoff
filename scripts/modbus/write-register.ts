@@ -12,7 +12,6 @@ import { Brand } from '../../api/modbus/models/enum/brand';
 // import { mod_tl3_registers } from '../../drivers/blauhoff-modbus/devices/growatt/mod-XXXX-tl3';
 import { Logger } from '../../helpers/log';
 import { RegisterDataType } from '../../api/modbus/models/enum/register-datatype';
-import { DeviceAction } from '../../api/modbus/helpers/set-modes';
 
 //const host = '10.210.5.12';
 const host = '88.159.155.195';

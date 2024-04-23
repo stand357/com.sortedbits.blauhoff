@@ -12,6 +12,7 @@ import { blauhoffSPHA } from './blauhoff/spha';
 import { deyeSunXKSG01HP3 } from './deye/sun-xk-sg01hp3-eu-am2';
 import { growattTL } from './growatt/mod-XXXX-tl';
 import { growattTL3 } from './growatt/mod-XXXX-tl3';
+import { ModbusRegister } from '../models/modbus-register';
 
 export class DeviceRepository {
     private static devices: DeviceModel[] = [blauhoffSPHA, growattTL, growattTL3, deyeSunXKSG01HP3, aforeAFXKTH];
@@ -30,5 +31,16 @@ export class DeviceRepository {
 
     public static getDeviceByBrandAndModel(brand: Brand, model: string): DeviceModel | undefined {
         return this.devices.find((device) => device.brand === brand && device.id === model);
+    }
+
+    public static getRegisterByTypeAndAddress(device: DeviceModel, type: string, address: number): ModbusRegister | undefined {
+        switch (type) {
+            case 'input':
+                return device.definition.inputRegisters.find((register) => register.address === address);
+            case 'holding':
+                return device.definition.holdingRegisters.find((register) => register.address === address);
+            default:
+                return undefined;
+        }
     }
 }

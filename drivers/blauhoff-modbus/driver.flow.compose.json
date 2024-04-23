@@ -1,19 +1,6 @@
 {
     "actions": [
         {
-            "id": "disable_solar_selling",
-            "title": {
-                "en": "Disable solar selling"
-            }
-        },
-        {
-            "id": "enable_solar_selling",
-            "title": {
-                "en": "Enable solar selling"
-            }
-        },
-
-        {
             "id": "write_value_to_register",
             "title": {
                 "en": "Write value to register"
@@ -46,6 +33,110 @@
                     },
                     "placeholder": {
                         "en": "Register address"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "set_max_solar_power",
+            "title": {
+                "en": "Set max solar power"
+            },
+            "titleFormatted": {
+                "en": "Set max solar power to [[value]] W."
+            },
+            "args": [
+                {
+                    "type": "number",
+                    "name": "value",
+                    "title": { "en": "Watts" },
+                    "placeholder": { "en": "watts" }
+                }
+            ]
+        },
+        {
+            "id": "set_max_sell_power",
+            "title": {
+                "en": "Set max sell power"
+            },
+            "titleFormatted": {
+                "en": "Set max sell power to [[value]] W."
+            },
+            "args": [
+                {
+                    "type": "number",
+                    "name": "value",
+                    "title": { "en": "Watts" },
+                    "placeholder": { "en": "watts" }
+                }
+            ]
+        },
+        {
+            "id": "set_energy_pattern",
+            "title": {
+                "en": "Set energy pattern"
+            },
+            "titleFormatted": {
+                "en": "Set energy pattern to [[value]]."
+            },
+            "args": [
+                {
+                    "type": "dropdown",
+                    "name": "value",
+                    "title": { "en": "Energy pattern" },
+                    "values": [
+                        {
+                            "id": "batt_first",
+                            "title": { "en": "Battery first" }
+                        },
+                        {
+                            "id": "load_first",
+                            "title": { "en": "Load first" }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "set_grid_peak_shaving_on",
+            "title": {
+                "en": "Set grid peak shaving on"
+            },
+            "titleFormatted": {
+                "en": "Set grid peak shaving on with [[value]] W power."
+            },
+            "args": [
+                {
+                    "type": "number",
+                    "name": "value",
+                    "title": { "en": "Watts" },
+                    "placeholder": { "en": "watts" }
+                }
+            ]
+        },
+        {
+            "id": "set_grid_peak_shaving_off",
+            "title": {
+                "en": "Set grid peak shaving off"
+            },
+            "titleFormatted": {
+                "en": "Set grid peak shaving off."
+            }
+        },
+        {
+            "id": "set_solar_sell",
+            "title": {
+                "en": "Set solar selling"
+            },
+            "titleFormatted": {
+                "en": "Set solar selling to [[enabled]]."
+            },
+            "args": [
+                {
+                    "type": "checkbox",
+                    "name": "enabled",
+                    "title": {
+                        "en": "Solar selling"
                     }
                 }
             ]

@@ -15,7 +15,6 @@ import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-regi
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
 import { DeviceModel } from '../../api/modbus/models/device-model';
 import { Brand } from '../../api/modbus/models/enum/brand';
-import { DeviceAction } from '../../api/modbus/helpers/set-modes';
 
 class ModbusDevice extends Device {
     private api?: ModbusAPI;
@@ -290,10 +289,36 @@ class ModbusDevice extends Device {
         }
     }
 
-    callAction = async (action: DeviceAction, args: any) => {
-        this.log('callAction', this.device.name, action);
+    callAction = async (action: string, args: any) => {
+        const cleanArgs = {
+            ...args,
+        };
 
-        await this.api?.callAction(action, args);
+        if (cleanArgs.device) {
+            delete cleanArgs.device;
+        }
+
+        this.log('callAction', this.device.name, action, JSON.stringify(cleanArgs));
+
+        // First we check if the DeviceModel supports this called action
+
+        if (!this.api) {
+            this.error('ModbusAPI is not initialized');
+            return;
+        }
+
+        if (!this.device.supportedFlows?.actions) {
+            this.error('No supported actions found');
+            return;
+        }
+
+        const deviceAction = this.device.supportedFlows.actions[action];
+        if (!deviceAction) {
+            this.error('Unsupported action', action);
+            return;
+        }
+
+        await deviceAction(this, args, this.api);
     };
 }
 

@@ -6,16 +6,14 @@
  */
 
 import ModbusRTU from 'modbus-serial';
-import { register } from 'module';
 import { IBaseLogger } from '../../helpers/log';
 import { ModbusRegister } from './models/modbus-register';
 import { ModbusDeviceDefinition } from './models/modbus-device-registers';
-import { DeviceAction } from './helpers/set-modes';
 import { Socket } from 'net';
 import { createRegisterBatches } from './helpers/register-batches';
-import { ReadRegisterResult } from 'modbus-serial/ModbusRTU';
 import { AccessMode } from './models/enum/access-mode';
 import { validateValue } from './helpers/validate-value';
+import { DeviceRepository } from './device-repository/device-repository';
 
 enum RegisterType {
     Input,
@@ -26,7 +24,7 @@ enum RegisterType {
  * Represents a Modbus API.
  */
 export class ModbusAPI {
-    private client: ModbusRTU;
+    public client: ModbusRTU;
 
     private host: string;
     private port: number;
@@ -240,15 +238,6 @@ export class ModbusAPI {
         this.log.filteredLog('Finished reading registers');
     };
 
-    callAction = async (mode: DeviceAction, args: any) => {
-        if (this.deviceDefinition.actions && this.deviceDefinition.actions[mode]) {
-            this.log.filteredLog('Setting mode', this.host, mode);
-            await this.deviceDefinition.actions[mode](this.log, args, this.client);
-        } else {
-            this.log.error('No setMode function found for', this.host, mode);
-        }
-    };
-
     readBatch = async (batch: ModbusRegister[], registerType: RegisterType) => {
         if (batch.length === 0) {
             return;
@@ -284,5 +273,38 @@ export class ModbusAPI {
         } catch (error) {
             this.log.error('Error reading batch', error);
         }
+    };
+
+    writeValueToRegister = async (origin: IBaseLogger, args: any): Promise<void> => {
+        const { value, registerType, register, device } = args;
+
+        if (device.device === undefined) {
+            origin.error('Device is undefined');
+            return;
+        }
+
+        if (value === undefined || registerType === undefined || !register) {
+            origin.log('Wait, something is missing', value, registerType, register);
+            return;
+        }
+
+        if (!register || !register.address) {
+            origin.error('Register is undefined');
+            return;
+        }
+
+        const foundRegister = DeviceRepository.getRegisterByTypeAndAddress(device.device, registerType, register.address);
+
+        if (!foundRegister) {
+            origin.error('Register not found');
+            return;
+        }
+
+        origin.log('Device', JSON.stringify(device.device, null, 2));
+
+        origin.log('write_value_to_register', value, registerType, register);
+
+        const result = await this.writeRegister(foundRegister, value);
+        origin.log('Write result', result);
     };
 }

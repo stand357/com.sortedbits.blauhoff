@@ -13,6 +13,7 @@ import { DeviceModel } from '../../models/device-model';
 import { defaultValueConverter } from '../_shared/default-value-converter';
 import { IBaseLogger } from '../../../../helpers/log';
 import { AccessMode } from '../../models/enum/access-mode';
+import { ModbusAPI } from '../../modbus-api';
 
 const inputRegisters: ModbusRegister[] = [];
 
@@ -274,6 +275,32 @@ const holdingRegisters: ModbusRegister[] = [
     //ModbusRegister.default('measure_power.ups_l3', 642, 1, RegisterDataType.UINT16),
 ];
 
+const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const { value } = args;
+
+    // Hier zouden we de waardes moeten wegschrijven
+};
+const setSolarSell = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const { enabled } = args;
+
+    // Hier zouden we de waardes moeten wegschrijven
+};
+
+const writeValueToRegister = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    client.writeValueToRegister(origin, args);
+};
+
+const setEnergyPattern = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const { value } = args;
+};
+
+const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const { value } = args;
+};
+
+const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {};
+
+/*
 const enableSellSolar = async (origin: IBaseLogger, args: any, client: ModbusRTU): Promise<void> => {
     const buffer = Buffer.alloc(2);
     buffer.writeInt16BE(0x1, 0);
@@ -300,6 +327,7 @@ const disableSellSolar = async (origin: IBaseLogger, args: any, client: ModbusRT
         origin.error('Error disabling solar selling', error);
     }
 };
+*/
 
 // eslint-disable-next-line camelcase
 const definition: ModbusDeviceDefinition = {
@@ -307,10 +335,6 @@ const definition: ModbusDeviceDefinition = {
     holdingRegisters,
     inputRegisterResultConversion: defaultValueConverter,
     holdingRegisterResultConversion: defaultValueConverter,
-    actions: {
-        enableSellSolar,
-        disableSellSolar,
-    },
     deprecatedCapabilities: ['status_code.work_mode', 'status_code.run_mode'],
 };
 
@@ -321,4 +345,14 @@ export const deyeSunXKSG01HP3: DeviceModel = {
     description: 'Deye Sun *K SG01HP3 EU AM2 Series with modbus interface',
     debug: true,
     definition,
+    supportedFlows: {
+        actions: {
+            set_max_solar_power: setMaxSolarPower,
+            set_solar_sell: setSolarSell,
+            write_value_to_register: writeValueToRegister,
+            set_energy_pattern: setEnergyPattern,
+            set_grid_peak_shaving_on: setGridPeakShavingOn,
+            set_grid_peak_shaving_off: setGridPeakShavingOff,
+        },
+    },
 };

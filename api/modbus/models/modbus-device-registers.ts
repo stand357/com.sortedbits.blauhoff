@@ -5,10 +5,8 @@
  * Non-commercial use only
  */
 
-import { ModbusRTU, ReadRegisterResult } from 'modbus-serial/ModbusRTU';
 import { IBaseLogger } from '../../../helpers/log';
 import { ModbusRegister } from './modbus-register';
-import { DeviceAction } from '../helpers/set-modes';
 
 export interface ModbusDeviceDefinition {
     inputRegisterResultConversion: (log: IBaseLogger, buffer: Buffer, register: ModbusRegister) => any;
@@ -18,8 +16,4 @@ export interface ModbusDeviceDefinition {
     holdingRegisters: ModbusRegister[];
 
     deprecatedCapabilities?: string[];
-
-    actions?: {
-        [id in DeviceAction]: (origin: IBaseLogger, args: any, client: ModbusRTU) => Promise<void>;
-    };
 }
