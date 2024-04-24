@@ -4,7 +4,6 @@
  *
  * Non-commercial use only
  */
-import ModbusRTU from 'modbus-serial';
 import { RegisterDataType } from '../../models/enum/register-datatype';
 import { ModbusRegister } from '../../models/modbus-register';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
