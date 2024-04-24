@@ -15,14 +15,13 @@ import { Brand } from '../../models/enum/brand';
 import { AccessMode } from '../../models/enum/access-mode';
 import { IBaseLogger } from '../../../../helpers/log';
 import { ModbusAPI } from '../../modbus-api';
-import { DeviceRepository } from '../device-repository';
 
 // eslint-disable-next-line camelcase
 const mod_tl3_registers: ModbusDeviceDefinition = {
     inputRegisters: [
         ...mod_tl_registers.inputRegisters,
         ModbusRegister.scale('measure_voltage.grid_l2', 42, 2, RegisterDataType.UINT16, 0.1),
-        ModbusRegister.scale('measure_voltage.grid_l3', 46, 2, RegisterDataType.UINT16, 0.1, AccessMode.ReadWrite),
+        ModbusRegister.scale('measure_voltage.grid_l3', 46, 2, RegisterDataType.UINT16, 0.1),
     ],
     holdingRegisters: mod_tl_registers.holdingRegisters,
     inputRegisterResultConversion: mod_tl_registers.inputRegisterResultConversion,

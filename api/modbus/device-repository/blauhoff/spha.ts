@@ -12,16 +12,6 @@ import { Brand } from '../../models/enum/brand';
 import { DeviceModel } from '../../models/device-model';
 import { defaultValueConverter } from '../_shared/default-value-converter';
 
-/**
- * This is the list of registers for the BlauHoff Modbus device.
- *
- * Field 1: Address
- * Field 2: Length
- * Field 3: Data Type
- * Field 4: Scale
- * Field 5: Capability ID
- * Field 6: Calculation that needs to be performed on the value
- */
 const inputRegisters = [
     ModbusRegister.default('status_code.run_mode', 36101, 1, RegisterDataType.UINT16),
 

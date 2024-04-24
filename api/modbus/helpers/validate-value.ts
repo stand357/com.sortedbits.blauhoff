@@ -1,5 +1,11 @@
 import { RegisterDataType } from '../models/enum/register-datatype';
 
+/**
+ * Validate the value based on the data type.
+ *
+ * @param value The value
+ * @param dataType The data type
+ */
 export const validateValue = (value: any, dataType: RegisterDataType): boolean => {
     switch (dataType) {
         case RegisterDataType.UINT8:
