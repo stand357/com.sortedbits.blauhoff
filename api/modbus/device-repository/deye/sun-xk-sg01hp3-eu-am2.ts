@@ -13,6 +13,7 @@ import { defaultValueConverter } from '../_shared/default-value-converter';
 import { IBaseLogger } from '../../../../helpers/log';
 import { AccessMode } from '../../models/enum/access-mode';
 import { ModbusAPI } from '../../modbus-api';
+import { RegisterType } from '../../models/enum/register-type';
 
 const inputRegisters: ModbusRegister[] = [];
 
@@ -275,10 +276,33 @@ const holdingRegisters: ModbusRegister[] = [
 ];
 
 const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const address = 340;
+    const registerType = RegisterType.Holding;
+
+    const register = client.getAddressByType(registerType, address);
+
+    if (register === undefined) {
+        origin.error('Register not found');
+        return;
+    }
+
     const { value } = args;
 
-    // Hier zouden we de waardes moeten wegschrijven
+    origin.log('Setting max solar power to: ', value);
+
+    if (value < 0 || value > 7800) {
+        origin.error('Value out of range');
+        return;
+    }
+
+    try {
+        const result = await client.writeRegister(register, value);
+        origin.log('Output', result);
+    } catch (error) {
+        origin.error('Error enabling solar selling', error);
+    }
 };
+
 const setSolarSell = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
     const { enabled } = args;
 

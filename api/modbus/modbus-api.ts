@@ -14,11 +14,8 @@ import { createRegisterBatches } from './helpers/register-batches';
 import { AccessMode } from './models/enum/access-mode';
 import { validateValue } from './helpers/validate-value';
 import { DeviceRepository } from './device-repository/device-repository';
-
-enum RegisterType {
-    Input,
-    Holding,
-}
+import { DeviceModel } from './models/device-model';
+import { RegisterType } from './models/enum/register-type';
 
 /**
  * Represents a Modbus API.
@@ -30,7 +27,7 @@ export class ModbusAPI {
     private port: number;
     private unitId: number;
     private log: IBaseLogger;
-    private deviceDefinition: ModbusDeviceDefinition;
+    private deviceModel: DeviceModel;
     private disconnecting: boolean = false;
 
     get isOpen(): boolean {
@@ -60,15 +57,15 @@ export class ModbusAPI {
      * @param host - The host address.
      * @param port - The port number.
      * @param unitId - The unit ID.
-     * @param deviceDefinition - The Modbus device information.
+     * @param deviceModel - The Modbus device information.
      */
-    constructor(log: IBaseLogger, host: string, port: number, unitId: number, deviceDefinition: ModbusDeviceDefinition) {
+    constructor(log: IBaseLogger, host: string, port: number, unitId: number, deviceModel: DeviceModel) {
         this.host = host;
         this.port = port;
         this.unitId = unitId;
         this.client = new ModbusRTU();
         this.log = log;
-        this.deviceDefinition = deviceDefinition;
+        this.deviceModel = deviceModel;
     }
 
     /**
@@ -137,18 +134,12 @@ export class ModbusAPI {
      * @param host - The host address of the Modbus device.
      * @param port - The port number of the Modbus device.
      * @param unitId - The unit ID of the Modbus device.
-     * @param deviceDefinition - The device information of the Modbus device.
+     * @param deviceModel - The device information of the Modbus device.
      * @returns A promise that resolves to a boolean indicating the success of the connection.
      */
-    static verifyConnection = async (
-        log: IBaseLogger,
-        host: string,
-        port: number,
-        unitId: number,
-        deviceDefinition: ModbusDeviceDefinition,
-    ): Promise<boolean> => {
+    static verifyConnection = async (log: IBaseLogger, host: string, port: number, unitId: number, deviceModel: DeviceModel): Promise<boolean> => {
         log.log('Creating modbus API');
-        const api = new ModbusAPI(log, host, port, unitId, deviceDefinition);
+        const api = new ModbusAPI(log, host, port, unitId, deviceModel);
 
         log.log('Connecting...');
         const result = await api.connect();
@@ -161,18 +152,25 @@ export class ModbusAPI {
         return result;
     };
 
-    readAddress = async (register: ModbusRegister): Promise<any> => {
+    getAddressByType = (registerType: RegisterType, address: number): ModbusRegister | undefined => {
+        return DeviceRepository.getRegisterByTypeAndAddress(this.deviceModel, registerType.toString(), address);
+    };
+
+    readAddress = async (register: ModbusRegister, registerType: RegisterType): Promise<any> => {
         if (register.accessMode === AccessMode.WriteOnly) {
             return undefined;
         }
 
-        const input = await this.client.readInputRegisters(register.address, register.length);
+        const input =
+            registerType === RegisterType.Input
+                ? await this.client.readInputRegisters(register.address, register.length)
+                : await this.client.readHoldingRegisters(register.address, register.length);
 
-        this.log.filteredLog('Read input registers', input);
-        this.log.filteredLog('Data', input.data);
-        this.log.filteredLog('Buffer', input.buffer);
+        this.log.log('Read registers', input);
+        this.log.log('Data', input.data);
+        this.log.log('Buffer', input.buffer);
 
-        const result = this.deviceDefinition.inputRegisterResultConversion(this.log, input.buffer, register);
+        const result = this.deviceModel.definition.inputRegisterResultConversion(this.log, input.buffer, register);
         this.log.filteredLog('Conversion result', result);
 
         return result;
@@ -183,12 +181,18 @@ export class ModbusAPI {
             this.log.error('No valueResolved function set');
         }
 
-        const inputBatches = createRegisterBatches(this.log, this.deviceDefinition.inputRegisters);
+        const inputBatches = createRegisterBatches(this.log, this.deviceModel.definition.inputRegisters);
+
+        this.log.log('Reading input register batches', inputBatches.length);
+
         for (const batch of inputBatches) {
             await this.readBatch(batch, RegisterType.Input);
         }
 
-        const holdingBatches = createRegisterBatches(this.log, this.deviceDefinition.holdingRegisters);
+        const holdingBatches = createRegisterBatches(this.log, this.deviceModel.definition.holdingRegisters);
+
+        this.log.log('Reading holding register batches', holdingBatches.length);
+
         for (const batch of holdingBatches) {
             await this.readBatch(batch, RegisterType.Holding);
         }
@@ -227,11 +231,11 @@ export class ModbusAPI {
             this.log.error('No valueResolved function set');
         }
 
-        for (const register of this.deviceDefinition.inputRegisters.filter((x) => x.accessMode !== AccessMode.WriteOnly)) {
+        for (const register of this.deviceModel.definition.inputRegisters.filter((x) => x.accessMode !== AccessMode.WriteOnly)) {
             await this.readBatch([register], RegisterType.Input);
         }
 
-        for (const register of this.deviceDefinition.holdingRegisters.filter((x) => x.accessMode !== AccessMode.WriteOnly)) {
+        for (const register of this.deviceModel.definition.holdingRegisters.filter((x) => x.accessMode !== AccessMode.WriteOnly)) {
             await this.readBatch([register], RegisterType.Holding);
         }
 
@@ -248,6 +252,8 @@ export class ModbusAPI {
 
         const length = batch.length > 1 ? lastRegister.address + lastRegister.length - firstRegister.address : batch[0].length;
 
+        //        this.log.log('Reading batch', firstRegister.address, length, registerType === RegisterType.Input ? 'Input' : 'Holding');
+
         try {
             const results =
                 registerType === RegisterType.Input
@@ -262,8 +268,8 @@ export class ModbusAPI {
                 //const value = conversionFunction(this.log, buffer, register);
                 const value =
                     registerType === RegisterType.Input
-                        ? this.deviceDefinition.inputRegisterResultConversion(this.log, buffer, register)
-                        : this.deviceDefinition.holdingRegisterResultConversion(this.log, buffer, register);
+                        ? this.deviceModel.definition.inputRegisterResultConversion(this.log, buffer, register)
+                        : this.deviceModel.definition.holdingRegisterResultConversion(this.log, buffer, register);
 
                 if (this.onDataReceived) {
                     await this.onDataReceived(value, register);
