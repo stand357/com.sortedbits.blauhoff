@@ -494,7 +494,7 @@
           "en": "Set max solar power"
         },
         "titleFormatted": {
-          "en": "Set max solar power to [[value]] W."
+          "en": "Set max solar power to [[value]]."
         },
         "args": [
           {
@@ -503,8 +503,12 @@
             "filter": "driver_id=blauhoff-modbus"
           },
           {
-            "type": "number",
+            "type": "range",
+            "min": 0,
+            "max": 7800,
             "name": "value",
+            "label": "W",
+            "labelDecimals": 0,
             "title": {
               "en": "Watts"
             },

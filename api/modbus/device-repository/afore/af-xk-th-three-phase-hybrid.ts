@@ -14,11 +14,14 @@ import { defaultValueConverter } from '../_shared/default-value-converter';
 import { IBaseLogger } from '../../../../helpers/log';
 import { ModbusAPI } from '../../modbus-api';
 
-const inputRegisters = [
+const inputRegisters: ModbusRegister[] = [
+    ModbusRegister.default('serial', 0, 2, RegisterDataType.UINT16),
     //settings
-    ModbusRegister.default('serial', 41, 8, RegisterDataType.STRING),
+    //    ModbusRegister.default('serial', 41, 8, RegisterDataType.STRING),
+    //    ModbusRegister.default('measure_power.grid_l1', 516, 4, RegisterDataType.UINT32),
+    //ModbusRegister.default('serial', 0, 2, RegisterDataType.UINT16),
     //ModbusRegister.default('status_code.run_mode', 2500, 2, RegisterDataType.UINT16),
-
+    /*
     ModbusRegister.transform('status_text.run_mode', 2500, 2, RegisterDataType.UINT16, (value) => {
         if (value === 0) {
             return 'initial power-up';
@@ -82,6 +85,7 @@ const inputRegisters = [
     ModbusRegister.scale('measure_voltage.l1', 507, 2, RegisterDataType.UINT16, 0.1),
     ModbusRegister.scale('measure_voltage.l2', 508, 2, RegisterDataType.UINT16, 0.1),
     ModbusRegister.scale('measure_voltage.l3', 509, 2, RegisterDataType.UINT16, 0.1),
+    */
 ];
 
 const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {

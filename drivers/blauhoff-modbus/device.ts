@@ -121,7 +121,7 @@ class ModbusDevice extends Device {
 
         await this.initializeCapabilities(this.device.definition);
 
-        this.api = new ModbusAPI(this, host, port, unitId, this.device.definition);
+        this.api = new ModbusAPI(this, host, port, unitId, this.device);
         this.api.onDataReceived = this.onDataReceived;
         this.api.onError = this.onError;
         this.api.onDisconnect = this.onDisconnect;

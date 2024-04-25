@@ -31,7 +31,7 @@ const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Deye, 'deye-sun-x
 
 const addressInfo = ModbusRegister.default('', registerAddress, 1, RegisterDataType.INT16);
 
-const api = new ModbusAPI(log, host, port, unitId, device!.definition);
+const api = new ModbusAPI(log, host, port, unitId, device!);
 
 const perform = async (): Promise<void> => {
     api.onDataReceived = valueResolved;

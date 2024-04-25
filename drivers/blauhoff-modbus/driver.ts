@@ -167,7 +167,7 @@ class ModbusDriver extends Homey.Driver {
             throw new Error('Unknown device type');
         }
 
-        const result = await ModbusAPI.verifyConnection(this, data.host, data.port, data.unitId, device.definition);
+        const result = await ModbusAPI.verifyConnection(this, data.host, data.port, data.unitId, device);
 
         if (result) {
             await session.nextView();
