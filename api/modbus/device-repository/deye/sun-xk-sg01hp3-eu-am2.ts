@@ -304,9 +304,25 @@ const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: ModbusAP
 };
 
 const setSolarSell = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const address = 145;
+    const registerType = RegisterType.Holding;
+
+    const register = client.getAddressByType(registerType, address);
+    if (register === undefined) {
+        origin.error('Register not found');
+        return;
+    }
+
     const { enabled } = args;
 
-    // Hier zouden we de waardes moeten wegschrijven
+    origin.log('Setting solar selling to: ', enabled);
+
+    try {
+        const result = await client.writeRegister(register, enabled ? 1 : 0);
+        origin.log('Output', result);
+    } catch (error) {
+        origin.error('Error enabling solar selling', error);
+    }
 };
 
 const writeValueToRegister = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
