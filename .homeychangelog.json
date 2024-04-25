@@ -10,5 +10,8 @@
   },
   "1.1.1": {
     "en": "Better Deye support"
+  },
+  "1.1.2": {
+    "en": "Added Max Solar Power support"
   }
 }
