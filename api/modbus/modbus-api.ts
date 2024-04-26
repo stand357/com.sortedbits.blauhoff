@@ -193,15 +193,11 @@ export class ModbusAPI {
 
         const inputBatches = createRegisterBatches(this.log, this.deviceModel.definition.inputRegisters);
 
-        this.log.log('Reading input register batches', inputBatches.length);
-
         for (const batch of inputBatches) {
             await this.readBatch(batch, RegisterType.Input);
         }
 
         const holdingBatches = createRegisterBatches(this.log, this.deviceModel.definition.holdingRegisters);
-
-        this.log.log('Reading holding register batches', holdingBatches.length);
 
         for (const batch of holdingBatches) {
             await this.readBatch(batch, RegisterType.Holding);

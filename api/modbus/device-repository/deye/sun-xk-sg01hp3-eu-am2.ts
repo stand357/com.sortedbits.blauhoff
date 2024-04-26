@@ -56,9 +56,11 @@ const holdingRegisters: ModbusRegister[] = [
         1,
         RegisterDataType.UINT16,
         (value) => {
-            if (value === 0) {
+            const firstBit = value & 1;
+
+            if (firstBit === 0) {
                 return 'Battery First';
-            } else if (value === 1) {
+            } else if (firstBit === 1) {
                 return 'Load First';
             } else {
                 return 'Unknown';
@@ -292,13 +294,14 @@ const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: ModbusAP
 
     origin.log('Setting max solar power to: ', value);
 
-    if (value < 0 || value > 7800) {
+    if (value < 1000 || value > 7800) {
         origin.error('Value out of range');
         return;
     }
 
     try {
-        const result = await client.writeRegister(register, value);
+        const payload = register.calculatePayload(value, origin);
+        const result = await client.writeRegister(register, payload);
         origin.log('Output', result);
     } catch (error) {
         origin.error('Error enabling solar selling', error);
@@ -326,7 +329,8 @@ const setMaxSellPower = async (origin: IBaseLogger, args: any, client: ModbusAPI
     }
 
     try {
-        const result = await client.writeRegister(register, value);
+        const payload = register.calculatePayload(value, origin);
+        const result = await client.writeRegister(register, payload);
         origin.log('Output', result);
     } catch (error) {
         origin.error('Error enabling solar selling', error);
@@ -379,7 +383,7 @@ const setEnergyPattern = async (origin: IBaseLogger, args: any, client: ModbusAP
 
     origin.log('Setting energy pattern to: ', value);
 
-    const newBits = value === 'batt_first' ? [1, 0] : [1, 1];
+    const newBits = value === 'batt_first' ? [0] : [1];
 
     try {
         const currentValue = await client.readAddressWithoutConversion(register, RegisterType.Holding);
@@ -387,6 +391,8 @@ const setEnergyPattern = async (origin: IBaseLogger, args: any, client: ModbusAP
         if (!currentValue) {
             throw new Error('Error reading current value');
         }
+
+        logBits(origin, currentValue.buffer, currentValue.buffer.length);
 
         const byteIndex = 1; // Big Endian so we count in reverse
         const resultBuffer = writeBitsToBuffer(currentValue.buffer, byteIndex, newBits);
@@ -446,7 +452,8 @@ const setWorkmodeAndZeroExportPower = async (origin: IBaseLogger, args: any, cli
         const modeResult = await client.writeRegister(modeRegister, workModeValue);
         origin.log('Workmode output', modeResult);
 
-        const powerResult = await client.writeRegister(powerRegister, value);
+        const payload = powerRegister.calculatePayload(value, origin);
+        const powerResult = await client.writeRegister(powerRegister, payload);
         origin.log('Power output', powerResult);
     } catch (error) {
         origin.error('Error setting workmode or power', error);
@@ -458,35 +465,6 @@ const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: Modb
 };
 
 const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {};
-
-/*
-const enableSellSolar = async (origin: IBaseLogger, args: any, client: ModbusRTU): Promise<void> => {
-    const buffer = Buffer.alloc(2);
-    buffer.writeInt16BE(0x1, 0);
-
-    origin.filteredLog('Writing register 145: ', buffer, buffer.byteLength);
-
-    try {
-        const result = await client.writeRegisters(145, buffer);
-        origin.filteredLog('Output', result.address);
-    } catch (error) {
-        origin.error('Error enabling solar selling', error);
-    }
-};
-
-const disableSellSolar = async (origin: IBaseLogger, args: any, client: ModbusRTU): Promise<void> => {
-    const buffer = Buffer.alloc(2);
-    buffer.writeInt16BE(0, 0);
-
-    origin.filteredLog('Writing register 145: ', buffer, buffer.byteLength);
-
-    try {
-        await client.writeRegisters(145, buffer);
-    } catch (error) {
-        origin.error('Error disabling solar selling', error);
-    }
-};
-*/
 
 // eslint-disable-next-line camelcase
 const definition: ModbusDeviceDefinition = {

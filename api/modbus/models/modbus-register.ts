@@ -5,10 +5,11 @@
  * Non-commercial use only
  */
 
+import { IBaseLogger } from '../../../helpers/log';
 import { AccessMode } from './enum/access-mode';
 import { RegisterDataType } from './enum/register-datatype';
 
-export type Transformation = (value: any) => any;
+export type Transformation = (value: any, log: IBaseLogger) => any;
 
 export class ModbusRegister {
     address: number;
@@ -63,12 +64,18 @@ export class ModbusRegister {
         this.accessMode = accessMode;
     }
 
-    calculateValue(value: any): any {
+    calculateValue(value: any, log: IBaseLogger): any {
         let result = Number(value) && this.scale ? value * this.scale : value;
 
         if (this.transformation) {
-            result = this.transformation(result);
+            result = this.transformation(result, log);
         }
+
+        return result;
+    }
+
+    calculatePayload(value: any, log: IBaseLogger): any {
+        const result = Number(value) && this.scale ? value / this.scale : value;
 
         return result;
     }

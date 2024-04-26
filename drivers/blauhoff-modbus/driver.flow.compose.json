@@ -48,7 +48,7 @@
             "args": [
                 {
                     "type": "range",
-                    "min": 0,
+                    "min": 1000,
                     "max": 7800,
                     "name": "value",
                     "label": "W",

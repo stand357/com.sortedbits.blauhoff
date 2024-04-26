@@ -22,7 +22,7 @@ const log = new Logger();
 const registerAddress = 145;
 
 const valueResolved = async (value: any, register: ModbusRegister) => {
-    const result = register.calculateValue(value);
+    const result = register.calculateValue(value, log);
     log.log(register.capabilityId, result);
 };
 
