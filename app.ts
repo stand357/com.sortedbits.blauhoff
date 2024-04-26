@@ -12,6 +12,7 @@ import { ArgumentAutocompleteResults } from 'homey/lib/FlowCard';
 import { getBrand } from './api/modbus/helpers/brand-name';
 import { DeviceRepository } from './api/modbus/device-repository/device-repository';
 import { AccessMode } from './api/modbus/models/enum/access-mode';
+import { getSupportedFlowTypes } from './api/modbus/models/device-model';
 
 class BlauHoffApp extends Homey.App {
     /**
@@ -22,6 +23,15 @@ class BlauHoffApp extends Homey.App {
 
         const registerAutocompleteCard = this.homey.flow.getActionCard('write_value_to_register');
         this.registerWriteRegisterAutocomplete(registerAutocompleteCard);
+
+        const values = getSupportedFlowTypes();
+
+        values.forEach((flowType) => {
+            this.log('Registering action card', flowType);
+            this.homey.flow.getActionCard(flowType).registerRunListener(async (args) => {
+                await args.device.callAction(flowType, args);
+            });
+        });
     }
 
     registerWriteRegisterAutocomplete = (card: Homey.FlowCardAction) => {

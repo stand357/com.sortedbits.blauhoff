@@ -16,6 +16,7 @@ import { validateValue } from './helpers/validate-value';
 import { DeviceRepository } from './device-repository/device-repository';
 import { DeviceModel } from './models/device-model';
 import { RegisterType } from './models/enum/register-type';
+import { ReadRegisterResult } from 'modbus-serial/ModbusRTU';
 
 /**
  * Represents a Modbus API.
@@ -156,24 +157,33 @@ export class ModbusAPI {
         return DeviceRepository.getRegisterByTypeAndAddress(this.deviceModel, registerType.toString(), address);
     };
 
-    readAddress = async (register: ModbusRegister, registerType: RegisterType): Promise<any> => {
+    readAddressWithoutConversion = async (register: ModbusRegister, registerType: RegisterType): Promise<ReadRegisterResult | undefined> => {
         if (register.accessMode === AccessMode.WriteOnly) {
             return undefined;
         }
 
-        const input =
+        const data =
             registerType === RegisterType.Input
                 ? await this.client.readInputRegisters(register.address, register.length)
                 : await this.client.readHoldingRegisters(register.address, register.length);
 
-        this.log.log('Read registers', input);
-        this.log.log('Data', input.data);
-        this.log.log('Buffer', input.buffer);
+        this.log.log('Read registers', data);
+        this.log.log('Data', data.data);
+        this.log.log('Buffer', data.buffer);
 
-        const result = this.deviceModel.definition.inputRegisterResultConversion(this.log, input.buffer, register);
-        this.log.filteredLog('Conversion result', result);
+        return data;
+    };
 
-        return result;
+    readAddress = async (register: ModbusRegister, registerType: RegisterType): Promise<any> => {
+        const data = await this.readAddressWithoutConversion(register, registerType);
+
+        if (data) {
+            const result = this.deviceModel.definition.inputRegisterResultConversion(this.log, data.buffer, register);
+            this.log.log('Conversion result', result);
+            return result;
+        }
+
+        return undefined;
     };
 
     readRegistersInBatch = async () => {
@@ -212,6 +222,24 @@ export class ModbusAPI {
 
         try {
             const result = await this.client.writeRegisters(register.address, [value]);
+            this.log.filteredLog('Output', result.address);
+        } catch (error) {
+            this.log.error('Error writing to register', error);
+            return false;
+        }
+
+        return true;
+    };
+
+    writeBufferRegister = async (register: ModbusRegister, buffer: Buffer): Promise<boolean> => {
+        if (register.accessMode === AccessMode.ReadOnly) {
+            return false;
+        }
+
+        this.log.log('Writing to register', register.address, buffer, typeof buffer);
+
+        try {
+            const result = await this.client.writeRegisters(register.address, buffer);
             this.log.filteredLog('Output', result.address);
         } catch (error) {
             this.log.error('Error writing to register', error);

@@ -14,6 +14,8 @@ import { IBaseLogger } from '../../../../helpers/log';
 import { AccessMode } from '../../models/enum/access-mode';
 import { ModbusAPI } from '../../modbus-api';
 import { RegisterType } from '../../models/enum/register-type';
+import { logBits, readBit, writeBitsToBuffer } from '../../../blauhoff/helpers/bits';
+import { log } from 'console';
 
 const inputRegisters: ModbusRegister[] = [];
 
@@ -303,6 +305,34 @@ const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: ModbusAP
     }
 };
 
+const setMaxSellPower = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const address = 143;
+    const registerType = RegisterType.Holding;
+
+    const register = client.getAddressByType(registerType, address);
+
+    if (register === undefined) {
+        origin.error('Register not found');
+        return;
+    }
+
+    const { value } = args;
+
+    origin.log('Setting max sell power to: ', value);
+
+    if (value < 10 || value > 16000) {
+        origin.error('Value out of range');
+        return;
+    }
+
+    try {
+        const result = await client.writeRegister(register, value);
+        origin.log('Output', result);
+    } catch (error) {
+        origin.error('Error enabling solar selling', error);
+    }
+};
+
 const setSolarSell = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
     const address = 145;
     const registerType = RegisterType.Holding;
@@ -330,7 +360,97 @@ const writeValueToRegister = async (origin: IBaseLogger, args: any, client: Modb
 };
 
 const setEnergyPattern = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const address = 141;
+    const registerType = RegisterType.Holding;
+
+    const register = client.getAddressByType(registerType, address);
+
+    if (register === undefined) {
+        origin.error('Register not found');
+        return;
+    }
+
     const { value } = args;
+
+    if (value !== 'batt_first' && value !== 'load_first') {
+        origin.error('Invalid value', value);
+        return;
+    }
+
+    origin.log('Setting energy pattern to: ', value);
+
+    const newBits = value === 'batt_first' ? [1, 0] : [1, 1];
+
+    try {
+        const currentValue = await client.readAddressWithoutConversion(register, RegisterType.Holding);
+
+        if (!currentValue) {
+            throw new Error('Error reading current value');
+        }
+
+        const byteIndex = 1; // Big Endian so we count in reverse
+        const resultBuffer = writeBitsToBuffer(currentValue.buffer, byteIndex, newBits);
+        logBits(origin, resultBuffer, resultBuffer.length);
+
+        const result = await client.writeBufferRegister(register, resultBuffer);
+        origin.log('Output', result);
+    } catch (error) {
+        origin.error('Error reading current value', error);
+        return;
+    }
+};
+
+const setWorkmodeAndZeroExportPower = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const modeAddress = 142;
+    const powerAddress = 104;
+    const registerType = RegisterType.Holding;
+    const workmodes = [
+        { id: 'selling_first', value: 0 },
+        {
+            id: 'zero_export_to_load',
+            value: 1,
+        },
+        {
+            id: 'zero_export_to_ct',
+            value: 2,
+        },
+    ];
+
+    const modeRegister = client.getAddressByType(registerType, modeAddress);
+    const powerRegister = client.getAddressByType(registerType, powerAddress);
+
+    if (!modeRegister || !powerRegister) {
+        origin.error('Register not found');
+        return;
+    }
+
+    const { value, workmode } = args;
+
+    const workmodeDefinition = workmodes.find((m) => m.id === workmode);
+
+    if (!workmodeDefinition) {
+        origin.error('Invalid workmode', workmode);
+        return;
+    }
+
+    if (value < 0 || value > 100) {
+        origin.error('Value out of range', value);
+        return;
+    }
+
+    origin.log('Setting workmode to ', workmode, 'with zero export power to ', value, 'W');
+
+    const workModeValue = workmodeDefinition.value;
+
+    try {
+        const modeResult = await client.writeRegister(modeRegister, workModeValue);
+        origin.log('Workmode output', modeResult);
+
+        const powerResult = await client.writeRegister(powerRegister, value);
+        origin.log('Power output', powerResult);
+    } catch (error) {
+        origin.error('Error setting workmode or power', error);
+    }
 };
 
 const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
@@ -388,10 +508,12 @@ export const deyeSunXKSG01HP3: DeviceModel = {
         actions: {
             set_max_solar_power: setMaxSolarPower,
             set_solar_sell: setSolarSell,
+            set_max_sell_power: setMaxSellPower,
             write_value_to_register: writeValueToRegister,
             set_energy_pattern: setEnergyPattern,
             set_grid_peak_shaving_on: setGridPeakShavingOn,
             set_grid_peak_shaving_off: setGridPeakShavingOff,
+            set_work_mode_and_zero_export_power: setWorkmodeAndZeroExportPower,
         },
     },
 };

@@ -64,12 +64,16 @@
                 "en": "Set max sell power"
             },
             "titleFormatted": {
-                "en": "Set max sell power to [[value]] W."
+                "en": "Set max sell power to [[value]]."
             },
             "args": [
                 {
-                    "type": "number",
+                    "type": "range",
+                    "min": 10,
+                    "max": 16000,
                     "name": "value",
+                    "label": "W",
+                    "labelDecimals": 0,
                     "title": { "en": "Watts" },
                     "placeholder": { "en": "watts" }
                 }
@@ -107,12 +111,16 @@
                 "en": "Set grid peak shaving on"
             },
             "titleFormatted": {
-                "en": "Set grid peak shaving on with [[value]] W power."
+                "en": "Set grid peak shaving on with [[value]] power."
             },
             "args": [
                 {
-                    "type": "number",
+                    "type": "range",
+                    "min": 0,
+                    "max": 16000,
                     "name": "value",
+                    "label": "W",
+                    "labelDecimals": 0,
                     "title": { "en": "Watts" },
                     "placeholder": { "en": "watts" }
                 }
@@ -142,6 +150,37 @@
                     "title": {
                         "en": "Solar selling"
                     }
+                }
+            ]
+        },
+        {
+            "id": "set_work_mode_and_zero_export_power",
+            "title": {
+                "en": "Set work mode and zero export power"
+            },
+            "titleFormatted": {
+                "en": "Set workmode to [[workmode]] and Zero Export Power to [[value]]."
+            },
+            "args": [
+                {
+                    "type": "range",
+                    "min": 0,
+                    "max": 100,
+                    "name": "value",
+                    "label": "W",
+                    "labelDecimals": 0,
+                    "title": { "en": "Watts" },
+                    "placeholder": { "en": "watts" }
+                },
+                {
+                    "name": "workmode",
+                    "type": "dropdown",
+                    "title": { "en": "Workmode" },
+                    "values": [
+                        { "id": "selling_first", "title": { "en": "Selling first" } },
+                        { "id": "zero_export_to_load", "title": { "en": "Zero export to load" } },
+                        { "id": "zero_export_to_ct", "title": { "en": "Zero export to CT" } }
+                    ]
                 }
             ]
         }
