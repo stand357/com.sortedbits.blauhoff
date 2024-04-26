@@ -57,7 +57,7 @@ class ModbusDevice extends Device {
      * @returns A Promise that resolves when the value is handled.
      */
     private onDataReceived = async (value: any, register: ModbusRegister) => {
-        const result = register.calculateValue(value);
+        const result = register.calculateValue(value, this);
 
         if (this.device.brand === Brand.Deye) {
             this.filteredLog(register.capabilityId, result);

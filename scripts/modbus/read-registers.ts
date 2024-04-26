@@ -19,7 +19,7 @@ const unitId = 1;
 const log = new Logger();
 
 const valueResolved = async (value: any, register: ModbusRegister) => {
-    const result = register.calculateValue(value);
+    const result = register.calculateValue(value, log);
     log.log(register.capabilityId, result);
 };
 
