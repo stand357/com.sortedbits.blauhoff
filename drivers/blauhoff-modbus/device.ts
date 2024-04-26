@@ -13,7 +13,7 @@ import { ModbusDeviceDefinition } from '../../api/modbus/models/modbus-device-re
 import { getBrand } from '../../api/modbus/helpers/brand-name';
 import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-registers';
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
-import { DeviceModel } from '../../api/modbus/models/device-model';
+import { DeviceModel, SupportedFlowTypes } from '../../api/modbus/models/device-model';
 import { Brand } from '../../api/modbus/models/enum/brand';
 
 class ModbusDevice extends Device {
@@ -312,7 +312,9 @@ class ModbusDevice extends Device {
             return;
         }
 
-        const deviceAction = this.device.supportedFlows.actions[action];
+        const flowType = SupportedFlowTypes[action as keyof typeof SupportedFlowTypes];
+
+        const deviceAction = this.device.supportedFlows.actions[flowType];
         if (!deviceAction) {
             this.error('Unsupported action', action);
             return;

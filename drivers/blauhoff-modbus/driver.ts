@@ -11,6 +11,7 @@ import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { getBrand, iconForBrand, getDeviceModelName } from '../../api/modbus/helpers/brand-name';
 import { Brand } from '../../api/modbus/models/enum/brand';
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
+import { getSupportedFlowTypes } from '../../api/modbus/models/device-model';
 
 interface DeviceTypeFormData {
     deviceType: string;
@@ -43,31 +44,11 @@ class ModbusDriver extends Homey.Driver {
         this.log(args);
     }
 
-    private registerActionCards = async (): Promise<void> => {
-        this.homey.flow.getActionCard('set_max_solar_power').registerRunListener(async (args) => {
-            await args.device.callAction('set_max_solar_power', args);
-        });
-
-        this.homey.flow.getActionCard('set_solar_sell').registerRunListener(async (args) => {
-            await args.device.callAction('set_solar_sell', args);
-        });
-
-        this.homey.flow.getActionCard('write_value_to_register').registerRunListener(async (args) => {
-            await args.device.callAction('write_value_to_register', args);
-        });
-
-        this.homey.flow.getActionCard('set_energy_pattern').registerRunListener(async (args) => {
-            await args.device.callAction('set_energy_pattern', args);
-        });
-    };
-
     /**
      * onInit is called when the driver is initialized.
      */
     async onInit() {
         this.log('ModbusDriver has been initialized');
-
-        await this.registerActionCards();
     }
 
     createPairingDevice = (deviceInformation: ModbusDeviceInformation): any => {
