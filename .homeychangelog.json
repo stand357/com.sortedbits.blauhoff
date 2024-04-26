@@ -19,5 +19,8 @@
   },
   "1.1.4": {
     "en": "Allow energy pattern"
+  },
+  "1.1.5": {
+    "en": "Fixed issue with controlling Deye inverters"
   }
 }
