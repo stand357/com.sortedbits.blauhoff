@@ -461,7 +461,7 @@ const setWorkmodeAndZeroExportPower = async (origin: IBaseLogger, args: any, cli
 };
 
 const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
-    const modeAddress = 142;
+    const modeAddress = 178;
     const powerAddress = 191;
     const registerType = RegisterType.Holding;
 
@@ -510,7 +510,7 @@ const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: Modb
 };
 
 const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
-    const modeAddress = 142;
+    const modeAddress = 178;
     const registerType = RegisterType.Holding;
 
     const modeRegister = client.getAddressByType(registerType, modeAddress);
@@ -529,16 +529,14 @@ const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: Mod
             throw new Error('Error reading current value');
         }
 
-        origin.log('--- Current bit settings');
         logBits(origin, currentValue.buffer, currentValue.buffer.length);
 
-        const newBits = [1, 0];
+        const newBits = [0, 1];
         const startBitIndex = 4;
 
         const byteIndex = 1; // Big Endian so we count in reverse
         const resultBuffer = writeBitsToBuffer(currentValue.buffer, byteIndex, newBits, startBitIndex);
 
-        origin.log('--- New bit settings');
         logBits(origin, resultBuffer, resultBuffer.length);
 
         const result = await client.writeBufferRegister(modeRegister, resultBuffer);
