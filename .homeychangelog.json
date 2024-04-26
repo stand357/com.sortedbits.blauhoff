@@ -25,5 +25,8 @@
   },
   "1.1.6": {
     "en": "Add grid peak shaving mode"
+  },
+  "1.1.7": {
+    "en": "Grid peak shaving fix #2"
   }
 }
