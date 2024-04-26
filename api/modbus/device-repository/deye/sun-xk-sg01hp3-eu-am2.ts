@@ -166,9 +166,9 @@ const holdingRegisters: ModbusRegister[] = [
             const fifthBit = (value & 16) >> 4; // read 5th bit
 
             if (fourthBit === 1 && fifthBit === 0) {
-                return ' peak shaving disable';
+                return 'Disabled';
             } else if (fourthBit === 1 && fifthBit === 1) {
-                return ' peak shaving enable';
+                return 'Enabled';
             } else {
                 return 'Unknown';
             }
@@ -461,10 +461,92 @@ const setWorkmodeAndZeroExportPower = async (origin: IBaseLogger, args: any, cli
 };
 
 const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const modeAddress = 142;
+    const powerAddress = 191;
+    const registerType = RegisterType.Holding;
+
+    const modeRegister = client.getAddressByType(registerType, modeAddress);
+    const powerRegister = client.getAddressByType(registerType, powerAddress);
+
+    if (!modeRegister || !powerRegister) {
+        origin.error('Register not found');
+        return;
+    }
+
     const { value } = args;
+
+    if (value < 0 || value > 16000) {
+        origin.error('Value out of range', value);
+        return;
+    }
+
+    origin.log('Setting Grid Peak Shaving mode on with ', value, 'W');
+
+    try {
+        const currentValue = await client.readAddressWithoutConversion(modeRegister, RegisterType.Holding);
+
+        if (!currentValue) {
+            throw new Error('Error reading current value');
+        }
+
+        logBits(origin, currentValue.buffer, currentValue.buffer.length);
+
+        const newBits = [1, 1];
+        const startBitIndex = 4;
+
+        const byteIndex = 1; // Big Endian so we count in reverse
+        const resultBuffer = writeBitsToBuffer(currentValue.buffer, byteIndex, newBits, startBitIndex);
+        logBits(origin, resultBuffer, resultBuffer.length);
+
+        const result = await client.writeBufferRegister(modeRegister, resultBuffer);
+        origin.log('Output', result);
+
+        const payload = powerRegister.calculatePayload(value, origin);
+        const powerResult = await client.writeRegister(powerRegister, payload);
+        origin.log('Power output', powerResult);
+    } catch (error) {
+        origin.error('Error setting workmode or power', error);
+    }
 };
 
-const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {};
+const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const modeAddress = 142;
+    const registerType = RegisterType.Holding;
+
+    const modeRegister = client.getAddressByType(registerType, modeAddress);
+
+    if (!modeRegister) {
+        origin.error('Register not found');
+        return;
+    }
+
+    origin.log('Setting Grid Peak Shaving mode off');
+
+    try {
+        const currentValue = await client.readAddressWithoutConversion(modeRegister, RegisterType.Holding);
+
+        if (!currentValue) {
+            throw new Error('Error reading current value');
+        }
+
+        origin.log('--- Current bit settings');
+        logBits(origin, currentValue.buffer, currentValue.buffer.length);
+
+        const newBits = [1, 0];
+        const startBitIndex = 4;
+
+        const byteIndex = 1; // Big Endian so we count in reverse
+        const resultBuffer = writeBitsToBuffer(currentValue.buffer, byteIndex, newBits, startBitIndex);
+
+        origin.log('--- New bit settings');
+        logBits(origin, resultBuffer, resultBuffer.length);
+
+        const result = await client.writeBufferRegister(modeRegister, resultBuffer);
+        origin.log('Output', result);
+    } catch (error) {
+        origin.error('Error setting workmode or power', error);
+    }
+};
 
 // eslint-disable-next-line camelcase
 const definition: ModbusDeviceDefinition = {

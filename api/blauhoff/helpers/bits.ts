@@ -4,16 +4,16 @@ export const readBit = (buffer: Buffer, byteIndex: number, bitIndex: number): nu
     return (buffer[byteIndex] >> (7 - bitIndex)) & 1;
 };
 
-export const writeBitsToBuffer = (buffer: Buffer, byteIndex: number, bits: number[]): Buffer => {
+export const writeBitsToBuffer = (buffer: Buffer, byteIndex: number, bits: number[], startBitIndex: number = 0): Buffer => {
     const result = Buffer.from(buffer);
 
     let byte = result[byteIndex];
 
     for (let i = 0; i < bits.length; i++) {
         if (bits[i] === 1) {
-            byte = byte | (1 << i);
+            byte = byte | (1 << (i + startBitIndex));
         } else if (bits[i] === 0) {
-            byte = byte & ~(1 << i);
+            byte = byte & ~(1 << (i + startBitIndex));
         }
     }
 
