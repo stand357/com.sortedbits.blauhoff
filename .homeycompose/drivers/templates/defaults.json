@@ -551,6 +551,11 @@
             "title": {
                 "en": "Sell solar"
             }
+        },
+        "status_text.grid_peak_shaving": {
+            "title": {
+                "en": "Grid peak shaving"
+            }
         }
     },
     "energy": {
