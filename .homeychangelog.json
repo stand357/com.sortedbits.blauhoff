@@ -1,35 +1,38 @@
 {
-  "1.0.0": {
-    "en": "First support for API connected BlauHoff devices"
-  },
-  "1.0.1": {
-    "en": "Initial release"
-  },
-  "1.1.0": {
-    "en": "Adding BlauHoff modbus support"
-  },
-  "1.1.1": {
-    "en": "Better Deye support"
-  },
-  "1.1.2": {
-    "en": "Added Max Solar Power support"
-  },
-  "1.1.3": {
-    "en": "Add '"
-  },
-  "1.1.4": {
-    "en": "Allow energy pattern"
-  },
-  "1.1.5": {
-    "en": "Fixed issue with controlling Deye inverters"
-  },
-  "1.1.6": {
-    "en": "Add grid peak shaving mode"
-  },
-  "1.1.7": {
-    "en": "Grid peak shaving fix #2"
-  },
-  "1.2.0": {
-    "en": "Allow Time of Use for Deye"
-  }
+    "1.0.0": {
+        "en": "First support for API connected BlauHoff devices"
+    },
+    "1.0.1": {
+        "en": "Initial release"
+    },
+    "1.1.0": {
+        "en": "Adding BlauHoff modbus support"
+    },
+    "1.1.1": {
+        "en": "Better Deye support"
+    },
+    "1.1.2": {
+        "en": "Added Max Solar Power support"
+    },
+    "1.1.3": {
+        "en": "Add '"
+    },
+    "1.1.4": {
+        "en": "Allow energy pattern"
+    },
+    "1.1.5": {
+        "en": "Fixed issue with controlling Deye inverters"
+    },
+    "1.1.6": {
+        "en": "Add grid peak shaving mode"
+    },
+    "1.1.7": {
+        "en": "Grid peak shaving fix #2"
+    },
+    "1.2.0": {
+        "en": "Allow Time of Use for Deye"
+    },
+    "1.2.1": {
+        "en": "Update steps for power cards"
+    }
 }
