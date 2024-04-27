@@ -610,7 +610,7 @@ const setTimeOfUseTimeslotParameters = async (origin: IBaseLogger, args: any, cl
         return;
     }
 
-    const chargeBits = [generatorChargeBit, gridChargeBit];
+    const chargeBits = [gridChargeBit, generatorChargeBit];
     const parsedTime = Number(time.replace(':', ''));
     const powerPayload = powerRegister.calculatePayload(powerLimitNumber, origin);
 
