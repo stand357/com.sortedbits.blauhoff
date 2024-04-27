@@ -158,6 +158,13 @@ export class ModbusAPI {
         return DeviceRepository.getRegisterByTypeAndAddress(this.deviceModel, registerType.toString(), address);
     };
 
+    /**
+     * Reads a Modbus register without converting the data.
+     *
+     * @param register - The Modbus register to read.
+     * @param registerType - The type of the register.
+     * @returns A promise that resolves to the read data or undefined if the read operation failed.
+     */
     readAddressWithoutConversion = async (register: ModbusRegister, registerType: RegisterType): Promise<ReadRegisterResult | undefined> => {
         const data =
             registerType === RegisterType.Input
@@ -169,6 +176,13 @@ export class ModbusAPI {
         return data;
     };
 
+    /**
+     * Reads a Modbus register and converts the data.
+     *
+     * @param register - The Modbus register to read.
+     * @param registerType - The type of the register.
+     * @returns A promise that resolves to the converted data or undefined if the read operation failed.
+     */
     readAddress = async (register: ModbusRegister, registerType: RegisterType): Promise<any> => {
         const data = await this.readAddressWithoutConversion(register, registerType);
 
@@ -181,6 +195,17 @@ export class ModbusAPI {
         return undefined;
     };
 
+    /**
+     * Reads multiple Modbus registers in a batch operation.
+     *
+     * This method reads both input and holding registers in batches.
+     * The batches are created using the `createRegisterBatches` function.
+     * Each batch is then read using the `readBatch` method.
+     *
+     * If the `onDataReceived` callback is not set, an error is logged.
+     *
+     * @returns A promise that resolves when the batch operation is complete.
+     */
     readRegistersInBatch = async () => {
         if (!this.onDataReceived) {
             this.log.error('No valueResolved function set');
@@ -199,6 +224,18 @@ export class ModbusAPI {
         }
     };
 
+    /**
+     * Writes a value to a Modbus register.
+     *
+     * This method first checks if the register is read-only. If it is, the method returns false.
+     * It then validates the value to be written using the `validateValue` function. If the value is invalid, an error is logged and the method returns false.
+     * The method then attempts to write the value to the register. If the write operation fails, an error is logged and the method returns false.
+     * If the write operation is successful, the method returns true.
+     *
+     * @param register - The Modbus register to write to.
+     * @param value - The value to write.
+     * @returns A promise that resolves to a boolean indicating whether the write operation was successful.
+     */
     writeRegister = async (register: ModbusRegister, value: any): Promise<boolean> => {
         if (register.accessMode === AccessMode.ReadOnly) {
             return false;
@@ -222,6 +259,18 @@ export class ModbusAPI {
         return true;
     };
 
+    /**
+     * Writes a buffer to a Modbus register.
+     *
+     * This method first checks if the register is read-only. If it is, the method returns false.
+     * The method then logs the buffer to be written and attempts to write the buffer to the register.
+     * If the write operation fails, an error is logged and the method returns false.
+     * If the write operation is successful, the method returns true.
+     *
+     * @param register - The Modbus register to write to.
+     * @param buffer - The buffer to write.
+     * @returns A promise that resolves to a boolean indicating whether the write operation was successful.
+     */
     writeBufferRegister = async (register: ModbusRegister, buffer: Buffer): Promise<boolean> => {
         if (register.accessMode === AccessMode.ReadOnly) {
             return false;
@@ -261,6 +310,21 @@ export class ModbusAPI {
         this.log.filteredLog('Finished reading registers');
     };
 
+    /**
+     * Reads a batch of Modbus registers.
+     *
+     * This method reads either input or holding registers based on the register type.
+     * It first checks if the batch is empty. If it is, the method returns.
+     * It then calculates the length of the batch and attempts to read the registers.
+     * If the read operation fails, an error is logged.
+     * If the read operation is successful, the method iterates over the batch and processes each register.
+     * The processing involves extracting a buffer from the read results and converting it to a value.
+     * The conversion is done using either the `inputRegisterResultConversion` or `holdingRegisterResultConversion` method of the device model's definition.
+     * If the `onDataReceived` callback is set, it is called with the converted value and the register.
+     *
+     * @param batch - The batch of Modbus registers to read.
+     * @param registerType - The type of the registers.
+     */
     readBatch = async (batch: ModbusRegister[], registerType: RegisterType) => {
         if (batch.length === 0) {
             return;
@@ -270,8 +334,6 @@ export class ModbusAPI {
         const lastRegister = batch[batch.length - 1];
 
         const length = batch.length > 1 ? lastRegister.address + lastRegister.length - firstRegister.address : batch[0].length;
-
-        //        this.log.log('Reading batch', firstRegister.address, length, registerType === RegisterType.Input ? 'Input' : 'Holding');
 
         try {
             const results =
@@ -284,7 +346,6 @@ export class ModbusAPI {
                 const end = startOffset + register.length * 2;
                 const buffer = batch.length > 1 ? results.buffer.subarray(startOffset, end) : results.buffer;
 
-                //const value = conversionFunction(this.log, buffer, register);
                 const value =
                     registerType === RegisterType.Input
                         ? this.deviceModel.definition.inputRegisterResultConversion(this.log, buffer, register)
@@ -300,6 +361,23 @@ export class ModbusAPI {
         }
     };
 
+    /**
+     * Writes a value to a specified Modbus register.
+     *
+     * This method first checks if the device and necessary parameters are defined. If not, it logs an error and returns.
+     * It then retrieves the specified register from the device repository.
+     * If the register is not found, it logs an error and returns.
+     * It then logs the device and the parameters for the write operation.
+     * Finally, it writes the value to the register and logs the result of the write operation.
+     *
+     * @param origin - The logger to use for logging.
+     * @param args - An object containing the parameters for the write operation. It should have the following properties:
+     *               - value: The value to write.
+     *               - registerType: The type of the register.
+     *               - register: The register to write to.
+     *               - device: The device containing the register.
+     * @returns A promise that resolves when the write operation is complete.
+     */
     writeValueToRegister = async (origin: IBaseLogger, args: any): Promise<void> => {
         const { value, registerType, register, device } = args;
 
@@ -333,6 +411,21 @@ export class ModbusAPI {
         origin.log('Write result', result);
     };
 
+    /**
+     * Writes bits to a Modbus register.
+     *
+     * This method first reads the current value of the register. If the read operation fails, an error is logged and the method returns false.
+     * It then checks if the bit index is within the range of the register. If it is not, an error is logged and the method returns false.
+     * The method then calculates the byte index and the start bit index within the byte.
+     * It then writes the bits to the buffer at the calculated indices.
+     * Finally, it writes the buffer back to the register.
+     *
+     * @param register - The Modbus register to write to.
+     * @param registerType - The type of the register.
+     * @param bits - The bits to write.
+     * @param bitIndex - The index at which to start writing the bits.
+     * @returns A promise that resolves to a boolean indicating whether the write operation was successful.
+     */
     writeBitsToRegister = async (register: ModbusRegister, registerType: RegisterType, bits: number[], bitIndex: number): Promise<boolean> => {
         const currentValue = await this.readAddressWithoutConversion(register, registerType);
 
