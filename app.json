@@ -506,6 +506,7 @@
             "type": "range",
             "min": 1000,
             "max": 7800,
+            "step": 10,
             "name": "value",
             "label": "W",
             "labelDecimals": 0,
@@ -536,6 +537,7 @@
             "type": "range",
             "min": 10,
             "max": 16000,
+            "step": 10,
             "name": "value",
             "label": "W",
             "labelDecimals": 0,
@@ -602,6 +604,7 @@
           {
             "type": "range",
             "min": 0,
+            "step": 10,
             "max": 16000,
             "name": "value",
             "label": "W",
@@ -673,6 +676,7 @@
             "min": 0,
             "max": 100,
             "name": "value",
+            "step": 10,
             "label": "W",
             "labelDecimals": 0,
             "title": {
