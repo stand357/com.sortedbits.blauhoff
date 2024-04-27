@@ -3,9 +3,6 @@ import { Brand } from '../models/enum/brand';
 
 describe('brand-name', () => {
     test('get-brand with existing name', async () => {
-        const blauhoff = getBrand('blauhoff');
-        expect(blauhoff).toBe(Brand.BlauHoff);
-
         const growatt = getBrand('growatt');
         expect(growatt).toBe(Brand.Growatt);
     });
@@ -16,24 +13,21 @@ describe('brand-name', () => {
     });
 
     test('get-device-model-name with existing model', async () => {
-        const model = getDeviceModelName(Brand.BlauHoff, 'blauhoff-1');
-        expect(model).toBe('BlauHoff SPHA');
+        const model = getDeviceModelName(Brand.Deye, 'deye-sun-xk-sg01hp3-eu-am2');
+        expect(model).toBe('Deye Sun *K SG01HP3 EU AM2 Series');
     });
 
     test('get-device-model-name with non existing model', async () => {
-        const blauhoff = getDeviceModelName(Brand.BlauHoff, 'non existing model');
-        expect(blauhoff).toBe('Unknown Blauhoff device');
+        const blauhoff = getDeviceModelName(Brand.Deye, 'non existing model');
+        expect(blauhoff).toBe('Unknown Deye device');
 
         const kstar = getDeviceModelName(Brand.Afore, 'non existing model');
         expect(kstar).toBe('Unknown Afore device');
     });
 
     test('icon-for-brand', async () => {
-        const blauhoff = iconForBrand(Brand.BlauHoff);
-        expect(blauhoff).toBe('blauhoff-device.svg');
-
-        const kstar = iconForBrand(Brand.Afore);
-        expect(kstar).toBe('afore-device.svg');
+        const afore = iconForBrand(Brand.Afore);
+        expect(afore).toBe('afore-device.svg');
 
         const deye = iconForBrand(Brand.Deye);
         expect(deye).toBe('deye-device.svg');

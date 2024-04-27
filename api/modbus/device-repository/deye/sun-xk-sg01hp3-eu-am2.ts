@@ -4,19 +4,17 @@
  *
  * Non-commercial use only
  */
-import { RegisterDataType } from '../../models/enum/register-datatype';
-import { ModbusRegister } from '../../models/modbus-register';
-import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
-import { Brand } from '../../models/enum/brand';
-import { DeviceModel } from '../../models/device-model';
-import { defaultValueConverter } from '../_shared/default-value-converter';
 import { IBaseLogger } from '../../../../helpers/log';
-import { AccessMode } from '../../models/enum/access-mode';
+import { logBits, writeBitsToBuffer } from '../../../blauhoff/helpers/bits';
 import { ModbusAPI } from '../../modbus-api';
+import { DeviceModel } from '../../models/device-model';
+import { AccessMode } from '../../models/enum/access-mode';
+import { Brand } from '../../models/enum/brand';
+import { RegisterDataType } from '../../models/enum/register-datatype';
 import { RegisterType } from '../../models/enum/register-type';
-import { logBits, readBit, writeBitsToBuffer } from '../../../blauhoff/helpers/bits';
-import { log } from 'console';
-import { dayToBitIndex } from '../../../blauhoff/helpers/days';
+import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
+import { ModbusRegister } from '../../models/modbus-register';
+import { defaultValueConverter } from '../_shared/default-value-converter';
 
 const inputRegisters: ModbusRegister[] = [];
 

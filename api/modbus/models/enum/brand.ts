@@ -9,10 +9,9 @@
  * Represents the brand of a device.
  */
 export enum Brand {
-    BlauHoff = 'blauhoff',
     Growatt = 'growatt',
     Deye = 'deye',
     Afore = 'afore',
 }
 
-export const brands = [Brand.BlauHoff, Brand.Growatt, Brand.Deye, Brand.Afore];
+export const brands = [Brand.Growatt, Brand.Deye, Brand.Afore];

@@ -3,14 +3,14 @@ import { Brand } from '../models/enum/brand';
 
 describe('device-repository', () => {
     test('get models for brand', async () => {
-        const response = DeviceRepository.getDevicesByBrand(Brand.BlauHoff);
+        const response = DeviceRepository.getDevicesByBrand(Brand.Deye);
         expect(response).toBeDefined();
         expect(response.length).toBe(1);
 
         const model = response[0];
 
-        expect(model.id).toBe('blauhoff-1');
-        expect(model.debug).toBe(false);
+        expect(model.id).toBe('deye-sun-xk-sg01hp3-eu-am2');
+        expect(model.debug).toBe(true);
         expect(model.definition).toBeDefined();
     });
 
@@ -24,18 +24,18 @@ describe('device-repository', () => {
     });
 
     test('getDeviceModel with existing model', async () => {
-        const response = DeviceRepository.getDevicesByBrand(Brand.BlauHoff);
+        const response = DeviceRepository.getDevicesByBrand(Brand.Deye);
         expect(response.length).toBeGreaterThan(0);
         const model = response[0];
 
-        const queryModel = DeviceRepository.getDeviceByBrandAndModel(Brand.BlauHoff, model.id);
+        const queryModel = DeviceRepository.getDeviceByBrandAndModel(Brand.Deye, model.id);
 
         expect(queryModel).toBeDefined();
         expect(queryModel).toEqual(model);
     });
 
     test('getDeviceModel with non existing model', async () => {
-        const model = DeviceRepository.getDeviceByBrandAndModel(Brand.BlauHoff, 'non-existing-model');
+        const model = DeviceRepository.getDeviceByBrandAndModel(Brand.Deye, 'non-existing-model');
         expect(model).toBeUndefined();
     });
 
