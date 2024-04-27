@@ -15,8 +15,6 @@ import { Brand } from '../models/enum/brand';
  */
 export const getBrand = (brandName: string): Brand | undefined => {
     switch (brandName.toLocaleLowerCase()) {
-        case 'blauhoff':
-            return Brand.BlauHoff;
         case 'growatt':
             return Brand.Growatt;
         case 'afore':
@@ -54,7 +52,6 @@ export const getDeviceModelName = (brandName: Brand, modelId: string): string =>
  */
 export const iconForBrand = (brandName: Brand): string => {
     switch (brandName) {
-        case Brand.BlauHoff:
         case Brand.Growatt:
         case Brand.Afore:
         case Brand.Deye:

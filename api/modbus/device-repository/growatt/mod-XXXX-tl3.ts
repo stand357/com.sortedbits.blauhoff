@@ -6,15 +6,14 @@
  */
 
 import { RegisterDataType } from '../../models/enum/register-datatype';
-import { ModbusRegister } from '../../models/modbus-register';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
+import { ModbusRegister } from '../../models/modbus-register';
 
-import { mod_tl_registers } from './mod-XXXX-tl';
-import { DeviceModel } from '../../models/device-model';
-import { Brand } from '../../models/enum/brand';
-import { AccessMode } from '../../models/enum/access-mode';
 import { IBaseLogger } from '../../../../helpers/log';
 import { ModbusAPI } from '../../modbus-api';
+import { DeviceModel } from '../../models/device-model';
+import { Brand } from '../../models/enum/brand';
+import { mod_tl_registers } from './mod-XXXX-tl';
 
 // eslint-disable-next-line camelcase
 const mod_tl3_registers: ModbusDeviceDefinition = {

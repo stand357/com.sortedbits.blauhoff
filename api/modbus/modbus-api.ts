@@ -6,18 +6,17 @@
  */
 
 import ModbusRTU from 'modbus-serial';
-import { IBaseLogger } from '../../helpers/log';
-import { ModbusRegister } from './models/modbus-register';
-import { ModbusDeviceDefinition } from './models/modbus-device-registers';
-import { Socket } from 'net';
-import { createRegisterBatches } from './helpers/register-batches';
-import { AccessMode } from './models/enum/access-mode';
-import { validateValue } from './helpers/validate-value';
-import { DeviceRepository } from './device-repository/device-repository';
-import { DeviceModel } from './models/device-model';
-import { RegisterType } from './models/enum/register-type';
 import { ReadRegisterResult } from 'modbus-serial/ModbusRTU';
+import { Socket } from 'net';
+import { IBaseLogger } from '../../helpers/log';
 import { logBits, writeBitsToBuffer } from '../blauhoff/helpers/bits';
+import { DeviceRepository } from './device-repository/device-repository';
+import { createRegisterBatches } from './helpers/register-batches';
+import { validateValue } from './helpers/validate-value';
+import { DeviceModel } from './models/device-model';
+import { AccessMode } from './models/enum/access-mode';
+import { RegisterType } from './models/enum/register-type';
+import { ModbusRegister } from './models/modbus-register';
 
 /**
  * Represents a Modbus API.

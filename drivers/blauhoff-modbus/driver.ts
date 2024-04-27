@@ -7,11 +7,10 @@
 
 import Homey from 'homey';
 import { PairSession } from 'homey/lib/Driver';
-import { ModbusAPI } from '../../api/modbus/modbus-api';
-import { getBrand, iconForBrand, getDeviceModelName } from '../../api/modbus/helpers/brand-name';
-import { Brand } from '../../api/modbus/models/enum/brand';
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
-import { getSupportedFlowTypes } from '../../api/modbus/models/device-model';
+import { getBrand, getDeviceModelName, iconForBrand } from '../../api/modbus/helpers/brand-name';
+import { ModbusAPI } from '../../api/modbus/modbus-api';
+import { Brand } from '../../api/modbus/models/enum/brand';
 
 interface DeviceTypeFormData {
     deviceType: string;
@@ -36,7 +35,7 @@ interface DeviceModelDTO {
 }
 
 class ModbusDriver extends Homey.Driver {
-    pairingDeviceBrand: Brand = Brand.BlauHoff;
+    pairingDeviceBrand: Brand = Brand.Deye;
     pairingDeviceModelId: string | undefined;
     modbusDeviceInformation: ModbusDeviceInformation | undefined;
 
