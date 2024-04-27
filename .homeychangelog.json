@@ -28,5 +28,8 @@
   },
   "1.1.7": {
     "en": "Grid peak shaving fix #2"
+  },
+  "1.2.0": {
+    "en": "Allow Time of Use for Deye"
   }
 }
