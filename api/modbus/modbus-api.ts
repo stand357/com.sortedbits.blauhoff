@@ -17,6 +17,7 @@ import { DeviceRepository } from './device-repository/device-repository';
 import { DeviceModel } from './models/device-model';
 import { RegisterType } from './models/enum/register-type';
 import { ReadRegisterResult } from 'modbus-serial/ModbusRTU';
+import { logBits, writeBitsToBuffer } from '../blauhoff/helpers/bits';
 
 /**
  * Represents a Modbus API.
@@ -158,18 +159,12 @@ export class ModbusAPI {
     };
 
     readAddressWithoutConversion = async (register: ModbusRegister, registerType: RegisterType): Promise<ReadRegisterResult | undefined> => {
-        if (register.accessMode === AccessMode.WriteOnly) {
-            return undefined;
-        }
-
         const data =
             registerType === RegisterType.Input
                 ? await this.client.readInputRegisters(register.address, register.length)
                 : await this.client.readHoldingRegisters(register.address, register.length);
 
-        this.log.log('Read registers', data);
-        this.log.log('Data', data.data);
-        this.log.log('Buffer', data.buffer);
+        this.log.log('Reading address', register.address, ':', data);
 
         return data;
     };
@@ -210,11 +205,11 @@ export class ModbusAPI {
         }
 
         if (!validateValue(value, register.dataType)) {
-            this.log.error('Invalid value', value, 'for register', register.address, register.dataType);
+            this.log.error('Invalid value', value, 'for address', register.address, register.dataType);
             return false;
         }
 
-        this.log.log('Writing to register', register.address, value, typeof value);
+        this.log.log('Writing to address', register.address, ':', value);
 
         try {
             const result = await this.client.writeRegisters(register.address, [value]);
@@ -336,5 +331,31 @@ export class ModbusAPI {
 
         const result = await this.writeRegister(foundRegister, value);
         origin.log('Write result', result);
+    };
+
+    writeBitsToRegister = async (register: ModbusRegister, registerType: RegisterType, bits: number[], bitIndex: number): Promise<boolean> => {
+        const currentValue = await this.readAddressWithoutConversion(register, registerType);
+
+        if (currentValue === undefined) {
+            this.log.error('Failed to read current value');
+            return false;
+        }
+
+        logBits(this.log, currentValue.buffer, currentValue.buffer.length);
+
+        if (currentValue.buffer.length * 8 < bitIndex + bits.length) {
+            this.log.error('Bit index out of range');
+            return false;
+        }
+
+        const byteIndex = currentValue.buffer.length - 1 - Math.floor(bitIndex / 8);
+        const startBitIndex = bitIndex % 8;
+
+        this.log.log('writeBitsToRegister', registerType, bits, startBitIndex, byteIndex);
+
+        const result = writeBitsToBuffer(currentValue.buffer, byteIndex, bits, startBitIndex);
+        logBits(this.log, result, result.length);
+
+        return await this.writeBufferRegister(register, result);
     };
 }

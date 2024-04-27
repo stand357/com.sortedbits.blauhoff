@@ -15,6 +15,7 @@ import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-regi
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
 import { DeviceModel, SupportedFlowTypes } from '../../api/modbus/models/device-model';
 import { Brand } from '../../api/modbus/models/enum/brand';
+import { AccessMode } from '../../api/modbus/models/enum/access-mode';
 
 class ModbusDevice extends Device {
     private api?: ModbusAPI;
@@ -96,12 +97,16 @@ class ModbusDevice extends Device {
         const inputRegisters = orderModbusRegisters(definition.inputRegisters);
 
         for (const register of inputRegisters) {
-            await addCapabilityIfNotExists(this, register.capabilityId);
+            if (register.accessMode !== AccessMode.WriteOnly) {
+                await addCapabilityIfNotExists(this, register.capabilityId);
+            }
         }
 
         const holdingRegisters = orderModbusRegisters(definition.holdingRegisters);
         for (const register of holdingRegisters) {
-            await addCapabilityIfNotExists(this, register.capabilityId);
+            if (register.accessMode !== AccessMode.WriteOnly) {
+                await addCapabilityIfNotExists(this, register.capabilityId);
+            }
         }
     };
 

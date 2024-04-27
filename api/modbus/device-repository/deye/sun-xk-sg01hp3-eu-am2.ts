@@ -16,6 +16,7 @@ import { ModbusAPI } from '../../modbus-api';
 import { RegisterType } from '../../models/enum/register-type';
 import { logBits, readBit, writeBitsToBuffer } from '../../../blauhoff/helpers/bits';
 import { log } from 'console';
+import { dayToBitIndex } from '../../../blauhoff/helpers/days';
 
 const inputRegisters: ModbusRegister[] = [];
 
@@ -106,50 +107,11 @@ const holdingRegisters: ModbusRegister[] = [
         1,
         RegisterDataType.UINT16,
         (value) => {
-            if (value === 0) {
-                return 'time of use, off';
-            } else if (value === 255) {
-                return 'time of use, all days on';
-            } else {
-                return 'Unknown';
-            }
-        },
-        AccessMode.ReadWrite,
-    ),
-
-    //repeat for addresse 172/177
-    ModbusRegister.transform(
-        'status_text.tou_grid_charge',
-        172,
-        1,
-        RegisterDataType.UINT16,
-        (value) => {
-            const firstBit = value & 1; // read 1th bit
+            const firstBit = value & 1;
             if (firstBit === 0) {
-                return 'Grid charge off';
-            } else if (firstBit === 1) {
-                return 'Grid charge on';
+                return 'Disabled';
             } else {
-                return 'Unknown';
-            }
-        },
-        AccessMode.ReadWrite,
-    ),
-
-    //repeat for addresse 172/177
-    ModbusRegister.transform(
-        'status_text.tou_gen_charge',
-        172,
-        1,
-        RegisterDataType.UINT16,
-        (value) => {
-            const secondBit = value & 2; // read 2th bit
-            if (secondBit === 0) {
-                return 'Gen charge off';
-            } else if (secondBit === 1) {
-                return 'Gen charge on';
-            } else {
-                return 'Unknown';
+                return 'Enabled';
             }
         },
         AccessMode.ReadWrite,
@@ -277,6 +239,44 @@ const holdingRegisters: ModbusRegister[] = [
     //ModbusRegister.default('measure_power.ups_l1', 640, 1, RegisterDataType.UINT16),
     //ModbusRegister.default('measure_power.ups_l2', 641, 1, RegisterDataType.UINT16),
     //ModbusRegister.default('measure_power.ups_l3', 642, 1, RegisterDataType.UINT16),
+
+    /*
+     * Time of use  parameters, we don't want to show ALL of these
+     * Should grid/generator charging be enabled for this timeslot
+     */
+    ModbusRegister.default('timeslot.charging', 172, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.charging', 173, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.charging', 174, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.charging', 175, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.charging', 176, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.charging', 177, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    /*
+     * Powerlimit for this timeslot
+     */
+    ModbusRegister.scale('timeslot.powerlimit', 154, 1, RegisterDataType.UINT16, 10, AccessMode.WriteOnly),
+    ModbusRegister.scale('timeslot.powerlimit', 155, 1, RegisterDataType.UINT16, 10, AccessMode.WriteOnly),
+    ModbusRegister.scale('timeslot.powerlimit', 156, 1, RegisterDataType.UINT16, 10, AccessMode.WriteOnly),
+    ModbusRegister.scale('timeslot.powerlimit', 157, 1, RegisterDataType.UINT16, 10, AccessMode.WriteOnly),
+    ModbusRegister.scale('timeslot.powerlimit', 158, 1, RegisterDataType.UINT16, 10, AccessMode.WriteOnly),
+    ModbusRegister.scale('timeslot.powerlimit', 159, 1, RegisterDataType.UINT16, 10, AccessMode.WriteOnly),
+    /*
+     * Minimum battery percentage for this timeslot
+     */
+    ModbusRegister.default('timeslot.battery', 166, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.battery', 167, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.battery', 168, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.battery', 169, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.battery', 170, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.battery', 171, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    /*
+     * Time for this timeslot
+     */
+    ModbusRegister.default('timeslot.time', 148, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 149, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 150, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 151, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 152, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 153, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
 ];
 
 const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
@@ -480,30 +480,19 @@ const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: Modb
         return;
     }
 
+    const bits = [1, 1];
+    const bitIndex = 4;
     origin.log('Setting Grid Peak Shaving mode on with ', value, 'W');
 
     try {
-        const currentValue = await client.readAddressWithoutConversion(modeRegister, RegisterType.Holding);
+        const result = await client.writeBitsToRegister(modeRegister, registerType, bits, bitIndex);
+        origin.log('Set `grid peak shaving on` result', result);
 
-        if (!currentValue) {
-            throw new Error('Error reading current value');
+        if (result) {
+            const payload = powerRegister.calculatePayload(value, origin);
+            const powerResult = await client.writeRegister(powerRegister, payload);
+            origin.log('Power output', powerResult);
         }
-
-        logBits(origin, currentValue.buffer, currentValue.buffer.length);
-
-        const newBits = [1, 1];
-        const startBitIndex = 4;
-
-        const byteIndex = 1; // Big Endian so we count in reverse
-        const resultBuffer = writeBitsToBuffer(currentValue.buffer, byteIndex, newBits, startBitIndex);
-        logBits(origin, resultBuffer, resultBuffer.length);
-
-        const result = await client.writeBufferRegister(modeRegister, resultBuffer);
-        origin.log('Output', result);
-
-        const payload = powerRegister.calculatePayload(value, origin);
-        const powerResult = await client.writeRegister(powerRegister, payload);
-        origin.log('Power output', powerResult);
     } catch (error) {
         origin.error('Error setting workmode or power', error);
     }
@@ -522,27 +511,135 @@ const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: Mod
 
     origin.log('Setting Grid Peak Shaving mode off');
 
+    const bits = [0, 1];
+    const bitIndex = 4;
+
     try {
-        const currentValue = await client.readAddressWithoutConversion(modeRegister, RegisterType.Holding);
+        const result = await client.writeBitsToRegister(modeRegister, registerType, bits, bitIndex);
+        origin.log('Set `grid peak shaving off` result', result);
+    } catch (error) {
+        origin.error('Error setting grid peak shaving mode', error);
+    }
+};
 
-        if (!currentValue) {
-            throw new Error('Error reading current value');
-        }
+const setTimeOfUseEnabled = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const address = 146;
+    const registerType = RegisterType.Holding;
 
-        logBits(origin, currentValue.buffer, currentValue.buffer.length);
+    const register = client.getAddressByType(registerType, address);
 
-        const newBits = [0, 1];
-        const startBitIndex = 4;
+    if (register === undefined) {
+        origin.error('Register not found');
+        return;
+    }
 
-        const byteIndex = 1; // Big Endian so we count in reverse
-        const resultBuffer = writeBitsToBuffer(currentValue.buffer, byteIndex, newBits, startBitIndex);
+    const { enabled } = args;
+    origin.log('Setting time of use enabled to: ', enabled);
+    const bits = enabled === 'true' ? [1] : [0];
 
-        logBits(origin, resultBuffer, resultBuffer.length);
-
-        const result = await client.writeBufferRegister(modeRegister, resultBuffer);
-        origin.log('Output', result);
+    try {
+        const result = await client.writeBitsToRegister(register, registerType, bits, 0);
+        origin.log('Set time of use enabled result', result);
     } catch (error) {
         origin.error('Error setting workmode or power', error);
+    }
+};
+
+const setTimeOfUseDayEnabled = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const address = 146;
+    const registerType = RegisterType.Holding;
+
+    const register = client.getAddressByType(registerType, address);
+
+    if (register === undefined) {
+        origin.error('Register not found');
+        return;
+    }
+
+    const { enabled, day } = args;
+
+    if (Number(day) < 1 || Number(day) > 7) {
+        origin.error('Invalid day', day);
+    }
+
+    const bitIndex = Number(day);
+    const bits = enabled === 'true' ? [1] : [0];
+
+    try {
+        const result = await client.writeBitsToRegister(register, registerType, bits, bitIndex);
+        origin.log('Set time of use for day enabled result', result);
+    } catch (error) {
+        origin.error('Error setting workmode or power', error);
+    }
+};
+
+const setTimeOfUseTimeslotParameters = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+    const { timeslot, time, gridcharge, generatorcharge, powerlimit, batterycharge } = args;
+
+    const timeslotNumber = Number(timeslot);
+    if (timeslotNumber < 1 || timeslotNumber > 6) {
+        origin.error('Invalid timeslot', timeslot);
+        return;
+    }
+
+    const gridChargeBit = gridcharge === 'true' ? 1 : 0;
+    const generatorChargeBit = generatorcharge === 'true' ? 1 : 0;
+
+    const powerLimitNumber = Number(powerlimit);
+    if (powerLimitNumber < 0 || powerLimitNumber > 8000) {
+        origin.error('Invalid power limit', powerlimit);
+        return;
+    }
+
+    const batteryChargeNumber = Number(batterycharge);
+    if (batteryChargeNumber < 0 || batteryChargeNumber > 100) {
+        origin.error('Invalid battery charge', batterycharge);
+        return;
+    }
+
+    const chargeAddress = 172 + (timeslotNumber - 1);
+    const powerAddress = 154 + (timeslotNumber - 1);
+    const batteryAddress = 166 + (timeslotNumber - 1);
+    const timeAddress = 148 + (timeslotNumber - 1);
+
+    const chargeRegister = client.getAddressByType(RegisterType.Holding, chargeAddress);
+    const powerRegister = client.getAddressByType(RegisterType.Holding, powerAddress);
+    const batteryRegister = client.getAddressByType(RegisterType.Holding, batteryAddress);
+    const timeRegister = client.getAddressByType(RegisterType.Holding, timeAddress);
+
+    if (!chargeRegister || !powerRegister || !batteryRegister || !timeRegister) {
+        origin.error('Register not found', chargeAddress, powerAddress, batteryAddress, timeAddress);
+        return;
+    }
+
+    const chargeBits = [generatorChargeBit, gridChargeBit];
+    const parsedTime = Number(time.replace(':', ''));
+    const powerPayload = powerRegister.calculatePayload(powerLimitNumber, origin);
+
+    origin.log('Setting timeslot parameters', {
+        timeslot,
+        parsedTime,
+        gridcharge,
+        generatorcharge,
+        chargingBits: chargeBits,
+        powerPayload,
+        batteryChargeNumber,
+    });
+
+    try {
+        const chargeResult = await client.writeBitsToRegister(chargeRegister, RegisterType.Holding, chargeBits, 0);
+        origin.log('Set timeslot charge result', chargeResult);
+
+        const powerResult = await client.writeRegister(powerRegister, powerPayload);
+        origin.log('Set timeslot power result', powerResult);
+
+        const batteryResult = await client.writeRegister(batteryRegister, batteryChargeNumber);
+        origin.log('Set timeslot battery result', batteryResult);
+
+        const timeResult = await client.writeRegister(timeRegister, parsedTime);
+        origin.log('Set timeslot time result', timeResult);
+    } catch (error) {
+        origin.error('Error setting timeslot parameters', error);
     }
 };
 
@@ -572,6 +669,9 @@ export const deyeSunXKSG01HP3: DeviceModel = {
             set_grid_peak_shaving_on: setGridPeakShavingOn,
             set_grid_peak_shaving_off: setGridPeakShavingOff,
             set_work_mode_and_zero_export_power: setWorkmodeAndZeroExportPower,
+            set_time_of_use_enabled: setTimeOfUseEnabled,
+            set_time_of_use_day_enabled: setTimeOfUseDayEnabled,
+            set_time_of_use_timeslot_parameters: setTimeOfUseTimeslotParameters,
         },
     },
 };

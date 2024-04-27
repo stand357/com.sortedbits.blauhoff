@@ -556,6 +556,11 @@
             "title": {
                 "en": "Grid peak shaving"
             }
+        },
+        "status_text.time_of_use": {
+            "title": {
+                "en": "Grid peak shaving"
+            }
         }
     },
     "energy": {
