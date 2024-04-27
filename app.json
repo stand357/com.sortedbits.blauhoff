@@ -710,6 +710,271 @@
             ]
           }
         ]
+      },
+      {
+        "id": "set_time_of_use_enabled",
+        "title": {
+          "en": "Turn time of use on/off"
+        },
+        "titleFormatted": {
+          "en": "Set time of use to [[enabled]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus"
+          },
+          {
+            "type": "dropdown",
+            "name": "enabled",
+            "title": {
+              "en": "Time of use"
+            },
+            "values": [
+              {
+                "id": "true",
+                "title": {
+                  "en": "enabled"
+                }
+              },
+              {
+                "id": "false",
+                "title": {
+                  "en": "disabled"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_time_of_use_day_enabled",
+        "title": {
+          "en": "Turn time of use on/off for this day"
+        },
+        "titleFormatted": {
+          "en": "Set time of use to [[enabled]] for [[day]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus"
+          },
+          {
+            "type": "dropdown",
+            "name": "enabled",
+            "title": {
+              "en": "Time of use"
+            },
+            "values": [
+              {
+                "id": "true",
+                "title": {
+                  "en": "enabled"
+                }
+              },
+              {
+                "id": "false",
+                "title": {
+                  "en": "disabled"
+                }
+              }
+            ]
+          },
+          {
+            "type": "dropdown",
+            "name": "day",
+            "title": {
+              "en": "Day"
+            },
+            "values": [
+              {
+                "id": "1",
+                "title": {
+                  "en": "Monday"
+                }
+              },
+              {
+                "id": "2",
+                "title": {
+                  "en": "Tuesday"
+                }
+              },
+              {
+                "id": "3",
+                "title": {
+                  "en": "Wednesday"
+                }
+              },
+              {
+                "id": "4",
+                "title": {
+                  "en": "Thursday"
+                }
+              },
+              {
+                "id": "5",
+                "title": {
+                  "en": "Friday"
+                }
+              },
+              {
+                "id": "6",
+                "title": {
+                  "en": "Saturday"
+                }
+              },
+              {
+                "id": "7",
+                "title": {
+                  "en": "Sunday"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_time_of_use_timeslot_parameters",
+        "title": {
+          "en": "Set time of use parameters for timeslot"
+        },
+        "titleFormatted": {
+          "en": "For timeslot [[timeslot]] set the start time to [[time]]. Set grid charge to [[gridcharge]] and generator charge to [[generatorcharge]]. Power limit is [[powerlimit]] and minimum battery charge is [[batterycharge]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus"
+          },
+          {
+            "type": "dropdown",
+            "name": "timeslot",
+            "title": {
+              "en": "Timeslot"
+            },
+            "values": [
+              {
+                "id": "1",
+                "title": {
+                  "en": "1"
+                }
+              },
+              {
+                "id": "2",
+                "title": {
+                  "en": "2"
+                }
+              },
+              {
+                "id": "3",
+                "title": {
+                  "en": "3"
+                }
+              },
+              {
+                "id": "4",
+                "title": {
+                  "en": "4"
+                }
+              },
+              {
+                "id": "5",
+                "title": {
+                  "en": "5"
+                }
+              },
+              {
+                "id": "6",
+                "title": {
+                  "en": "6"
+                }
+              }
+            ]
+          },
+          {
+            "type": "time",
+            "name": "time",
+            "title": {
+              "en": "Time"
+            },
+            "placeholder": {
+              "en": "08:00"
+            }
+          },
+          {
+            "type": "dropdown",
+            "name": "gridcharge",
+            "title": {
+              "en": "Grid charging"
+            },
+            "values": [
+              {
+                "id": "true",
+                "title": {
+                  "en": "enabled"
+                }
+              },
+              {
+                "id": "false",
+                "title": {
+                  "en": "disabled"
+                }
+              }
+            ]
+          },
+          {
+            "type": "dropdown",
+            "name": "generatorcharge",
+            "title": {
+              "en": "Generator charging"
+            },
+            "values": [
+              {
+                "id": "true",
+                "title": {
+                  "en": "enabled"
+                }
+              },
+              {
+                "id": "false",
+                "title": {
+                  "en": "disabled"
+                }
+              }
+            ]
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 8000,
+            "name": "powerlimit",
+            "label": "W",
+            "step": 10,
+            "labelDecimals": 0,
+            "title": {
+              "en": "Power limit"
+            },
+            "placeholder": {
+              "en": "watts"
+            }
+          },
+          {
+            "type": "range",
+            "name": "batterycharge",
+            "title": {
+              "en": "Minimum battery charge"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "label": "%",
+            "labelDecimals": 0
+          }
+        ]
       }
     ]
   },
@@ -1269,6 +1534,11 @@
           }
         },
         "status_text.grid_peak_shaving": {
+          "title": {
+            "en": "Grid peak shaving"
+          }
+        },
+        "status_text.time_of_use": {
           "title": {
             "en": "Grid peak shaving"
           }
@@ -1966,6 +2236,11 @@
           }
         },
         "status_text.grid_peak_shaving": {
+          "title": {
+            "en": "Grid peak shaving"
+          }
+        },
+        "status_text.time_of_use": {
           "title": {
             "en": "Grid peak shaving"
           }
