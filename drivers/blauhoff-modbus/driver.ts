@@ -10,6 +10,7 @@ import { PairSession } from 'homey/lib/Driver';
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
 import { getBrand, getDeviceModelName, iconForBrand } from '../../api/modbus/helpers/brand-name';
 import { ModbusAPI } from '../../api/modbus/modbus-api';
+import { DeviceModel } from '../../api/modbus/models/device-model';
 import { Brand } from '../../api/modbus/models/enum/brand';
 
 interface DeviceTypeFormData {
@@ -147,13 +148,27 @@ class ModbusDriver extends Homey.Driver {
             throw new Error('Unknown device type');
         }
 
-        const result = await ModbusAPI.verifyConnection(this, data.host, data.port, data.unitId, device);
+        const result = await this.verifyConnection(data.host, data.port, data.unitId, device);
 
         if (result) {
             await session.nextView();
             return { success: true };
         }
         return { success: false, message: 'Failed to connect to the device' };
+    };
+
+    verifyConnection = async (host: string, port: number, unitId: number, deviceModel: DeviceModel): Promise<boolean> => {
+        const api = new ModbusAPI(this, host, port, unitId, deviceModel);
+
+        this.log('Connecting...');
+        const result = await api.connect();
+
+        // api.disconnect();
+        if (result) {
+            this.log('Disconnecting...');
+        }
+
+        return result;
     };
 
     /**

@@ -6,7 +6,6 @@
  */
 
 import ModbusRTU from 'modbus-serial';
-import { ReadRegisterResult } from 'modbus-serial/ModbusRTU';
 import { Socket } from 'net';
 import { IBaseLogger } from '../../helpers/log';
 import { logBits, writeBitsToBuffer } from '../blauhoff/helpers/bits';
@@ -33,6 +32,14 @@ export class ModbusAPI {
 
     get isOpen(): boolean {
         return this.client.isOpen;
+    }
+
+    getDeviceModel(): DeviceModel {
+        return this.deviceModel;
+    }
+
+    setOnDataReceived(onDataReceived: (value: any, register: ModbusRegister) => Promise<void>): void {
+        this.onDataReceived = onDataReceived;
     }
 
     /**
@@ -129,34 +136,6 @@ export class ModbusAPI {
     };
 
     /**
-     * Verifies the connection to a Modbus device.
-     *
-     * @param log - The logger instance.
-     * @param host - The host address of the Modbus device.
-     * @param port - The port number of the Modbus device.
-     * @param unitId - The unit ID of the Modbus device.
-     * @param deviceModel - The device information of the Modbus device.
-     * @returns A promise that resolves to a boolean indicating the success of the connection.
-     */
-    static verifyConnection = async (log: IBaseLogger, host: string, port: number, unitId: number, deviceModel: DeviceModel): Promise<boolean> => {
-        log.log('Creating modbus API');
-        const api = new ModbusAPI(log, host, port, unitId, deviceModel);
-
-        log.log('Connecting...');
-        const result = await api.connect();
-
-        // api.disconnect();
-        if (result) {
-            log.log('Disconnecting...');
-        }
-
-        return result;
-    };
-
-    getAddressByType = (registerType: RegisterType, address: number): ModbusRegister | undefined => {
-        return DeviceRepository.getRegisterByTypeAndAddress(this.deviceModel, registerType.toString(), address);
-    };
-
     /**
      * Reads a Modbus register without converting the data.
      *
@@ -164,7 +143,7 @@ export class ModbusAPI {
      * @param registerType - The type of the register.
      * @returns A promise that resolves to the read data or undefined if the read operation failed.
      */
-    readAddressWithoutConversion = async (register: ModbusRegister, registerType: RegisterType): Promise<ReadRegisterResult | undefined> => {
+    readAddressWithoutConversion = async (register: ModbusRegister, registerType: RegisterType): Promise<Buffer | undefined> => {
         const data =
             registerType === RegisterType.Input
                 ? await this.client.readInputRegisters(register.address, register.length)
@@ -172,7 +151,10 @@ export class ModbusAPI {
 
         this.log.log('Reading address', register.address, ':', data);
 
-        return data;
+        if (data && data.buffer) {
+            return data.buffer;
+        }
+        return undefined;
     };
 
     /**
@@ -183,10 +165,10 @@ export class ModbusAPI {
      * @returns A promise that resolves to the converted data or undefined if the read operation failed.
      */
     readAddress = async (register: ModbusRegister, registerType: RegisterType): Promise<any> => {
-        const data = await this.readAddressWithoutConversion(register, registerType);
+        const buffer = await this.readAddressWithoutConversion(register, registerType);
 
-        if (data) {
-            const result = this.deviceModel.definition.inputRegisterResultConversion(this.log, data.buffer, register);
+        if (buffer) {
+            const result = this.deviceModel.definition.inputRegisterResultConversion(this.log, buffer, register);
             this.log.log('Conversion result', result);
             return result;
         }
@@ -290,7 +272,7 @@ export class ModbusAPI {
 
     /**
      * Reads the input and holding registers of the Modbus device.
-     *
+     * @deprecated Use `readRegistersInBatch` instead.
      * @returns {Promise<void>} A promise that resolves when all registers have been read.
      */
     readRegisters = async () => {
@@ -377,37 +359,37 @@ export class ModbusAPI {
      *               - device: The device containing the register.
      * @returns A promise that resolves when the write operation is complete.
      */
-    writeValueToRegister = async (origin: IBaseLogger, args: any): Promise<void> => {
+    writeValueToRegister = async (args: any): Promise<void> => {
         const { value, registerType, register, device } = args;
 
         if (device.device === undefined) {
-            origin.error('Device is undefined');
+            this.log.error('Device is undefined');
             return;
         }
 
         if (value === undefined || registerType === undefined || !register) {
-            origin.log('Wait, something is missing', value, registerType, register);
+            this.log.log('Wait, something is missing', value, registerType, register);
             return;
         }
 
         if (!register || !register.address) {
-            origin.error('Register is undefined');
+            this.log.error('Register is undefined');
             return;
         }
 
         const foundRegister = DeviceRepository.getRegisterByTypeAndAddress(device.device, registerType, register.address);
 
         if (!foundRegister) {
-            origin.error('Register not found');
+            this.log.error('Register not found');
             return;
         }
 
-        origin.log('Device', JSON.stringify(device.device, null, 2));
+        this.log.log('Device', JSON.stringify(device.device, null, 2));
 
-        origin.log('write_value_to_register', value, registerType, register);
+        this.log.log('write_value_to_register', value, registerType, register);
 
         const result = await this.writeRegister(foundRegister, value);
-        origin.log('Write result', result);
+        this.log.log('Write result', result);
     };
 
     /**
@@ -426,26 +408,26 @@ export class ModbusAPI {
      * @returns A promise that resolves to a boolean indicating whether the write operation was successful.
      */
     writeBitsToRegister = async (register: ModbusRegister, registerType: RegisterType, bits: number[], bitIndex: number): Promise<boolean> => {
-        const currentValue = await this.readAddressWithoutConversion(register, registerType);
+        const readBuffer = await this.readAddressWithoutConversion(register, registerType);
 
-        if (currentValue === undefined) {
+        if (readBuffer === undefined) {
             this.log.error('Failed to read current value');
             return false;
         }
 
-        logBits(this.log, currentValue.buffer, currentValue.buffer.length);
+        logBits(this.log, readBuffer, readBuffer.length);
 
-        if (currentValue.buffer.length * 8 < bitIndex + bits.length) {
+        if (readBuffer.length * 8 < bitIndex + bits.length) {
             this.log.error('Bit index out of range');
             return false;
         }
 
-        const byteIndex = currentValue.buffer.length - 1 - Math.floor(bitIndex / 8);
+        const byteIndex = readBuffer.length - 1 - Math.floor(bitIndex / 8);
         const startBitIndex = bitIndex % 8;
 
         this.log.log('writeBitsToRegister', registerType, bits, startBitIndex, byteIndex);
 
-        const result = writeBitsToBuffer(currentValue.buffer, byteIndex, bits, startBitIndex);
+        const result = writeBitsToBuffer(readBuffer, byteIndex, bits, startBitIndex);
         logBits(this.log, result, result.length);
 
         return await this.writeBufferRegister(register, result);
