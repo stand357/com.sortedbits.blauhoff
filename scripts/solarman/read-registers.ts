@@ -31,8 +31,12 @@ if (!device) {
 const api = new Solarman(log, device, host, '3518024876');
 api.setOnDataReceived(valueResolved);
 
+const workModeRegister = DeviceRepository.getRegisterByTypeAndAddress(device, 'input', 2500);
+
 const perform = async (): Promise<void> => {
     await api.readRegistersInBatch();
+
+    await api.writeRegister(workModeRegister!, 1);
     /*
     const address = DeviceRepository.getRegisterByTypeAndAddress(device, 'input', 507);
 
