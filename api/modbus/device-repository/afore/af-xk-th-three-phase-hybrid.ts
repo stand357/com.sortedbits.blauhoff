@@ -111,6 +111,7 @@ const inputRegisters: ModbusRegister[] = [
     ModbusRegister.scale('measure_temperature.battery1', 2001, 1, RegisterDataType.INT16, 0.1),
     ModbusRegister.default('measure_percentage.bat_soc', 2002, 1, RegisterDataType.UINT16),
     ModbusRegister.scale('measure_voltage.battery', 2004, 1, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.default('status_code.run_mode', 2500, 2, RegisterDataType.UINT16),
 ];
 
 const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {

@@ -7,7 +7,7 @@ import { RegisterType } from '../modbus/models/enum/register-type';
 import { ModbusRegister } from '../modbus/models/modbus-register';
 import { FrameDefinition } from './frame-definition';
 import { calculateBufferCRC } from './helpers/buffer-crc-calculator';
-import { parseRegistersFromResponse, parseResponse } from './helpers/response-parser';
+import { parseResponse } from './helpers/response-parser';
 
 /*
  * Attempting to port the amazing pysolarmanv5 library to TypeScript
@@ -66,20 +66,35 @@ export class Solarman implements IAPI {
         throw new Error('Method not implemented.');
     }
     getDeviceModel(): DeviceModel {
-        throw new Error('Method not implemented.');
+        return this.deviceModel;
     }
     connect(): Promise<boolean> {
-        throw new Error('Method not implemented.');
+        this.log.log('Connecting');
+        return Promise.resolve(true);
     }
     disconnect(): void {
-        throw new Error('Method not implemented.');
+        this.log.log('Disconnecting');
     }
-    writeRegister(register: ModbusRegister, value: any): Promise<boolean> {
-        throw new Error('Method not implemented.');
-    }
-    writeBufferRegister(register: ModbusRegister, buffer: Buffer): Promise<boolean> {
-        throw new Error('Method not implemented.');
-    }
+
+    writeRegister = async (register: ModbusRegister, value: number): Promise<boolean> => {
+        const request = this.createModbusWriteRequest(register, [value]);
+        const result = await this.performRequest(request);
+
+        this.log.log('Write register', register.address, value, result);
+        //TODO: Make sure we return the right boolean
+        return true;
+    };
+
+    writeBufferRegister = async (register: ModbusRegister, buffer: Buffer): Promise<boolean> => {
+        const request = this.createModbusWriteRequest(register, buffer);
+        const result = await this.performRequest(request);
+
+        this.log.log('Write buffer register', register.address, buffer, result);
+
+        //TODO: Make sure we return the right boolean
+        return true;
+    };
+
     writeBitsToRegister(register: ModbusRegister, registerType: RegisterType, bits: number[], bitIndex: number): Promise<boolean> {
         throw new Error('Method not implemented.');
     }
@@ -115,7 +130,7 @@ export class Solarman implements IAPI {
      * @returns A promise that resolves to the read data or undefined if the read operation failed.
      */
     readAddressWithoutConversion = async (register: ModbusRegister, registerType: RegisterType): Promise<Buffer | undefined> => {
-        const request = this.createModbusRequest(register, 1, registerType);
+        const request = this.createModbusReadRequest(register, 1, registerType);
         const buffer = await this.performRequest(request);
 
         return buffer;
@@ -166,6 +181,11 @@ export class Solarman implements IAPI {
             return;
         }
 
+        if (!this.onDataReceived) {
+            this.log.log('No valueResolved function set');
+            return;
+        }
+
         const firstRegister = batch[0];
         const lastRegister = batch[batch.length - 1];
 
@@ -174,13 +194,23 @@ export class Solarman implements IAPI {
         this.log.log('Reading batch', firstRegister.address, length, registerType);
 
         try {
-            const request = this.createModbusRequest(firstRegister, length, registerType);
+            const request = this.createModbusReadRequest(firstRegister, length, registerType);
             const response = await this.performRequest(request);
 
-            this.log.log('Response data', response);
-
             if (response) {
-                await parseRegistersFromResponse(this.log, batch, this.deviceModel.definition.inputRegisterResultConversion, response, this.onDataReceived);
+                const data = parseResponse(this.log, response);
+                console.log(data);
+
+                if (data.length === batch.length) {
+                    for (let i = 0; i < data.length; i++) {
+                        const register = batch[i];
+                        const value = data[i];
+
+                        await this.onDataReceived(value, register);
+                    }
+                } else {
+                    this.log.error('Mismatch in response length', data.length, batch.length);
+                }
             } else {
                 this.log.error('No response');
             }
@@ -196,7 +226,7 @@ export class Solarman implements IAPI {
         return new Promise<Buffer | undefined>((resolve, reject) => {
             client.on('data', (data) => {
                 client.end();
-
+                this.log.log('Data', data);
                 const buffer = this.frameDefinition.unwrapResponseFrame(data);
                 resolve(buffer);
             });
@@ -220,7 +250,39 @@ export class Solarman implements IAPI {
         });
     };
 
-    createModbusRequest(startRegister: ModbusRegister, length: number, registerType: RegisterType): Buffer {
+    createModbusWriteRequest(register: ModbusRegister, value: Buffer | Array<number>): Buffer {
+        // https://github.com/yaacov/node-modbus-serial/blob/49ecaf3caf93dfedf1dab19b2dec01de07aabe27/index.js#L1028
+
+        let dataLength = value.length;
+        if (Buffer.isBuffer(value)) {
+            dataLength = value.length / 2;
+        }
+
+        const codeLength = 7 + 2 * dataLength;
+
+        const buffer = Buffer.alloc(codeLength + 2);
+        buffer.writeUInt8(this.slaveId, 0);
+        buffer.writeUInt8(16, 1);
+        buffer.writeUInt16BE(register.address, 2);
+        buffer.writeUInt16BE(dataLength, 4);
+        buffer.writeUInt8(dataLength * 2, 6);
+
+        if (Buffer.isBuffer(value)) {
+            value.copy(buffer, 7);
+        } else {
+            for (let i = 0; i < dataLength; i++) {
+                buffer.writeUInt16BE(value[i], 7 + 2 * i);
+            }
+        }
+
+        buffer.writeUInt16LE(calculateBufferCRC(buffer.subarray(0, -2)), codeLength);
+        this.log.log('Write request', buffer);
+
+        const request = this.frameDefinition.wrapModbusFrame(buffer);
+        return request;
+    }
+
+    createModbusReadRequest(startRegister: ModbusRegister, length: number, registerType: RegisterType): Buffer {
         const command = registerType === RegisterType.Input ? 0x04 : 0x03;
         const modbusFrame = this.createModbusFrame(startRegister, length, command);
         const request = this.frameDefinition.wrapModbusFrame(modbusFrame);

@@ -4,13 +4,10 @@ import { ModbusRegister } from '../../modbus/models/modbus-register';
 export const parseResponse = (log: IBaseLogger, response: Buffer): Array<number> => {
     const length = response.readUInt8(2);
 
-    log.log('parseResponse, length', length);
-
     const result = [];
 
     for (let i = 0; i < length; i += 2) {
         const value = response.readUInt16BE(i + 3);
-        log.log('parseResponse, value', value);
         result.push(value);
     }
 
