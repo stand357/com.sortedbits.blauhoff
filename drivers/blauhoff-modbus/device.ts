@@ -11,17 +11,17 @@ import { DeviceRepository } from '../../api/modbus/device-repository/device-repo
 import { getBrand } from '../../api/modbus/helpers/brand-name';
 import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-registers';
 import { ModbusAPI } from '../../api/modbus/modbus-api';
-import { DeviceModel, SupportedFlowTypes } from '../../api/modbus/models/device-model';
+import { IDeviceModel, SupportedFlowTypes } from '../../api/modbus/models/device/device-model';
+import { ModbusDeviceDefinition } from '../../api/modbus/models/device/modbus-device-registers';
 import { AccessMode } from '../../api/modbus/models/enum/access-mode';
 import { Brand } from '../../api/modbus/models/enum/brand';
-import { ModbusDeviceDefinition } from '../../api/modbus/models/modbus-device-registers';
 import { ModbusRegister } from '../../api/modbus/models/modbus-register';
 
 class ModbusDevice extends Device {
     private api?: ModbusAPI;
     private reachable: boolean = false;
     private readRegisterTimeout: NodeJS.Timeout | undefined;
-    private device!: DeviceModel;
+    private device!: IDeviceModel;
 
     public filteredLog(...args: any[]) {
         if (this.device.brand === Brand.Growatt) {

@@ -12,7 +12,7 @@ import { logBits, writeBitsToBuffer } from '../blauhoff/helpers/bits';
 import { DeviceRepository } from './device-repository/device-repository';
 import { createRegisterBatches } from './helpers/register-batches';
 import { validateValue } from './helpers/validate-value';
-import { DeviceModel } from './models/device-model';
+import { IDeviceModel } from './models/device/device-model';
 import { AccessMode } from './models/enum/access-mode';
 import { RegisterType } from './models/enum/register-type';
 import { ModbusRegister } from './models/modbus-register';
@@ -27,14 +27,14 @@ export class ModbusAPI {
     private port: number;
     private unitId: number;
     private log: IBaseLogger;
-    private deviceModel: DeviceModel;
+    private deviceModel: IDeviceModel;
     private disconnecting: boolean = false;
 
     get isOpen(): boolean {
         return this.client.isOpen;
     }
 
-    getDeviceModel(): DeviceModel {
+    getDeviceModel(): IDeviceModel {
         return this.deviceModel;
     }
 
@@ -67,7 +67,7 @@ export class ModbusAPI {
      * @param unitId - The unit ID.
      * @param deviceModel - The Modbus device information.
      */
-    constructor(log: IBaseLogger, host: string, port: number, unitId: number, deviceModel: DeviceModel) {
+    constructor(log: IBaseLogger, host: string, port: number, unitId: number, deviceModel: IDeviceModel) {
         this.host = host;
         this.port = port;
         this.unitId = unitId;
@@ -168,7 +168,7 @@ export class ModbusAPI {
         const buffer = await this.readAddressWithoutConversion(register, registerType);
 
         if (buffer) {
-            const result = this.deviceModel.definition.inputRegisterResultConversion(this.log, buffer, register);
+            const result = this.deviceModel.definition.resultConverter(this.log, buffer, register);
             this.log.log('Conversion result', result);
             return result;
         }
@@ -327,10 +327,7 @@ export class ModbusAPI {
                 const end = startOffset + register.length * 2;
                 const buffer = batch.length > 1 ? results.buffer.subarray(startOffset, end) : results.buffer;
 
-                const value =
-                    registerType === RegisterType.Input
-                        ? this.deviceModel.definition.inputRegisterResultConversion(this.log, buffer, register)
-                        : this.deviceModel.definition.holdingRegisterResultConversion(this.log, buffer, register);
+                const value = this.deviceModel.definition.resultConverter(this.log, buffer, register);
 
                 if (this.onDataReceived) {
                     await this.onDataReceived(value, register);

@@ -5,13 +5,13 @@
  * Non-commercial use only
  */
 
+import { ModbusDeviceDefinition } from '../../models/device/modbus-device-registers';
 import { RegisterDataType } from '../../models/enum/register-datatype';
-import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
 import { ModbusRegister } from '../../models/modbus-register';
 
 import { IBaseLogger } from '../../../../helpers/log';
 import { IAPI } from '../../../iapi';
-import { DeviceModel } from '../../models/device-model';
+import { IDeviceModel } from '../../models/device/device-model';
 import { Brand } from '../../models/enum/brand';
 import { mod_tl_registers } from './mod-XXXX-tl';
 
@@ -23,8 +23,7 @@ const mod_tl3_registers: ModbusDeviceDefinition = {
         ModbusRegister.scale('measure_voltage.grid_l3', 46, 2, RegisterDataType.UINT16, 0.1),
     ],
     holdingRegisters: mod_tl_registers.holdingRegisters,
-    inputRegisterResultConversion: mod_tl_registers.inputRegisterResultConversion,
-    holdingRegisterResultConversion: mod_tl_registers.holdingRegisterResultConversion,
+    resultConverter: mod_tl_registers.resultConverter,
     deprecatedCapabilities: mod_tl_registers.deprecatedCapabilities,
 };
 
@@ -46,7 +45,7 @@ const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: IAPI
 
 const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {};
 
-export const growattTL3: DeviceModel = {
+export const growattTL3: IDeviceModel = {
     id: 'growatt-tl3',
     brand: Brand.Growatt,
     name: 'Growatt 3PH MOD TL3-X series',

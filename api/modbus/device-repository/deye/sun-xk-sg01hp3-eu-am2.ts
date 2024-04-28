@@ -7,17 +7,13 @@
 import { IBaseLogger } from '../../../../helpers/log';
 import { logBits, writeBitsToBuffer } from '../../../blauhoff/helpers/bits';
 import { IAPI } from '../../../iapi';
-import { DeviceModel } from '../../models/device-model';
+import { DeviceModel } from '../../models/device/device-model';
 import { AccessMode } from '../../models/enum/access-mode';
 import { Brand } from '../../models/enum/brand';
 import { RegisterDataType } from '../../models/enum/register-datatype';
 import { RegisterType } from '../../models/enum/register-type';
-import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
 import { ModbusRegister } from '../../models/modbus-register';
-import { defaultValueConverter } from '../_shared/default-value-converter';
 import { DeviceRepository } from '../device-repository';
-
-const inputRegisters: ModbusRegister[] = [];
 
 const holdingRegisters: ModbusRegister[] = [
     // settings
@@ -651,23 +647,16 @@ const setTimeOfUseTimeslotParameters = async (origin: IBaseLogger, args: any, cl
     }
 };
 
-// eslint-disable-next-line camelcase
-const definition: ModbusDeviceDefinition = {
-    inputRegisters,
-    holdingRegisters,
-    inputRegisterResultConversion: defaultValueConverter,
-    holdingRegisterResultConversion: defaultValueConverter,
-    deprecatedCapabilities: ['status_code.work_mode', 'status_code.run_mode'],
-};
-
-export const deyeSunXKSG01HP3: DeviceModel = {
-    id: 'deye-sun-xk-sg01hp3-eu-am2',
-    brand: Brand.Deye,
-    name: 'Deye Sun *K SG01HP3 EU AM2 Series',
-    description: 'Deye Sun *K SG01HP3 EU AM2 Series with modbus interface',
-    debug: true,
-    definition,
-    supportedFlows: {
+export const device = new DeviceModel(
+    'deye-sun-xk-sg01hp3-eu-am2',
+    Brand.Deye,
+    'Deye Sun *K SG01HP3 EU AM2 Series',
+    'Deye Sun *K SG01HP3 EU AM2 Series with modbus interface',
+    true,
+)
+    .setHoldingRegisters(holdingRegisters)
+    .setDeprecatedCapabilities(['status_code.work_mode', 'status_code.run_mode'])
+    .setSupportedFlowTypes({
         actions: {
             set_max_solar_power: setMaxSolarPower,
             set_solar_sell: setSolarSell,
@@ -681,5 +670,4 @@ export const deyeSunXKSG01HP3: DeviceModel = {
             set_time_of_use_day_enabled: setTimeOfUseDayEnabled,
             set_time_of_use_timeslot_parameters: setTimeOfUseTimeslotParametersStart,
         },
-    },
-};
+    });

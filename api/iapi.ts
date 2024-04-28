@@ -1,9 +1,9 @@
-import { DeviceModel } from './modbus/models/device-model';
+import { IDeviceModel } from './modbus/models/device/device-model';
 import { RegisterType } from './modbus/models/enum/register-type';
 import { ModbusRegister } from './modbus/models/modbus-register';
 
 export interface IAPI {
-    getDeviceModel(): DeviceModel;
+    getDeviceModel(): IDeviceModel;
     setOnDataReceived(onDataReceived: (value: any, register: ModbusRegister) => Promise<void>): void;
 
     readAddress(register: ModbusRegister, registerType: RegisterType): Promise<any>;

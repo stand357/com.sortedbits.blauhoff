@@ -2,7 +2,7 @@ import * as net from 'net';
 import { IBaseLogger } from '../../helpers/log';
 import { IAPI } from '../iapi';
 import { createRegisterBatches } from '../modbus/helpers/register-batches';
-import { DeviceModel } from '../modbus/models/device-model';
+import { IDeviceModel } from '../modbus/models/device/device-model';
 import { RegisterType } from '../modbus/models/enum/register-type';
 import { ModbusRegister } from '../modbus/models/modbus-register';
 import { FrameDefinition } from './frame-definition';
@@ -24,7 +24,7 @@ export class Solarman implements IAPI {
     private timeout: number;
     private log: IBaseLogger;
 
-    private deviceModel: DeviceModel;
+    private deviceModel: IDeviceModel;
     private frameDefinition: FrameDefinition;
 
     private onDataReceived?: (value: any, register: ModbusRegister) => Promise<void>;
@@ -45,7 +45,7 @@ export class Solarman implements IAPI {
      */
     constructor(
         log: IBaseLogger,
-        deviceModel: DeviceModel,
+        deviceModel: IDeviceModel,
         ipAddress: string,
         serialNumber: string,
         port: number = 8899,
@@ -65,7 +65,7 @@ export class Solarman implements IAPI {
     writeValueToRegister(args: any): Promise<void> {
         throw new Error('Method not implemented.');
     }
-    getDeviceModel(): DeviceModel {
+    getDeviceModel(): IDeviceModel {
         return this.deviceModel;
     }
     connect(): Promise<boolean> {

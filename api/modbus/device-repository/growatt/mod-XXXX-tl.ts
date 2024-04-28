@@ -5,10 +5,10 @@
  * Non-commercial use only
  */
 
-import { DeviceModel } from '../../models/device-model';
+import { IDeviceModel } from '../../models/device/device-model';
+import { ModbusDeviceDefinition } from '../../models/device/modbus-device-registers';
 import { Brand } from '../../models/enum/brand';
 import { RegisterDataType } from '../../models/enum/register-datatype';
-import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
 import { ModbusRegister } from '../../models/modbus-register';
 import { defaultValueConverter } from '../_shared/default-value-converter';
 
@@ -34,12 +34,11 @@ const holdingRegisters: ModbusRegister[] = [ModbusRegister.default('serial', 23,
 export const mod_tl_registers: ModbusDeviceDefinition = {
     inputRegisters,
     holdingRegisters,
-    inputRegisterResultConversion: defaultValueConverter,
-    holdingRegisterResultConversion: defaultValueConverter,
+    resultConverter: defaultValueConverter,
     deprecatedCapabilities: ['measure_power.l1', 'measure_power.l2', 'measure_power.l3'],
 };
 
-export const growattTL: DeviceModel = {
+export const growattTL: IDeviceModel = {
     id: 'growatt-tl',
     brand: Brand.Growatt,
     name: 'Growatt 1PH MIC TL-X series',
