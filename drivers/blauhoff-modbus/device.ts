@@ -7,15 +7,15 @@
 
 import { addCapabilityIfNotExists, capabilityChange, deprecateCapability, Device } from 'homey-helpers';
 import { DateTime } from 'luxon';
-import { ModbusAPI } from '../../api/modbus/modbus-api';
-import { ModbusRegister } from '../../api/modbus/models/modbus-register';
-import { ModbusDeviceDefinition } from '../../api/modbus/models/modbus-device-registers';
+import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
 import { getBrand } from '../../api/modbus/helpers/brand-name';
 import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-registers';
-import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
+import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { DeviceModel, SupportedFlowTypes } from '../../api/modbus/models/device-model';
-import { Brand } from '../../api/modbus/models/enum/brand';
 import { AccessMode } from '../../api/modbus/models/enum/access-mode';
+import { Brand } from '../../api/modbus/models/enum/brand';
+import { ModbusDeviceDefinition } from '../../api/modbus/models/modbus-device-registers';
+import { ModbusRegister } from '../../api/modbus/models/modbus-register';
 
 class ModbusDevice extends Device {
     private api?: ModbusAPI;
@@ -189,10 +189,6 @@ class ModbusDevice extends Device {
             return;
         }
 
-        const { readInBatch } = this.getSettings();
-
-        this.log('Reading registers in batch', readInBatch);
-
         const localTimezone = this.homey.clock.getTimezone();
         const date = DateTime.now();
         const localDate = date.setZone(localTimezone);
@@ -201,11 +197,7 @@ class ModbusDevice extends Device {
 
         this.filteredLog('Reading registers for ', this.getName());
 
-        if (readInBatch) {
-            await this.api.readRegistersInBatch();
-        } else {
-            await this.api.readRegisters();
-        }
+        await this.api.readRegistersInBatch();
 
         const { refreshInterval } = this.getSettings();
 
@@ -215,7 +207,7 @@ class ModbusDevice extends Device {
         this.readRegisterTimeout = await this.homey.setTimeout(this.readRegisters.bind(this), interval);
     };
 
-    async writeRegisterByAddress(address: number, registerType: 'input' | 'holding', value: number) {
+    /*    async writeRegisterByAddress(address: number, registerType: 'input' | 'holding', value: number) {
         this.log('writeRegisterByAddress', address, registerType, value);
         const registers = registerType === 'input' ? this.device.definition.inputRegisters : this.device.definition.holdingRegisters;
         const register = registers.find((r) => r.address === address);
@@ -232,6 +224,7 @@ class ModbusDevice extends Device {
 
         await this.api.writeRegister(register, value);
     }
+*/
 
     /**
      * onAdded is called when the user adds the device, called just after pairing.

@@ -6,7 +6,7 @@
  */
 import { IBaseLogger } from '../../../../helpers/log';
 import { logBits, writeBitsToBuffer } from '../../../blauhoff/helpers/bits';
-import { ModbusAPI } from '../../modbus-api';
+import { IAPI } from '../../../iapi';
 import { DeviceModel } from '../../models/device-model';
 import { AccessMode } from '../../models/enum/access-mode';
 import { Brand } from '../../models/enum/brand';
@@ -15,6 +15,7 @@ import { RegisterType } from '../../models/enum/register-type';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
 import { ModbusRegister } from '../../models/modbus-register';
 import { defaultValueConverter } from '../_shared/default-value-converter';
+import { DeviceRepository } from '../device-repository';
 
 const inputRegisters: ModbusRegister[] = [];
 
@@ -277,11 +278,12 @@ const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.default('timeslot.time', 153, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
 ];
 
-const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const address = 340;
     const registerType = RegisterType.Holding;
 
-    const register = client.getAddressByType(registerType, address);
+    const register = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), address);
+    // const register = client.getAddressByType(registerType, address);
 
     if (register === undefined) {
         origin.error('Register not found');
@@ -306,11 +308,11 @@ const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: ModbusAP
     }
 };
 
-const setMaxSellPower = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setMaxSellPower = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const address = 143;
     const registerType = RegisterType.Holding;
 
-    const register = client.getAddressByType(registerType, address);
+    const register = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), address);
 
     if (register === undefined) {
         origin.error('Register not found');
@@ -335,11 +337,11 @@ const setMaxSellPower = async (origin: IBaseLogger, args: any, client: ModbusAPI
     }
 };
 
-const setSolarSell = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setSolarSell = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const address = 145;
     const registerType = RegisterType.Holding;
 
-    const register = client.getAddressByType(registerType, address);
+    const register = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), address);
     if (register === undefined) {
         origin.error('Register not found');
         return;
@@ -357,15 +359,15 @@ const setSolarSell = async (origin: IBaseLogger, args: any, client: ModbusAPI): 
     }
 };
 
-const writeValueToRegister = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
-    client.writeValueToRegister(origin, args);
+const writeValueToRegister = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
+    client.writeValueToRegister(args);
 };
 
-const setEnergyPattern = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setEnergyPattern = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const address = 141;
     const registerType = RegisterType.Holding;
 
-    const register = client.getAddressByType(registerType, address);
+    const register = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), address);
 
     if (register === undefined) {
         origin.error('Register not found');
@@ -384,16 +386,16 @@ const setEnergyPattern = async (origin: IBaseLogger, args: any, client: ModbusAP
     const newBits = value === 'batt_first' ? [0] : [1];
 
     try {
-        const currentValue = await client.readAddressWithoutConversion(register, RegisterType.Holding);
+        const readBuffer = await client.readAddressWithoutConversion(register, RegisterType.Holding);
 
-        if (!currentValue) {
+        if (!readBuffer) {
             throw new Error('Error reading current value');
         }
 
-        logBits(origin, currentValue.buffer, currentValue.buffer.length);
+        logBits(origin, readBuffer, readBuffer.length);
 
         const byteIndex = 1; // Big Endian so we count in reverse
-        const resultBuffer = writeBitsToBuffer(currentValue.buffer, byteIndex, newBits);
+        const resultBuffer = writeBitsToBuffer(readBuffer, byteIndex, newBits);
         logBits(origin, resultBuffer, resultBuffer.length);
 
         const result = await client.writeBufferRegister(register, resultBuffer);
@@ -404,7 +406,7 @@ const setEnergyPattern = async (origin: IBaseLogger, args: any, client: ModbusAP
     }
 };
 
-const setWorkmodeAndZeroExportPower = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setWorkmodeAndZeroExportPower = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const modeAddress = 142;
     const powerAddress = 104;
     const registerType = RegisterType.Holding;
@@ -420,8 +422,8 @@ const setWorkmodeAndZeroExportPower = async (origin: IBaseLogger, args: any, cli
         },
     ];
 
-    const modeRegister = client.getAddressByType(registerType, modeAddress);
-    const powerRegister = client.getAddressByType(registerType, powerAddress);
+    const modeRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), modeAddress);
+    const powerRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), powerAddress);
 
     if (!modeRegister || !powerRegister) {
         origin.error('Register not found');
@@ -458,13 +460,13 @@ const setWorkmodeAndZeroExportPower = async (origin: IBaseLogger, args: any, cli
     }
 };
 
-const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const modeAddress = 178;
     const powerAddress = 191;
     const registerType = RegisterType.Holding;
 
-    const modeRegister = client.getAddressByType(registerType, modeAddress);
-    const powerRegister = client.getAddressByType(registerType, powerAddress);
+    const modeRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), modeAddress);
+    const powerRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), powerAddress);
 
     if (!modeRegister || !powerRegister) {
         origin.error('Register not found');
@@ -496,11 +498,11 @@ const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: Modb
     }
 };
 
-const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const modeAddress = 178;
     const registerType = RegisterType.Holding;
 
-    const modeRegister = client.getAddressByType(registerType, modeAddress);
+    const modeRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), modeAddress);
 
     if (!modeRegister) {
         origin.error('Register not found');
@@ -520,11 +522,11 @@ const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: Mod
     }
 };
 
-const setTimeOfUseEnabled = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setTimeOfUseEnabled = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const address = 146;
     const registerType = RegisterType.Holding;
 
-    const register = client.getAddressByType(registerType, address);
+    const register = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), address);
 
     if (register === undefined) {
         origin.error('Register not found');
@@ -543,11 +545,11 @@ const setTimeOfUseEnabled = async (origin: IBaseLogger, args: any, client: Modbu
     }
 };
 
-const setTimeOfUseDayEnabled = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setTimeOfUseDayEnabled = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const address = 146;
     const registerType = RegisterType.Holding;
 
-    const register = client.getAddressByType(registerType, address);
+    const register = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), address);
 
     if (register === undefined) {
         origin.error('Register not found');
@@ -571,7 +573,7 @@ const setTimeOfUseDayEnabled = async (origin: IBaseLogger, args: any, client: Mo
     }
 };
 
-const setTimeOfUseTimeslotParameters = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setTimeOfUseTimeslotParameters = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const { timeslot, time, gridcharge, generatorcharge, powerlimit, batterycharge } = args;
 
     const timeslotNumber = Number(timeslot);
@@ -600,10 +602,10 @@ const setTimeOfUseTimeslotParameters = async (origin: IBaseLogger, args: any, cl
     const batteryAddress = 166 + (timeslotNumber - 1);
     const timeAddress = 148 + (timeslotNumber - 1);
 
-    const chargeRegister = client.getAddressByType(RegisterType.Holding, chargeAddress);
-    const powerRegister = client.getAddressByType(RegisterType.Holding, powerAddress);
-    const batteryRegister = client.getAddressByType(RegisterType.Holding, batteryAddress);
-    const timeRegister = client.getAddressByType(RegisterType.Holding, timeAddress);
+    const chargeRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), RegisterType.Holding.toString(), chargeAddress);
+    const powerRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), RegisterType.Holding.toString(), powerAddress);
+    const batteryRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), RegisterType.Holding.toString(), batteryAddress);
+    const timeRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), RegisterType.Holding.toString(), timeAddress);
 
     if (!chargeRegister || !powerRegister || !batteryRegister || !timeRegister) {
         origin.error('Register not found', chargeAddress, powerAddress, batteryAddress, timeAddress);

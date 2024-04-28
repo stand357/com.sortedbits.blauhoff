@@ -10,6 +10,7 @@
         "test": "jest --verbose",
         "write-register": "ts-node scripts/modbus/write-register.ts",
         "read-registers": "ts-node scripts/modbus/read-registers.ts",
+        "read-solarman": "ts-node scripts/solarman/read-registers.ts",
         "docs": "ts-node scripts/modbus/document-registers.ts",
         "lint": "eslint --ext .js,.ts --ignore-path .gitignore ."
     },

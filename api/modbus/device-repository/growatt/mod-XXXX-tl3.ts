@@ -10,7 +10,7 @@ import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
 import { ModbusRegister } from '../../models/modbus-register';
 
 import { IBaseLogger } from '../../../../helpers/log';
-import { ModbusAPI } from '../../modbus-api';
+import { IAPI } from '../../../iapi';
 import { DeviceModel } from '../../models/device-model';
 import { Brand } from '../../models/enum/brand';
 import { mod_tl_registers } from './mod-XXXX-tl';
@@ -28,23 +28,23 @@ const mod_tl3_registers: ModbusDeviceDefinition = {
     deprecatedCapabilities: mod_tl_registers.deprecatedCapabilities,
 };
 
-const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const { value } = args;
 };
-const setSolarSell = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setSolarSell = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const { value } = args;
 };
-const writeValueToRegister = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
-    client.writeValueToRegister(origin, args);
+const writeValueToRegister = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
+    client.writeValueToRegister(args);
 };
-const setEnergyPattern = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setEnergyPattern = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const { value } = args;
 };
-const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {
+const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const { value } = args;
 };
 
-const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {};
+const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {};
 
 export const growattTL3: DeviceModel = {
     id: 'growatt-tl3',
