@@ -90,7 +90,7 @@ const inputRegisters: ModbusRegister[] = [
     ModbusRegister.scale('measure_voltage.l1', 507, 1, RegisterDataType.UINT16, 0.1),
     ModbusRegister.scale('measure_voltage.l2', 508, 1, RegisterDataType.UINT16, 0.1),
     ModbusRegister.scale('measure_voltage.l3', 509, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.transform('status_text.battery', 2000, 2, RegisterDataType.UINT16, (value) => {
+    ModbusRegister.transform('status_text.battery', 2000, 1, RegisterDataType.UINT16, (value) => {
         switch (value) {
             case 1:
                 return 'No battery';
@@ -108,7 +108,9 @@ const inputRegisters: ModbusRegister[] = [
                 return 'Unknown';
         }
     }),
-    ModbusRegister.default('measure_percentage.bat_soc', 2002, 2, RegisterDataType.UINT16),
+    ModbusRegister.scale('measure_temperature.battery1', 2001, 1, RegisterDataType.INT16, 0.1),
+    ModbusRegister.default('measure_percentage.bat_soc', 2002, 1, RegisterDataType.UINT16),
+    ModbusRegister.scale('measure_voltage.battery', 2004, 1, RegisterDataType.UINT16, 0.1),
 ];
 
 const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: ModbusAPI): Promise<void> => {

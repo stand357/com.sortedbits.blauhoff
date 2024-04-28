@@ -573,6 +573,14 @@ const setTimeOfUseDayEnabled = async (origin: IBaseLogger, args: any, client: IA
     }
 };
 
+const setTimeOfUseTimeslotParametersStart = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
+    const randomTimeout = Math.floor(Math.random() * 600);
+
+    return new Promise((resolve) => {
+        setTimeout(() => resolve(setTimeOfUseTimeslotParameters(origin, args, client)), randomTimeout);
+    });
+};
+
 const setTimeOfUseTimeslotParameters = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     const { timeslot, time, gridcharge, generatorcharge, powerlimit, batterycharge } = args;
 
@@ -671,7 +679,7 @@ export const deyeSunXKSG01HP3: DeviceModel = {
             set_work_mode_and_zero_export_power: setWorkmodeAndZeroExportPower,
             set_time_of_use_enabled: setTimeOfUseEnabled,
             set_time_of_use_day_enabled: setTimeOfUseDayEnabled,
-            set_time_of_use_timeslot_parameters: setTimeOfUseTimeslotParameters,
+            set_time_of_use_timeslot_parameters: setTimeOfUseTimeslotParametersStart,
         },
     },
 };
