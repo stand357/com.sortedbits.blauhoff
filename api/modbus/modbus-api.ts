@@ -9,6 +9,7 @@ import ModbusRTU from 'modbus-serial';
 import { Socket } from 'net';
 import { IBaseLogger } from '../../helpers/log';
 import { logBits, writeBitsToBuffer } from '../blauhoff/helpers/bits';
+import { SolarmanPort } from '../solarman/port/solarman-port';
 import { DeviceRepository } from './device-repository/device-repository';
 import { createRegisterBatches } from './helpers/register-batches';
 import { validateValue } from './helpers/validate-value';
@@ -29,6 +30,7 @@ export class ModbusAPI {
     private log: IBaseLogger;
     private deviceModel: DeviceModel;
     private disconnecting: boolean = false;
+    private deviceSerial: string;
 
     get isOpen(): boolean {
         return this.client.isOpen;
@@ -67,11 +69,23 @@ export class ModbusAPI {
      * @param unitId - The unit ID.
      * @param deviceModel - The Modbus device information.
      */
-    constructor(log: IBaseLogger, host: string, port: number, unitId: number, deviceModel: DeviceModel) {
+    constructor(log: IBaseLogger, host: string, port: number, unitId: number, deviceModel: DeviceModel, deviceSerial?: string) {
         this.host = host;
         this.port = port;
         this.unitId = unitId;
-        this.client = new ModbusRTU();
+        this.deviceSerial = deviceSerial || '';
+
+        const useSolarman = true;
+
+        this.client = useSolarman
+            ? new ModbusRTU(
+                  new SolarmanPort(this.host, {
+                      port: this.port,
+                      serialNumber: this.deviceSerial,
+                  }),
+              )
+            : new ModbusRTU();
+
         this.log = log;
         this.deviceModel = deviceModel;
     }
@@ -94,12 +108,15 @@ export class ModbusAPI {
                 this.log.filteredLog('Received data', data.toString());
             });
 
+            this.client.open(() => {});
+
+            /*
             await this.client.connectTCP(this.host, {
                 port: this.port,
                 keepAlive: true,
                 timeout: 1000,
             });
-
+*/
             this.client.setID(this.unitId);
             this.client.setTimeout(1000);
 
