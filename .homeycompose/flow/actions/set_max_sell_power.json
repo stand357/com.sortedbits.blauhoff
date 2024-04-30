@@ -1,0 +1,27 @@
+{
+    "id": "set_max_sell_power",
+    "title": {
+        "en": "Set max sell power"
+    },
+    "titleFormatted": {
+        "en": "Set max sell power to [[value]]."
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+        },
+        {
+            "type": "range",
+            "min": 10,
+            "max": 16000,
+            "step": 10,
+            "name": "value",
+            "label": "W",
+            "labelDecimals": 0,
+            "title": { "en": "Watts" },
+            "placeholder": { "en": "watts" }
+        }
+    ]
+}

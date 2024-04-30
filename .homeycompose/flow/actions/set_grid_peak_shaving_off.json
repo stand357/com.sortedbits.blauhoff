@@ -1,0 +1,16 @@
+{
+    "id": "set_grid_peak_shaving_off",
+    "title": {
+        "en": "Set grid peak shaving off"
+    },
+    "titleFormatted": {
+        "en": "Set grid peak shaving off."
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+        }
+    ]
+}
