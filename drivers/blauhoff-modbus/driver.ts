@@ -12,6 +12,7 @@ import { getBrand, getDeviceModelName, iconForBrand } from '../../api/modbus/hel
 import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { DeviceModel } from '../../api/modbus/models/device-model';
 import { Brand } from '../../api/modbus/models/enum/brand';
+import { Solarman } from '../../api/solarman/solarman';
 
 interface DeviceTypeFormData {
     deviceType: string;
@@ -21,6 +22,8 @@ interface ModbusDeviceInformation {
     host: string;
     port: number;
     unitId: number;
+    solarman: boolean;
+    serial: string;
 }
 
 interface FormResult {
@@ -68,6 +71,8 @@ class ModbusDriver extends Homey.Driver {
                 port: deviceInformation.port,
                 unitId: deviceInformation.unitId,
                 refreshInterval: 10,
+                solarman: deviceInformation.solarman,
+                serial: deviceInformation.serial,
             },
             icon: iconForBrand(this.pairingDeviceBrand),
         };
@@ -148,7 +153,7 @@ class ModbusDriver extends Homey.Driver {
             throw new Error('Unknown device type');
         }
 
-        const result = await this.verifyConnection(data.host, data.port, data.unitId, device);
+        const result = await this.verifyConnection(data.host, data.port, data.unitId, device, data.solarman, data.serial);
 
         if (result) {
             await session.nextView();
@@ -157,8 +162,10 @@ class ModbusDriver extends Homey.Driver {
         return { success: false, message: 'Failed to connect to the device' };
     };
 
-    verifyConnection = async (host: string, port: number, unitId: number, deviceModel: DeviceModel): Promise<boolean> => {
-        const api = new ModbusAPI(this, host, port, unitId, deviceModel);
+    verifyConnection = async (host: string, port: number, unitId: number, deviceModel: DeviceModel, solarman: boolean, serial: string): Promise<boolean> => {
+        this.log('verifyConnection', host, port, unitId, deviceModel.id, solarman, serial);
+
+        const api = solarman ? new Solarman(this, deviceModel, host, serial /*'3518024876'*/) : new ModbusAPI(this, host, port, unitId, deviceModel);
 
         this.log('Connecting...');
         const result = await api.connect();

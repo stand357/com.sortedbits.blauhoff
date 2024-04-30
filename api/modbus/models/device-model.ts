@@ -5,10 +5,10 @@
  * Non-commercial use only
  */
 
-import { ModbusDeviceDefinition } from './modbus-device-registers';
-import { Brand } from './enum/brand';
 import { IBaseLogger } from '../../../helpers/log';
-import { ModbusAPI } from '../modbus-api';
+import { IAPI } from '../../iapi';
+import { Brand } from './enum/brand';
+import { ModbusDeviceDefinition } from './modbus-device-registers';
 
 export enum SupportedFlowTypes {
     set_max_solar_power = 'set_max_solar_power',
@@ -30,7 +30,7 @@ export const getSupportedFlowTypes = (): string[] => {
 
 interface SupportedFlows {
     actions?: {
-        [id in SupportedFlowTypes]?: (origin: IBaseLogger, args: any, client: ModbusAPI) => Promise<void>;
+        [id in SupportedFlowTypes]?: (origin: IBaseLogger, args: any, client: IAPI) => Promise<void>;
     };
 }
 

@@ -14,8 +14,8 @@ import { Logger } from '../../helpers/log';
 const host = '10.210.5.17';
 const log = new Logger();
 
-const valueResolved = async (value: any, register: ModbusRegister) => {
-    const result = register.calculateValue(value, log);
+const valueResolved = async (value: any, buffer: Buffer, register: ModbusRegister) => {
+    const result = register.calculateValue(value, buffer, log);
     log.log(register.capabilityId, ':', result);
 };
 
@@ -34,9 +34,11 @@ api.setOnDataReceived(valueResolved);
 const workModeRegister = DeviceRepository.getRegisterByTypeAndAddress(device, 'input', 2500);
 
 const perform = async (): Promise<void> => {
+    await api.connect();
+
     await api.readRegistersInBatch();
 
-    await api.writeRegister(workModeRegister!, 1);
+    //    await api.writeRegister(workModeRegister!, 1);
     /*
     const address = DeviceRepository.getRegisterByTypeAndAddress(device, 'input', 507);
 
@@ -51,6 +53,7 @@ const perform = async (): Promise<void> => {
 perform()
     .then(() => {
         log.log('Registers read');
+        api.disconnect();
     })
     .catch(log.error)
     .finally(() => {});
