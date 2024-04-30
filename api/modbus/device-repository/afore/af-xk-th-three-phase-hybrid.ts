@@ -21,7 +21,7 @@ const inputRegisters: ModbusRegister[] = [
     ModbusRegister.default('measure_power.grid_active_power', 535, 2, RegisterDataType.INT32), // P1 waarde / Grid in app
     ModbusRegister.default('measure_power.grid_total_load', 547, 2, RegisterDataType.INT32), // Consumption in app
 
-    ModbusRegister.transform('status_text.batter_state', 2000, 1, RegisterDataType.UINT16, (value) => {
+    ModbusRegister.transform('status_text.battery_state', 2000, 1, RegisterDataType.UINT16, (value) => {
         switch (value) {
             case 0:
                 return 'No battery';
@@ -47,10 +47,13 @@ const inputRegisters: ModbusRegister[] = [
     ModbusRegister.default('measure_power.battery', 2007, 2, RegisterDataType.INT32), // Battery charging/discharging power
 
     ModbusRegister.default('status_code.running_state', 2500, 1, RegisterDataType.UINT16, AccessMode.ReadOnly),
+
+    ModbusRegister.scale('meter_power.total_battery_charge', 2011, 2, RegisterDataType.UINT32, 0.1), // Total battery charging capacity
+    ModbusRegister.scale('meter_power.total_battery_discharge', 2013, 2, RegisterDataType.UINT32, 0.1),
 ];
 
 const holdingRegisters: ModbusRegister[] = [
-    ModbusRegister.default('status_code.ems_mode', 2500, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+    ModbusRegister.default('status_code.run_mode', 2500, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
     ModbusRegister.transform(
         'status_text.ems_mode',
         2500,
@@ -124,6 +127,7 @@ const definition: ModbusDeviceDefinition = {
     holdingRegisters,
     inputRegisterResultConversion: defaultValueConverter,
     holdingRegisterResultConversion: defaultValueConverter,
+    deprecatedCapabilities: ['status_text.batter_state'],
 };
 
 export const aforeAFXKTH: DeviceModel = {

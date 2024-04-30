@@ -1,0 +1,33 @@
+{
+    "id": "set_time_of_use_enabled",
+    "title": {
+        "en": "Turn time of use on/off"
+    },
+    "titleFormatted": {
+        "en": "Set time of use to [[enabled]]."
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+        },
+        {
+            "type": "dropdown",
+            "name": "enabled",
+            "title": {
+                "en": "Time of use"
+            },
+            "values": [
+                {
+                    "id": "true",
+                    "title": { "en": "enabled" }
+                },
+                {
+                    "id": "false",
+                    "title": { "en": "disabled" }
+                }
+            ]
+        }
+    ]
+}

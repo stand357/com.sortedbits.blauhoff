@@ -31,6 +31,556 @@
   "flow": {
     "actions": [
       {
+        "id": "set_energy_pattern",
+        "title": {
+          "en": "Set energy pattern"
+        },
+        "titleFormatted": {
+          "en": "Set energy pattern to [[value]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+          },
+          {
+            "type": "dropdown",
+            "name": "value",
+            "title": {
+              "en": "Energy pattern"
+            },
+            "values": [
+              {
+                "id": "batt_first",
+                "title": {
+                  "en": "Battery first"
+                }
+              },
+              {
+                "id": "load_first",
+                "title": {
+                  "en": "Load first"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_grid_peak_shaving_off",
+        "title": {
+          "en": "Set grid peak shaving off"
+        },
+        "titleFormatted": {
+          "en": "Set grid peak shaving off."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+          }
+        ]
+      },
+      {
+        "id": "set_grid_peak_shaving_on",
+        "title": {
+          "en": "Set grid peak shaving on"
+        },
+        "titleFormatted": {
+          "en": "Set grid peak shaving on with [[value]] power."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "step": 10,
+            "max": 16000,
+            "name": "value",
+            "label": "W",
+            "labelDecimals": 0,
+            "title": {
+              "en": "Watts"
+            },
+            "placeholder": {
+              "en": "watts"
+            }
+          }
+        ]
+      },
+      {
+        "id": "set_max_sell_power",
+        "title": {
+          "en": "Set max sell power"
+        },
+        "titleFormatted": {
+          "en": "Set max sell power to [[value]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+          },
+          {
+            "type": "range",
+            "min": 10,
+            "max": 16000,
+            "step": 10,
+            "name": "value",
+            "label": "W",
+            "labelDecimals": 0,
+            "title": {
+              "en": "Watts"
+            },
+            "placeholder": {
+              "en": "watts"
+            }
+          }
+        ]
+      },
+      {
+        "id": "set_max_solar_power",
+        "title": {
+          "en": "Set max solar power"
+        },
+        "titleFormatted": {
+          "en": "Set max solar power to [[value]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+          },
+          {
+            "type": "range",
+            "min": 1000,
+            "max": 7800,
+            "step": 10,
+            "name": "value",
+            "label": "W",
+            "labelDecimals": 0,
+            "title": {
+              "en": "Watts"
+            },
+            "placeholder": {
+              "en": "watts"
+            }
+          }
+        ]
+      },
+      {
+        "id": "set_solar_sell",
+        "title": {
+          "en": "Set solar selling"
+        },
+        "titleFormatted": {
+          "en": "Set solar selling to [[enabled]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+          },
+          {
+            "type": "checkbox",
+            "name": "enabled",
+            "title": {
+              "en": "Solar selling"
+            }
+          }
+        ]
+      },
+      {
+        "id": "set_time_of_use_day_enabled",
+        "title": {
+          "en": "Turn time of use on/off for this day"
+        },
+        "titleFormatted": {
+          "en": "Set time of use to [[enabled]] for [[day]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+          },
+          {
+            "type": "dropdown",
+            "name": "enabled",
+            "title": {
+              "en": "Time of use"
+            },
+            "values": [
+              {
+                "id": "true",
+                "title": {
+                  "en": "enabled"
+                }
+              },
+              {
+                "id": "false",
+                "title": {
+                  "en": "disabled"
+                }
+              }
+            ]
+          },
+          {
+            "type": "dropdown",
+            "name": "day",
+            "title": {
+              "en": "Day"
+            },
+            "values": [
+              {
+                "id": "1",
+                "title": {
+                  "en": "Monday"
+                }
+              },
+              {
+                "id": "2",
+                "title": {
+                  "en": "Tuesday"
+                }
+              },
+              {
+                "id": "3",
+                "title": {
+                  "en": "Wednesday"
+                }
+              },
+              {
+                "id": "4",
+                "title": {
+                  "en": "Thursday"
+                }
+              },
+              {
+                "id": "5",
+                "title": {
+                  "en": "Friday"
+                }
+              },
+              {
+                "id": "6",
+                "title": {
+                  "en": "Saturday"
+                }
+              },
+              {
+                "id": "7",
+                "title": {
+                  "en": "Sunday"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_time_of_use_enabled",
+        "title": {
+          "en": "Turn time of use on/off"
+        },
+        "titleFormatted": {
+          "en": "Set time of use to [[enabled]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+          },
+          {
+            "type": "dropdown",
+            "name": "enabled",
+            "title": {
+              "en": "Time of use"
+            },
+            "values": [
+              {
+                "id": "true",
+                "title": {
+                  "en": "enabled"
+                }
+              },
+              {
+                "id": "false",
+                "title": {
+                  "en": "disabled"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_time_of_use_timeslot_parameters",
+        "title": {
+          "en": "Set time of use parameters for timeslot"
+        },
+        "titleFormatted": {
+          "en": "For timeslot [[timeslot]] set the start time to [[time]]. Set grid charge to [[gridcharge]] and generator charge to [[generatorcharge]]. Power limit is [[powerlimit]] and minimum battery charge is [[batterycharge]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+          },
+          {
+            "type": "dropdown",
+            "name": "timeslot",
+            "title": {
+              "en": "Timeslot"
+            },
+            "values": [
+              {
+                "id": "1",
+                "title": {
+                  "en": "1"
+                }
+              },
+              {
+                "id": "2",
+                "title": {
+                  "en": "2"
+                }
+              },
+              {
+                "id": "3",
+                "title": {
+                  "en": "3"
+                }
+              },
+              {
+                "id": "4",
+                "title": {
+                  "en": "4"
+                }
+              },
+              {
+                "id": "5",
+                "title": {
+                  "en": "5"
+                }
+              },
+              {
+                "id": "6",
+                "title": {
+                  "en": "6"
+                }
+              }
+            ]
+          },
+          {
+            "type": "time",
+            "name": "time",
+            "title": {
+              "en": "Time"
+            },
+            "placeholder": {
+              "en": "08:00"
+            }
+          },
+          {
+            "type": "dropdown",
+            "name": "gridcharge",
+            "title": {
+              "en": "Grid charging"
+            },
+            "values": [
+              {
+                "id": "true",
+                "title": {
+                  "en": "enabled"
+                }
+              },
+              {
+                "id": "false",
+                "title": {
+                  "en": "disabled"
+                }
+              }
+            ]
+          },
+          {
+            "type": "dropdown",
+            "name": "generatorcharge",
+            "title": {
+              "en": "Generator charging"
+            },
+            "values": [
+              {
+                "id": "true",
+                "title": {
+                  "en": "enabled"
+                }
+              },
+              {
+                "id": "false",
+                "title": {
+                  "en": "disabled"
+                }
+              }
+            ]
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 8000,
+            "name": "powerlimit",
+            "label": "W",
+            "step": 10,
+            "labelDecimals": 0,
+            "title": {
+              "en": "Power limit"
+            },
+            "placeholder": {
+              "en": "watts"
+            }
+          },
+          {
+            "type": "range",
+            "name": "batterycharge",
+            "title": {
+              "en": "Minimum battery charge"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "label": "%",
+            "labelDecimals": 0
+          }
+        ]
+      },
+      {
+        "id": "set_work_mode_and_zero_export_power",
+        "title": {
+          "en": "Set work mode and zero export power"
+        },
+        "titleFormatted": {
+          "en": "Set workmode to [[workmode]] and Zero Export Power to [[value]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 100,
+            "name": "value",
+            "step": 10,
+            "label": "W",
+            "labelDecimals": 0,
+            "title": {
+              "en": "Watts"
+            },
+            "placeholder": {
+              "en": "watts"
+            }
+          },
+          {
+            "name": "workmode",
+            "type": "dropdown",
+            "title": {
+              "en": "Workmode"
+            },
+            "values": [
+              {
+                "id": "selling_first",
+                "title": {
+                  "en": "Selling first"
+                }
+              },
+              {
+                "id": "zero_export_to_load",
+                "title": {
+                  "en": "Zero export to load"
+                }
+              },
+              {
+                "id": "zero_export_to_ct",
+                "title": {
+                  "en": "Zero export to CT"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "write_value_to_register",
+        "title": {
+          "en": "Write value to register"
+        },
+        "titleFormatted": {
+          "en": "Write [[value]] to [[registerType]] register [[register]]",
+          "nl": "Schrijf [[value]] naar [[registerType]] register [[register]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.run_mode,status_text.ems_mode"
+          },
+          {
+            "type": "number",
+            "name": "value",
+            "title": {
+              "en": "Value"
+            },
+            "placeholder": {
+              "en": "Value to write"
+            }
+          },
+          {
+            "type": "dropdown",
+            "name": "registerType",
+            "title": {
+              "en": "The register type where to write to"
+            },
+            "values": [
+              {
+                "id": "input",
+                "title": {
+                  "en": "input"
+                }
+              },
+              {
+                "id": "holding",
+                "title": {
+                  "en": "holding"
+                }
+              }
+            ]
+          },
+          {
+            "type": "autocomplete",
+            "name": "register",
+            "title": {
+              "en": "Register"
+            },
+            "placeholder": {
+              "en": "Register address"
+            }
+          }
+        ]
+      },
+      {
         "id": "set_mode_1",
         "title": {
           "en": "Set mode1"
@@ -426,556 +976,6 @@
             },
             "min": 0,
             "max": 80,
-            "labelDecimals": 0
-          }
-        ]
-      },
-      {
-        "id": "write_value_to_register",
-        "title": {
-          "en": "Write value to register"
-        },
-        "titleFormatted": {
-          "en": "Write [[value]] to [[registerType]] register [[register]]",
-          "nl": "Schrijf [[value]] naar [[registerType]] register [[register]]"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=blauhoff-modbus"
-          },
-          {
-            "type": "number",
-            "name": "value",
-            "title": {
-              "en": "Value"
-            },
-            "placeholder": {
-              "en": "Value to write"
-            }
-          },
-          {
-            "type": "dropdown",
-            "name": "registerType",
-            "title": {
-              "en": "The register type where to write to"
-            },
-            "values": [
-              {
-                "id": "input",
-                "title": {
-                  "en": "input"
-                }
-              },
-              {
-                "id": "holding",
-                "title": {
-                  "en": "holding"
-                }
-              }
-            ]
-          },
-          {
-            "type": "autocomplete",
-            "name": "register",
-            "title": {
-              "en": "Register"
-            },
-            "placeholder": {
-              "en": "Register address"
-            }
-          }
-        ]
-      },
-      {
-        "id": "set_max_solar_power",
-        "title": {
-          "en": "Set max solar power"
-        },
-        "titleFormatted": {
-          "en": "Set max solar power to [[value]]."
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=blauhoff-modbus"
-          },
-          {
-            "type": "range",
-            "min": 1000,
-            "max": 7800,
-            "step": 10,
-            "name": "value",
-            "label": "W",
-            "labelDecimals": 0,
-            "title": {
-              "en": "Watts"
-            },
-            "placeholder": {
-              "en": "watts"
-            }
-          }
-        ]
-      },
-      {
-        "id": "set_max_sell_power",
-        "title": {
-          "en": "Set max sell power"
-        },
-        "titleFormatted": {
-          "en": "Set max sell power to [[value]]."
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=blauhoff-modbus"
-          },
-          {
-            "type": "range",
-            "min": 10,
-            "max": 16000,
-            "step": 10,
-            "name": "value",
-            "label": "W",
-            "labelDecimals": 0,
-            "title": {
-              "en": "Watts"
-            },
-            "placeholder": {
-              "en": "watts"
-            }
-          }
-        ]
-      },
-      {
-        "id": "set_energy_pattern",
-        "title": {
-          "en": "Set energy pattern"
-        },
-        "titleFormatted": {
-          "en": "Set energy pattern to [[value]]."
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=blauhoff-modbus"
-          },
-          {
-            "type": "dropdown",
-            "name": "value",
-            "title": {
-              "en": "Energy pattern"
-            },
-            "values": [
-              {
-                "id": "batt_first",
-                "title": {
-                  "en": "Battery first"
-                }
-              },
-              {
-                "id": "load_first",
-                "title": {
-                  "en": "Load first"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "set_grid_peak_shaving_on",
-        "title": {
-          "en": "Set grid peak shaving on"
-        },
-        "titleFormatted": {
-          "en": "Set grid peak shaving on with [[value]] power."
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=blauhoff-modbus"
-          },
-          {
-            "type": "range",
-            "min": 0,
-            "step": 10,
-            "max": 16000,
-            "name": "value",
-            "label": "W",
-            "labelDecimals": 0,
-            "title": {
-              "en": "Watts"
-            },
-            "placeholder": {
-              "en": "watts"
-            }
-          }
-        ]
-      },
-      {
-        "id": "set_grid_peak_shaving_off",
-        "title": {
-          "en": "Set grid peak shaving off"
-        },
-        "titleFormatted": {
-          "en": "Set grid peak shaving off."
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=blauhoff-modbus"
-          }
-        ]
-      },
-      {
-        "id": "set_solar_sell",
-        "title": {
-          "en": "Set solar selling"
-        },
-        "titleFormatted": {
-          "en": "Set solar selling to [[enabled]]."
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=blauhoff-modbus"
-          },
-          {
-            "type": "checkbox",
-            "name": "enabled",
-            "title": {
-              "en": "Solar selling"
-            }
-          }
-        ]
-      },
-      {
-        "id": "set_work_mode_and_zero_export_power",
-        "title": {
-          "en": "Set work mode and zero export power"
-        },
-        "titleFormatted": {
-          "en": "Set workmode to [[workmode]] and Zero Export Power to [[value]]."
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=blauhoff-modbus"
-          },
-          {
-            "type": "range",
-            "min": 0,
-            "max": 100,
-            "name": "value",
-            "step": 10,
-            "label": "W",
-            "labelDecimals": 0,
-            "title": {
-              "en": "Watts"
-            },
-            "placeholder": {
-              "en": "watts"
-            }
-          },
-          {
-            "name": "workmode",
-            "type": "dropdown",
-            "title": {
-              "en": "Workmode"
-            },
-            "values": [
-              {
-                "id": "selling_first",
-                "title": {
-                  "en": "Selling first"
-                }
-              },
-              {
-                "id": "zero_export_to_load",
-                "title": {
-                  "en": "Zero export to load"
-                }
-              },
-              {
-                "id": "zero_export_to_ct",
-                "title": {
-                  "en": "Zero export to CT"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "set_time_of_use_enabled",
-        "title": {
-          "en": "Turn time of use on/off"
-        },
-        "titleFormatted": {
-          "en": "Set time of use to [[enabled]]."
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=blauhoff-modbus"
-          },
-          {
-            "type": "dropdown",
-            "name": "enabled",
-            "title": {
-              "en": "Time of use"
-            },
-            "values": [
-              {
-                "id": "true",
-                "title": {
-                  "en": "enabled"
-                }
-              },
-              {
-                "id": "false",
-                "title": {
-                  "en": "disabled"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "set_time_of_use_day_enabled",
-        "title": {
-          "en": "Turn time of use on/off for this day"
-        },
-        "titleFormatted": {
-          "en": "Set time of use to [[enabled]] for [[day]]."
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=blauhoff-modbus"
-          },
-          {
-            "type": "dropdown",
-            "name": "enabled",
-            "title": {
-              "en": "Time of use"
-            },
-            "values": [
-              {
-                "id": "true",
-                "title": {
-                  "en": "enabled"
-                }
-              },
-              {
-                "id": "false",
-                "title": {
-                  "en": "disabled"
-                }
-              }
-            ]
-          },
-          {
-            "type": "dropdown",
-            "name": "day",
-            "title": {
-              "en": "Day"
-            },
-            "values": [
-              {
-                "id": "1",
-                "title": {
-                  "en": "Monday"
-                }
-              },
-              {
-                "id": "2",
-                "title": {
-                  "en": "Tuesday"
-                }
-              },
-              {
-                "id": "3",
-                "title": {
-                  "en": "Wednesday"
-                }
-              },
-              {
-                "id": "4",
-                "title": {
-                  "en": "Thursday"
-                }
-              },
-              {
-                "id": "5",
-                "title": {
-                  "en": "Friday"
-                }
-              },
-              {
-                "id": "6",
-                "title": {
-                  "en": "Saturday"
-                }
-              },
-              {
-                "id": "7",
-                "title": {
-                  "en": "Sunday"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "set_time_of_use_timeslot_parameters",
-        "title": {
-          "en": "Set time of use parameters for timeslot"
-        },
-        "titleFormatted": {
-          "en": "For timeslot [[timeslot]] set the start time to [[time]]. Set grid charge to [[gridcharge]] and generator charge to [[generatorcharge]]. Power limit is [[powerlimit]] and minimum battery charge is [[batterycharge]]."
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=blauhoff-modbus"
-          },
-          {
-            "type": "dropdown",
-            "name": "timeslot",
-            "title": {
-              "en": "Timeslot"
-            },
-            "values": [
-              {
-                "id": "1",
-                "title": {
-                  "en": "1"
-                }
-              },
-              {
-                "id": "2",
-                "title": {
-                  "en": "2"
-                }
-              },
-              {
-                "id": "3",
-                "title": {
-                  "en": "3"
-                }
-              },
-              {
-                "id": "4",
-                "title": {
-                  "en": "4"
-                }
-              },
-              {
-                "id": "5",
-                "title": {
-                  "en": "5"
-                }
-              },
-              {
-                "id": "6",
-                "title": {
-                  "en": "6"
-                }
-              }
-            ]
-          },
-          {
-            "type": "time",
-            "name": "time",
-            "title": {
-              "en": "Time"
-            },
-            "placeholder": {
-              "en": "08:00"
-            }
-          },
-          {
-            "type": "dropdown",
-            "name": "gridcharge",
-            "title": {
-              "en": "Grid charging"
-            },
-            "values": [
-              {
-                "id": "true",
-                "title": {
-                  "en": "enabled"
-                }
-              },
-              {
-                "id": "false",
-                "title": {
-                  "en": "disabled"
-                }
-              }
-            ]
-          },
-          {
-            "type": "dropdown",
-            "name": "generatorcharge",
-            "title": {
-              "en": "Generator charging"
-            },
-            "values": [
-              {
-                "id": "true",
-                "title": {
-                  "en": "enabled"
-                }
-              },
-              {
-                "id": "false",
-                "title": {
-                  "en": "disabled"
-                }
-              }
-            ]
-          },
-          {
-            "type": "range",
-            "min": 0,
-            "max": 8000,
-            "name": "powerlimit",
-            "label": "W",
-            "step": 10,
-            "labelDecimals": 0,
-            "title": {
-              "en": "Power limit"
-            },
-            "placeholder": {
-              "en": "watts"
-            }
-          },
-          {
-            "type": "range",
-            "name": "batterycharge",
-            "title": {
-              "en": "Minimum battery charge"
-            },
-            "min": 0,
-            "max": 100,
-            "step": 5,
-            "label": "%",
             "labelDecimals": 0
           }
         ]

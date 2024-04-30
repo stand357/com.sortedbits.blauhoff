@@ -1,0 +1,68 @@
+{
+    "id": "set_time_of_use_day_enabled",
+    "title": {
+        "en": "Turn time of use on/off for this day"
+    },
+    "titleFormatted": {
+        "en": "Set time of use to [[enabled]] for [[day]]."
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+        },
+        {
+            "type": "dropdown",
+            "name": "enabled",
+            "title": {
+                "en": "Time of use"
+            },
+            "values": [
+                {
+                    "id": "true",
+                    "title": { "en": "enabled" }
+                },
+                {
+                    "id": "false",
+                    "title": { "en": "disabled" }
+                }
+            ]
+        },
+        {
+            "type": "dropdown",
+            "name": "day",
+            "title": { "en": "Day" },
+            "values": [
+                {
+                    "id": "1",
+                    "title": { "en": "Monday" }
+                },
+                {
+                    "id": "2",
+                    "title": { "en": "Tuesday" }
+                },
+                {
+                    "id": "3",
+                    "title": { "en": "Wednesday" }
+                },
+                {
+                    "id": "4",
+                    "title": { "en": "Thursday" }
+                },
+                {
+                    "id": "5",
+                    "title": { "en": "Friday" }
+                },
+                {
+                    "id": "6",
+                    "title": { "en": "Saturday" }
+                },
+                {
+                    "id": "7",
+                    "title": { "en": "Sunday" }
+                }
+            ]
+        }
+    ]
+}

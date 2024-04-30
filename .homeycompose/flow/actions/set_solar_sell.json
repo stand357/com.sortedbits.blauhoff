@@ -1,0 +1,23 @@
+{
+    "id": "set_solar_sell",
+    "title": {
+        "en": "Set solar selling"
+    },
+    "titleFormatted": {
+        "en": "Set solar selling to [[enabled]]."
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+        },
+        {
+            "type": "checkbox",
+            "name": "enabled",
+            "title": {
+                "en": "Solar selling"
+            }
+        }
+    ]
+}

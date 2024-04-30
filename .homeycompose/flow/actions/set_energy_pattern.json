@@ -1,0 +1,32 @@
+{
+    "id": "set_energy_pattern",
+    "title": {
+        "en": "Set energy pattern"
+    },
+    "titleFormatted": {
+        "en": "Set energy pattern to [[value]]."
+    },
+    "$filter": "capabilities=",
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+        },
+        {
+            "type": "dropdown",
+            "name": "value",
+            "title": { "en": "Energy pattern" },
+            "values": [
+                {
+                    "id": "batt_first",
+                    "title": { "en": "Battery first" }
+                },
+                {
+                    "id": "load_first",
+                    "title": { "en": "Load first" }
+                }
+            ]
+        }
+    ]
+}
