@@ -27,10 +27,24 @@ export class Solarman implements IAPI {
     private deviceModel: DeviceModel;
     private frameDefinition: FrameDefinition;
 
-    private onDataReceived?: (value: any, register: ModbusRegister) => Promise<void>;
+    private onDataReceived?: (value: any, buffer: Buffer, register: ModbusRegister) => Promise<void>;
+    onError?: (error: unknown, register: ModbusRegister) => Promise<void>;
+    onDisconnect?: () => Promise<void>;
 
-    setOnDataReceived(onDataReceived: (value: any, register: ModbusRegister) => Promise<void>): void {
+    isConnected(): boolean {
+        return true;
+    }
+
+    setOnDataReceived(onDataReceived: (value: any, buffer: Buffer, register: ModbusRegister) => Promise<void>): void {
         this.onDataReceived = onDataReceived;
+    }
+
+    setOnError(onError: (error: unknown, register: ModbusRegister) => Promise<void>): void {
+        this.onError = onError;
+    }
+
+    setOnDisconnect(onDisconnect: () => Promise<void>): void {
+        this.onDisconnect = onDisconnect;
     }
 
     /**
@@ -50,7 +64,7 @@ export class Solarman implements IAPI {
         serialNumber: string,
         port: number = 8899,
         slaveId: number = 1,
-        timeout: number = 60,
+        timeout: number = 5,
     ) {
         this.ipAddress = ipAddress;
         this.port = port;
@@ -111,12 +125,10 @@ export class Solarman implements IAPI {
         const data = await this.readAddressWithoutConversion(register, registerType);
 
         if (data) {
-            const response = parseResponse(this.log, data);
-            if (response.length === 1) {
-                const result = register.calculateValue(response[0], this.log);
-                this.log.log('Fetched value for ', register.address, ':', result);
-                return result;
-            }
+            const convertedValue = this.deviceModel.definition.inputRegisterResultConversion(this.log, data, register);
+            const result = register.calculateValue(convertedValue, data, this.log);
+            this.log.log('Fetched value for ', register.address, ':', result);
+            return result;
         }
 
         return undefined;
@@ -133,16 +145,23 @@ export class Solarman implements IAPI {
         const request = this.createModbusReadRequest(register, 1, registerType);
         const buffer = await this.performRequest(request);
 
-        return buffer;
-        /*
-        if (!buffer) {
-            return undefined;
+        if (buffer) {
+            const response = parseResponse(this.log, buffer, [register]);
+            if (response.length === 1) {
+                this.log.log('Fetched value for ', register.address, ':', response[0]);
+                return response[0];
+            }
         }
 
-        if (this.onDataReceived) {
-        }
-        const response = parseRegistersFromResponse(this.log, [register], buffer);
-        */
+        return undefined;
+    };
+
+    fakeBatches = (registers: ModbusRegister[]): ModbusRegister[][] => {
+        const result = registers.map((register) => {
+            return [register];
+        });
+
+        return result;
     };
 
     readRegistersInBatch = async (): Promise<void> => {
@@ -150,15 +169,16 @@ export class Solarman implements IAPI {
             this.log.error('No valueResolved function set');
         }
 
+        // this.fakeBatches(this.deviceModel.definition.inputRegisters); //
         const inputBatches = createRegisterBatches(this.log, this.deviceModel.definition.inputRegisters);
         for (const batch of inputBatches) {
             await this.readBatch(batch, RegisterType.Input);
         }
-        /*
-        for (const register of this.deviceModel.definition.inputRegisters.filter((x) => x.accessMode !== AccessMode.WriteOnly)) {
-            await this.readBatch([register], RegisterType.Input);
+
+        const holidingBatches = createRegisterBatches(this.log, this.deviceModel.definition.holdingRegisters);
+        for (const batch of holidingBatches) {
+            await this.readBatch(batch, RegisterType.Holding);
         }
-        */
     };
 
     /**
@@ -189,24 +209,23 @@ export class Solarman implements IAPI {
         const firstRegister = batch[0];
         const lastRegister = batch[batch.length - 1];
 
-        const length = lastRegister.address - firstRegister.address + 1;
-
-        this.log.log('Reading batch', firstRegister.address, length, registerType);
+        const length = lastRegister.address + lastRegister.length - firstRegister.address + 1;
 
         try {
             const request = this.createModbusReadRequest(firstRegister, length, registerType);
             const response = await this.performRequest(request);
 
             if (response) {
-                const data = parseResponse(this.log, response);
-                console.log(data);
+                const data = parseResponse(this.log, response, batch);
 
                 if (data.length === batch.length) {
                     for (let i = 0; i < data.length; i++) {
                         const register = batch[i];
                         const value = data[i];
 
-                        await this.onDataReceived(value, register);
+                        const convertedValue = this.deviceModel.definition.inputRegisterResultConversion(this.log, value, register);
+
+                        await this.onDataReceived(convertedValue, value, register);
                     }
                 } else {
                     this.log.error('Mismatch in response length', data.length, batch.length);
@@ -226,9 +245,13 @@ export class Solarman implements IAPI {
         return new Promise<Buffer | undefined>((resolve, reject) => {
             client.on('data', (data) => {
                 client.end();
-                this.log.log('Data', data);
-                const buffer = this.frameDefinition.unwrapResponseFrame(data);
-                resolve(buffer);
+                try {
+                    const buffer = this.frameDefinition.unwrapResponseFrame(data);
+                    resolve(buffer);
+                } catch (error) {
+                    this.log.error('Error parsing response', error);
+                    resolve(undefined);
+                }
             });
 
             client.on('timeout', () => {
@@ -244,7 +267,6 @@ export class Solarman implements IAPI {
             });
 
             client.connect(this.port, this.ipAddress, () => {
-                this.log.log('Connected to datalogger');
                 client.write(request);
             });
         });

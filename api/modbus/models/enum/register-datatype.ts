@@ -14,3 +14,19 @@ export enum RegisterDataType {
     STRING = 'STRING',
     FLOAT32 = 'FLOAT32',
 }
+
+export const lengthForDataType = (dataType: RegisterDataType): number => {
+    switch (dataType) {
+        case RegisterDataType.UINT8:
+            return 1;
+        case RegisterDataType.UINT16:
+        case RegisterDataType.INT16:
+            return 2;
+        case RegisterDataType.UINT32:
+        case RegisterDataType.INT32:
+        case RegisterDataType.FLOAT32:
+            return 4;
+        case RegisterDataType.STRING:
+            return 8;
+    }
+};

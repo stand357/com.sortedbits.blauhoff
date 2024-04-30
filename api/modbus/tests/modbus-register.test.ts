@@ -14,7 +14,7 @@ describe('modbus-register', () => {
         expect(modbusRegister.capabilityId).toBe('measure_power.load');
         expect(modbusRegister.accessMode).toBe(AccessMode.ReadOnly);
 
-        const calculateValue = modbusRegister.calculateValue(123, log);
+        const calculateValue = modbusRegister.calculateValue(123, Buffer.alloc(0), log);
         expect(calculateValue).toBe(123);
     });
 
@@ -30,8 +30,8 @@ describe('modbus-register', () => {
         expect(modbusRegister.capabilityId).toBe('status_text.sell_solar');
         expect(modbusRegister.accessMode).toBe(AccessMode.ReadWrite);
 
-        expect(modbusRegister.calculateValue(1, log)).toBe('Yes');
-        expect(modbusRegister.calculateValue(0, log)).toBe('No');
+        expect(modbusRegister.calculateValue(1, Buffer.alloc(0), log)).toBe('Yes');
+        expect(modbusRegister.calculateValue(0, Buffer.alloc(0), log)).toBe('No');
     });
 
     test('scale initializer', async () => {
@@ -43,7 +43,7 @@ describe('modbus-register', () => {
         expect(modbusRegister.accessMode).toBe(AccessMode.ReadOnly);
         expect(modbusRegister.scale).toBe(0.1);
 
-        expect(modbusRegister.calculateValue(123, log)).toBe(12.3);
-        expect(modbusRegister.calculateValue(2500, log)).toBe(250);
+        expect(modbusRegister.calculateValue(123, Buffer.alloc(0), log)).toBe(12.3);
+        expect(modbusRegister.calculateValue(2500, Buffer.alloc(0), log)).toBe(250);
     });
 });

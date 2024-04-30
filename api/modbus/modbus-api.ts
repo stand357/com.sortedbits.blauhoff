@@ -9,6 +9,7 @@ import ModbusRTU from 'modbus-serial';
 import { Socket } from 'net';
 import { IBaseLogger } from '../../helpers/log';
 import { logBits, writeBitsToBuffer } from '../blauhoff/helpers/bits';
+import { IAPI } from '../iapi';
 import { DeviceRepository } from './device-repository/device-repository';
 import { createRegisterBatches } from './helpers/register-batches';
 import { validateValue } from './helpers/validate-value';
@@ -20,7 +21,7 @@ import { ModbusRegister } from './models/modbus-register';
 /**
  * Represents a Modbus API.
  */
-export class ModbusAPI {
+export class ModbusAPI implements IAPI {
     public client: ModbusRTU;
 
     private host: string;
@@ -30,7 +31,7 @@ export class ModbusAPI {
     private deviceModel: DeviceModel;
     private disconnecting: boolean = false;
 
-    get isOpen(): boolean {
+    isConnected(): boolean {
         return this.client.isOpen;
     }
 
@@ -38,8 +39,16 @@ export class ModbusAPI {
         return this.deviceModel;
     }
 
-    setOnDataReceived(onDataReceived: (value: any, register: ModbusRegister) => Promise<void>): void {
+    setOnDataReceived(onDataReceived: (value: any, buffer: Buffer, register: ModbusRegister) => Promise<void>): void {
         this.onDataReceived = onDataReceived;
+    }
+
+    setOnError(onError: (error: unknown, register: ModbusRegister) => Promise<void>): void {
+        this.onError = onError;
+    }
+
+    setOnDisconnect(onDisconnect: () => Promise<void>): void {
+        this.onDisconnect = onDisconnect;
     }
 
     /**
@@ -49,7 +58,7 @@ export class ModbusAPI {
      * @param register - The Modbus register associated with the resolved value.
      * @returns A promise that resolves when the callback function completes.
      */
-    onDataReceived?: (value: any, register: ModbusRegister) => Promise<void>;
+    onDataReceived?: (value: any, buffer: Buffer, register: ModbusRegister) => Promise<void>;
     onError?: (error: unknown, register: ModbusRegister) => Promise<void>;
     onDisconnect?: () => Promise<void>;
 
@@ -333,7 +342,7 @@ export class ModbusAPI {
                         : this.deviceModel.definition.holdingRegisterResultConversion(this.log, buffer, register);
 
                 if (this.onDataReceived) {
-                    await this.onDataReceived(value, register);
+                    await this.onDataReceived(value, buffer, register);
                 }
                 startOffset = end;
             }

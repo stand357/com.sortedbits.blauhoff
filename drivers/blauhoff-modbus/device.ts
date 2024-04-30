@@ -7,6 +7,7 @@
 
 import { addCapabilityIfNotExists, capabilityChange, deprecateCapability, Device } from 'homey-helpers';
 import { DateTime } from 'luxon';
+import { IAPI } from '../../api/iapi';
 import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
 import { getBrand } from '../../api/modbus/helpers/brand-name';
 import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-registers';
@@ -16,9 +17,10 @@ import { AccessMode } from '../../api/modbus/models/enum/access-mode';
 import { Brand } from '../../api/modbus/models/enum/brand';
 import { ModbusDeviceDefinition } from '../../api/modbus/models/modbus-device-registers';
 import { ModbusRegister } from '../../api/modbus/models/modbus-register';
+import { Solarman } from '../../api/solarman/solarman';
 
 class ModbusDevice extends Device {
-    private api?: ModbusAPI;
+    private api?: IAPI;
     private reachable: boolean = false;
     private readRegisterTimeout: NodeJS.Timeout | undefined;
     private device!: DeviceModel;
@@ -57,8 +59,8 @@ class ModbusDevice extends Device {
      * @param register - The Modbus register object.
      * @returns A Promise that resolves when the value is handled.
      */
-    private onDataReceived = async (value: any, register: ModbusRegister) => {
-        const result = register.calculateValue(value, this);
+    private onDataReceived = async (value: any, buffer: Buffer, register: ModbusRegister) => {
+        const result = register.calculateValue(value, buffer, this);
 
         if (this.device.brand === Brand.Deye) {
             this.filteredLog(register.capabilityId, result);
@@ -115,7 +117,7 @@ class ModbusDevice extends Device {
      * @returns {Promise<void>} A promise that resolves when the connection is established.
      */
     private connect = async () => {
-        const { host, port, unitId } = this.getSettings();
+        const { host, port, unitId, solarman, serial } = this.getSettings();
         const { deviceType, modelId } = this.getData();
 
         if (this.readRegisterTimeout) {
@@ -126,10 +128,10 @@ class ModbusDevice extends Device {
 
         await this.initializeCapabilities(this.device.definition);
 
-        this.api = new ModbusAPI(this, host, port, unitId, this.device);
-        this.api.onDataReceived = this.onDataReceived;
-        this.api.onError = this.onError;
-        this.api.onDisconnect = this.onDisconnect;
+        this.api = solarman ? new Solarman(this, this.device, host, serial, 8899, 1) : new ModbusAPI(this, host, port, unitId, this.device);
+        this.api.setOnDataReceived(this.onDataReceived);
+        this.api?.setOnError(this.onError);
+        this.api?.setOnDisconnect(this.onDisconnect);
 
         const isOpen = await this.api.connect();
 
@@ -256,7 +258,7 @@ class ModbusDevice extends Device {
             clearTimeout(this.readRegisterTimeout);
         }
 
-        if (this.api?.isOpen) {
+        if (this.api?.isConnected()) {
             await this.api?.disconnect();
         }
 
@@ -282,7 +284,7 @@ class ModbusDevice extends Device {
             clearTimeout(this.readRegisterTimeout);
         }
 
-        if (this.api?.isOpen) {
+        if (this.api?.isConnected()) {
             await this.api?.disconnect();
         }
     }

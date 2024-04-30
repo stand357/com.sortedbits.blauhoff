@@ -4,11 +4,16 @@ import { ModbusRegister } from './modbus/models/modbus-register';
 
 export interface IAPI {
     getDeviceModel(): DeviceModel;
-    setOnDataReceived(onDataReceived: (value: any, register: ModbusRegister) => Promise<void>): void;
+
+    setOnDataReceived(onDataReceived: (value: any, buffer: Buffer, register: ModbusRegister) => Promise<void>): void;
+    setOnError(onError: (error: unknown, register: ModbusRegister) => Promise<void>): void;
+    setOnDisconnect(onDisconnect: () => Promise<void>): void;
 
     readAddress(register: ModbusRegister, registerType: RegisterType): Promise<any>;
     readAddressWithoutConversion(register: ModbusRegister, registerType: RegisterType): Promise<Buffer | undefined>;
     readRegistersInBatch(): Promise<void>;
+
+    isConnected(): boolean;
 
     connect(): Promise<boolean>;
     disconnect(): void;
