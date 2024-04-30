@@ -1,0 +1,6 @@
+{
+    "name": {
+        "en": "Growatt TL3X"
+    },
+    "$extends": ["base-compose"]
+}

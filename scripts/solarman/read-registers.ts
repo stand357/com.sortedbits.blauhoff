@@ -5,7 +5,7 @@
  * Non-commercial use only
  */
 
-import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
+import { DeviceRepository } from '../../api/device-repository/device-repository';
 import { Brand } from '../../api/modbus/models/enum/brand';
 import { ModbusRegister } from '../../api/modbus/models/modbus-register';
 import { Solarman } from '../../api/solarman/solarman';

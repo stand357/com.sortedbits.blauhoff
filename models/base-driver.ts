@@ -7,12 +7,12 @@
 
 import Homey from 'homey';
 import { PairSession } from 'homey/lib/Driver';
-import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
-import { getBrand, getDeviceModelName, iconForBrand } from '../../api/modbus/helpers/brand-name';
-import { ModbusAPI } from '../../api/modbus/modbus-api';
-import { DeviceModel } from '../../api/modbus/models/device-model';
-import { Brand } from '../../api/modbus/models/enum/brand';
-import { Solarman } from '../../api/solarman/solarman';
+import { DeviceRepository } from '../api/device-repository/device-repository';
+import { getDeviceModelName, iconForBrand } from '../api/modbus/helpers/brand-name';
+import { ModbusAPI } from '../api/modbus/modbus-api';
+import { DeviceModel } from '../api/modbus/models/device-model';
+import { Brand } from '../api/modbus/models/enum/brand';
+import { Solarman } from '../api/solarman/solarman';
 
 interface DeviceTypeFormData {
     deviceType: string;
@@ -38,7 +38,7 @@ interface DeviceModelDTO {
     description: string;
 }
 
-class ModbusDriver extends Homey.Driver {
+export class BaseDriver extends Homey.Driver {
     pairingDeviceBrand: Brand = Brand.Deye;
     pairingDeviceModelId: string | undefined;
     modbusDeviceInformation: ModbusDeviceInformation | undefined;
@@ -89,51 +89,6 @@ class ModbusDriver extends Homey.Driver {
             return [];
         });
 
-        session.setHandler('device_type_selected', async (data: DeviceTypeFormData): Promise<FormResult> => {
-            const result = getBrand(data.deviceType);
-            if (!result) {
-                this.error('Unknown device type', data.deviceType);
-                return { success: false, message: 'Unknown device type' };
-            }
-
-            this.pairingDeviceBrand = result;
-
-            this.log('Set pairing device type', this.pairingDeviceBrand);
-
-            await session.nextView();
-            return { success: true };
-        });
-
-        session.setHandler('device_model_selected', async (data: { model: string }): Promise<FormResult> => {
-            this.pairingDeviceModelId = data.model;
-
-            this.log('Set pairing device model', this.pairingDeviceModelId);
-
-            const device = DeviceRepository.getDeviceByBrandAndModel(this.pairingDeviceBrand, this.pairingDeviceModelId);
-
-            if (!device?.definition) {
-                return { success: false, message: 'Unknown device type' };
-            }
-
-            await session.nextView();
-            return { success: true };
-        });
-
-        session.setHandler('list_models', async (): Promise<DeviceModelDTO[]> => {
-            this.log('Listing models for', this.pairingDeviceBrand);
-
-            const models = DeviceRepository.getDevicesByBrand(this.pairingDeviceBrand);
-
-            return models.map((model) => {
-                return {
-                    id: model.id,
-                    brand: model.brand,
-                    name: model.name,
-                    description: model.description,
-                };
-            });
-        });
-
         session.setHandler('modbus_device_information', async (data: ModbusDeviceInformation): Promise<FormResult> => {
             this.log('modbus_device_information', data);
             return this.pairModbusDevice(session, data);
@@ -165,7 +120,7 @@ class ModbusDriver extends Homey.Driver {
     verifyConnection = async (host: string, port: number, unitId: number, deviceModel: DeviceModel, solarman: boolean, serial: string): Promise<boolean> => {
         this.log('verifyConnection', host, port, unitId, deviceModel.id, solarman, serial);
 
-        const api = solarman ? new Solarman(this, deviceModel, host, serial /*'3518024876'*/) : new ModbusAPI(this, host, port, unitId, deviceModel);
+        const api = solarman ? new Solarman(this, deviceModel, host, serial) : new ModbusAPI(this, host, port, unitId, deviceModel);
 
         this.log('Connecting...');
         const result = await api.connect();
@@ -177,25 +132,4 @@ class ModbusDriver extends Homey.Driver {
 
         return result;
     };
-
-    /**
-     * onPairListDevices is called when a user is adding a device and the 'list_devices' view is called.
-     * This should return an array with the data of devices that are available for pairing.
-     */
-    async onPairListDevices() {
-        return [
-            // Example device data, note that `store` is optional
-            // {
-            //   name: 'My Device',
-            //   data: {
-            //     id: 'my-device',
-            //   },
-            //   store: {
-            //     address: '127.0.0.1',
-            //   },
-            // },
-        ];
-    }
 }
-
-module.exports = ModbusDriver;

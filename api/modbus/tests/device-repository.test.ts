@@ -1,4 +1,4 @@
-import { DeviceRepository } from '../device-repository/device-repository';
+import { DeviceRepository } from '../../device-repository/device-repository';
 import { Brand } from '../models/enum/brand';
 
 describe('device-repository', () => {

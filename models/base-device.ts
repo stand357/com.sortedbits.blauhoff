@@ -7,19 +7,19 @@
 
 import { addCapabilityIfNotExists, capabilityChange, deprecateCapability, Device } from 'homey-helpers';
 import { DateTime } from 'luxon';
-import { IAPI } from '../../api/iapi';
-import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
-import { getBrand } from '../../api/modbus/helpers/brand-name';
-import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-registers';
-import { ModbusAPI } from '../../api/modbus/modbus-api';
-import { DeviceModel, SupportedFlowTypes } from '../../api/modbus/models/device-model';
-import { AccessMode } from '../../api/modbus/models/enum/access-mode';
-import { Brand } from '../../api/modbus/models/enum/brand';
-import { ModbusDeviceDefinition } from '../../api/modbus/models/modbus-device-registers';
-import { ModbusRegister } from '../../api/modbus/models/modbus-register';
-import { Solarman } from '../../api/solarman/solarman';
+import { DeviceRepository } from '../api/device-repository/device-repository';
+import { IAPI } from '../api/iapi';
+import { getBrand } from '../api/modbus/helpers/brand-name';
+import { orderModbusRegisters } from '../api/modbus/helpers/order-modbus-registers';
+import { ModbusAPI } from '../api/modbus/modbus-api';
+import { DeviceModel, SupportedFlowTypes } from '../api/modbus/models/device-model';
+import { AccessMode } from '../api/modbus/models/enum/access-mode';
+import { Brand } from '../api/modbus/models/enum/brand';
+import { ModbusDeviceDefinition } from '../api/modbus/models/modbus-device-registers';
+import { ModbusRegister } from '../api/modbus/models/modbus-register';
+import { Solarman } from '../api/solarman/solarman';
 
-class ModbusDevice extends Device {
+export class BaseDevice extends Device {
     private api?: IAPI;
     private reachable: boolean = false;
     private readRegisterTimeout: NodeJS.Timeout | undefined;
@@ -323,5 +323,3 @@ class ModbusDevice extends Device {
         await deviceAction(this, args, this.api);
     };
 }
-
-module.exports = ModbusDevice;

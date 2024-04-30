@@ -4,16 +4,16 @@
  *
  * Non-commercial use only
  */
-import { IBaseLogger } from '../../../../helpers/log';
-import { logBits, writeBitsToBuffer } from '../../../blauhoff/helpers/bits';
-import { IAPI } from '../../../iapi';
-import { DeviceModel } from '../../models/device-model';
-import { AccessMode } from '../../models/enum/access-mode';
-import { Brand } from '../../models/enum/brand';
-import { RegisterDataType } from '../../models/enum/register-datatype';
-import { RegisterType } from '../../models/enum/register-type';
-import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
-import { ModbusRegister } from '../../models/modbus-register';
+import { IBaseLogger } from '../../../helpers/log';
+import { logBits, writeBitsToBuffer } from '../../blauhoff/helpers/bits';
+import { IAPI } from '../../iapi';
+import { DeviceModel } from '../../modbus/models/device-model';
+import { AccessMode } from '../../modbus/models/enum/access-mode';
+import { Brand } from '../../modbus/models/enum/brand';
+import { RegisterDataType } from '../../modbus/models/enum/register-datatype';
+import { RegisterType } from '../../modbus/models/enum/register-type';
+import { ModbusDeviceDefinition } from '../../modbus/models/modbus-device-registers';
+import { ModbusRegister } from '../../modbus/models/modbus-register';
 import { defaultValueConverter } from '../_shared/default-value-converter';
 import { DeviceRepository } from '../device-repository';
 

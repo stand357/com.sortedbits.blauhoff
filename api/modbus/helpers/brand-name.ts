@@ -5,7 +5,7 @@
  * Non-commercial use only
  */
 
-import { DeviceRepository } from '../device-repository/device-repository';
+import { DeviceRepository } from '../../device-repository/device-repository';
 import { Brand } from '../models/enum/brand';
 
 /**

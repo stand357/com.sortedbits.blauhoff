@@ -5,12 +5,12 @@
  * Non-commercial use only
  */
 
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+import { DeviceRepository } from '../../api/device-repository/device-repository';
 import { orderModbusRegisters } from '../../api/modbus/helpers/order-modbus-registers';
-import { brands } from '../../api/modbus/models/enum/brand';
 import { unitForCapability } from '../../api/modbus/helpers/units';
-import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
+import { brands } from '../../api/modbus/models/enum/brand';
 import { findFile } from './helpers/fs-helpers';
 
 let output = '';

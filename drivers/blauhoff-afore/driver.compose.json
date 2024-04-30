@@ -1,0 +1,6 @@
+{
+    "name": {
+        "en": "Blauhoff Afore *K-TH"
+    },
+    "$extends": ["base-compose"]
+}

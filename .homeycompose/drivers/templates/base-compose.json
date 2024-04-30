@@ -1,7 +1,4 @@
 {
-    "name": {
-        "en": "Modbus TCP device"
-    },
     "images": {
         "small": "{{driverAssetsPath}}/images/small.jpg",
         "large": "{{driverAssetsPath}}/images/large.jpg",
@@ -9,12 +6,6 @@
     },
     "capabilities": ["readable_boolean.device_status"],
     "pair": [
-        {
-            "id": "device_type"
-        },
-        {
-            "id": "device_model"
-        },
         {
             "id": "modbus_information"
         },

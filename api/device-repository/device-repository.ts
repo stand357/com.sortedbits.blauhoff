@@ -5,9 +5,9 @@
  * Non-commercial use only
  */
 
-import { DeviceModel } from '../models/device-model';
-import { Brand } from '../models/enum/brand';
-import { ModbusRegister } from '../models/modbus-register';
+import { DeviceModel } from '../modbus/models/device-model';
+import { Brand } from '../modbus/models/enum/brand';
+import { ModbusRegister } from '../modbus/models/modbus-register';
 import { aforeAFXKTH } from './afore/af-xk-th-three-phase-hybrid';
 import { deyeSunXKSG01HP3 } from './deye/sun-xk-sg01hp3-eu-am2';
 import { growattTL } from './growatt/mod-XXXX-tl';

@@ -5,14 +5,14 @@
  * Non-commercial use only
  */
 
-import { IBaseLogger } from '../../../../helpers/log';
-import { IAPI } from '../../../iapi';
-import { DeviceModel } from '../../models/device-model';
-import { AccessMode } from '../../models/enum/access-mode';
-import { Brand } from '../../models/enum/brand';
-import { RegisterDataType } from '../../models/enum/register-datatype';
-import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
-import { ModbusRegister } from '../../models/modbus-register';
+import { IBaseLogger } from '../../../helpers/log';
+import { IAPI } from '../../iapi';
+import { DeviceModel } from '../../modbus/models/device-model';
+import { AccessMode } from '../../modbus/models/enum/access-mode';
+import { Brand } from '../../modbus/models/enum/brand';
+import { RegisterDataType } from '../../modbus/models/enum/register-datatype';
+import { ModbusDeviceDefinition } from '../../modbus/models/modbus-device-registers';
+import { ModbusRegister } from '../../modbus/models/modbus-register';
 import { defaultValueConverter } from '../_shared/default-value-converter';
 
 const inputRegisters: ModbusRegister[] = [
@@ -21,7 +21,7 @@ const inputRegisters: ModbusRegister[] = [
     ModbusRegister.default('measure_power.grid_active_power', 535, 2, RegisterDataType.INT32), // P1 waarde / Grid in app
     ModbusRegister.default('measure_power.grid_total_load', 547, 2, RegisterDataType.INT32), // Consumption in app
 
-    ModbusRegister.transform('status_text.batter_state', 2000, 1, RegisterDataType.UINT16, (value) => {
+    ModbusRegister.transform('status_text.battery_state', 2000, 1, RegisterDataType.UINT16, (value) => {
         switch (value) {
             case 0:
                 return 'No battery';
@@ -45,6 +45,8 @@ const inputRegisters: ModbusRegister[] = [
     }),
     ModbusRegister.default('measure_percentage.bat_soc', 2002, 2, RegisterDataType.UINT16), // Battery SOC
     ModbusRegister.default('measure_power.battery', 2007, 2, RegisterDataType.INT32), // Battery charging/discharging power
+    ModbusRegister.scale('meter_power.total_battery_charge', 2011, 2, RegisterDataType.UINT32, 0.1), // Total battery charging capacity
+    ModbusRegister.scale('meter_power.total_battery_discharge', 2013, 2, RegisterDataType.UINT32, 0.1), // Total battery discharging capacity
 
     ModbusRegister.default('status_code.running_state', 2500, 1, RegisterDataType.UINT16, AccessMode.ReadOnly),
 ];
@@ -124,6 +126,7 @@ const definition: ModbusDeviceDefinition = {
     holdingRegisters,
     inputRegisterResultConversion: defaultValueConverter,
     holdingRegisterResultConversion: defaultValueConverter,
+    deprecatedCapabilities: ['status_text.batter_state'],
 };
 
 export const aforeAFXKTH: DeviceModel = {

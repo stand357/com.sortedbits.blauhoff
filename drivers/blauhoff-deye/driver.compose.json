@@ -1,0 +1,6 @@
+{
+    "name": {
+        "en": "Blauhoff Deye *K SG01HP3 EU AM2"
+    },
+    "$extends": ["base-compose"]
+}
