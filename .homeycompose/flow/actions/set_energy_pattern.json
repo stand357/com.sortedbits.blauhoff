@@ -6,7 +6,6 @@
     "titleFormatted": {
         "en": "Set energy pattern to [[value]]."
     },
-    "$filter": "capabilities=",
     "args": [
         {
             "type": "device",

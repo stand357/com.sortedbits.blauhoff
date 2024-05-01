@@ -186,6 +186,11 @@
                 "en": "PV 2 current"
             }
         },
+        "measure_power.charge_instructions": {
+            "title": {
+                "en": "Charge command power"
+            }
+        },
         "measure_power.pv1": {
             "title": {
                 "en": "PV 1 power"
@@ -567,10 +572,5 @@
         "cumulative": true
     },
     "platforms": ["local"],
-    "connectivity": ["lan"],
-    "images": {
-        "small": "{{driverAssetsPath}}/images/small.png",
-        "large": "{{driverAssetsPath}}/images/large.png",
-        "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
-    }
+    "connectivity": ["lan"]
 }

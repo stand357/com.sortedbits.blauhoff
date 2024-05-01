@@ -9,11 +9,6 @@
     },
     "args": [
         {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.ems_mode,status_text.run_mode"
-        },
-        {
             "type": "number",
             "name": "value",
             "title": { "en": "Value" },
