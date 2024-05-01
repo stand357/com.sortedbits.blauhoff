@@ -49,5 +49,8 @@
   },
   "2.0.1": {
     "en": "Allow pairing the same device through modbus and solarman"
+  },
+  "2.1.0": {
+    "en": "Allow reuse of retrieved value, optimizing requests made to inverter"
   }
 }
