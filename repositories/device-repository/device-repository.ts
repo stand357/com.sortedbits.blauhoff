@@ -5,13 +5,13 @@
  * Non-commercial use only
  */
 
-import { DeviceModel } from '../models/device-model';
-import { Brand } from '../models/enum/brand';
-import { ModbusRegister } from '../models/modbus-register';
-import { aforeAFXKTH } from './afore/af-xk-th-three-phase-hybrid';
-import { deyeSunXKSG01HP3 } from './deye/sun-xk-sg01hp3-eu-am2';
-import { growattTL } from './growatt/mod-XXXX-tl';
-import { growattTL3 } from './growatt/mod-XXXX-tl3';
+import { aforeAFXKTH } from './devices/afore/af-xk-th-three-phase-hybrid';
+import { deyeSunXKSG01HP3 } from './devices/deye/sun-xk-sg01hp3-eu-am2';
+import { growattTL } from './devices/growatt/mod-XXXX-tl';
+import { growattTL3 } from './devices/growatt/mod-XXXX-tl3';
+import { DeviceModel } from './models/device-model';
+import { Brand } from './models/enum/brand';
+import { ModbusRegister } from './models/modbus-register';
 
 export class DeviceRepository {
     private static devices: DeviceModel[] = [growattTL, growattTL3, deyeSunXKSG01HP3, aforeAFXKTH];

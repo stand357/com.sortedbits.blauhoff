@@ -5,12 +5,12 @@
  * Non-commercial use only
  */
 
+import { defaultValueConverter } from '../../helpers/default-value-converter';
 import { DeviceModel } from '../../models/device-model';
 import { Brand } from '../../models/enum/brand';
 import { RegisterDataType } from '../../models/enum/register-datatype';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
 import { ModbusRegister } from '../../models/modbus-register';
-import { defaultValueConverter } from '../_shared/default-value-converter';
 
 const inputRegisters = [
     ModbusRegister.default('status_code.run_mode', 0, 1, RegisterDataType.UINT8),

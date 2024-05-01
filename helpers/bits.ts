@@ -1,4 +1,4 @@
-import { IBaseLogger } from '../../../helpers/log';
+import { IBaseLogger } from './log';
 
 export const readBit = (buffer: Buffer, byteIndex: number, bitIndex: number): number => {
     return (buffer[byteIndex] >> (7 - bitIndex)) & 1;

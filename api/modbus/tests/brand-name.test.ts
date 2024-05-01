@@ -1,5 +1,5 @@
-import { getBrand, getDeviceModelName, iconForBrand } from '../helpers/brand-name';
-import { Brand } from '../models/enum/brand';
+import { getBrand, getDeviceModelName, iconForBrand } from '../../../repositories/device-repository/helpers/brand-name';
+import { Brand } from '../../../repositories/device-repository/models/enum/brand';
 
 describe('brand-name', () => {
     test('get-brand with existing name', async () => {

@@ -5,11 +5,11 @@
  * Non-commercial use only
  */
 
-import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
-import { Brand } from '../../api/modbus/models/enum/brand';
-import { ModbusRegister } from '../../api/modbus/models/modbus-register';
 import { Solarman } from '../../api/solarman/solarman';
 import { Logger } from '../../helpers/log';
+import { DeviceRepository } from '../../repositories/device-repository/device-repository';
+import { Brand } from '../../repositories/device-repository/models/enum/brand';
+import { ModbusRegister } from '../../repositories/device-repository/models/modbus-register';
 
 const host = '10.210.5.17';
 const log = new Logger();

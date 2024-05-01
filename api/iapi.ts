@@ -1,6 +1,6 @@
-import { DeviceModel } from './modbus/models/device-model';
-import { RegisterType } from './modbus/models/enum/register-type';
-import { ModbusRegister } from './modbus/models/modbus-register';
+import { DeviceModel } from '../repositories/device-repository/models/device-model';
+import { RegisterType } from '../repositories/device-repository/models/enum/register-type';
+import { ModbusRegister } from '../repositories/device-repository/models/modbus-register';
 
 export interface IAPI {
     getDeviceModel(): DeviceModel;

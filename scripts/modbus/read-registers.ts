@@ -5,12 +5,12 @@
  * Non-commercial use only
  */
 
-import { DeviceRepository } from '../../api/modbus/device-repository/device-repository';
 import { ModbusAPI } from '../../api/modbus/modbus-api';
-import { Brand } from '../../api/modbus/models/enum/brand';
-import { ModbusRegister } from '../../api/modbus/models/modbus-register';
 // import { mod_tl3_registers } from '../../drivers/blauhoff-modbus/devices/growatt/mod-XXXX-tl3';
 import { Logger } from '../../helpers/log';
+import { DeviceRepository } from '../../repositories/device-repository/device-repository';
+import { Brand } from '../../repositories/device-repository/models/enum/brand';
+import { ModbusRegister } from '../../repositories/device-repository/models/modbus-register';
 
 const host = '10.210.5.16';
 //const host = '88.159.155.195';

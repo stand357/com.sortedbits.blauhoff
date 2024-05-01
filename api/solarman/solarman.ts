@@ -1,10 +1,10 @@
 import * as net from 'net';
 import { IBaseLogger } from '../../helpers/log';
+import { createRegisterBatches } from '../../repositories/device-repository/helpers/register-batches';
+import { DeviceModel } from '../../repositories/device-repository/models/device-model';
+import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
+import { ModbusRegister } from '../../repositories/device-repository/models/modbus-register';
 import { IAPI } from '../iapi';
-import { createRegisterBatches } from '../modbus/helpers/register-batches';
-import { DeviceModel } from '../modbus/models/device-model';
-import { RegisterType } from '../modbus/models/enum/register-type';
-import { ModbusRegister } from '../modbus/models/modbus-register';
 import { FrameDefinition } from './frame-definition';
 import { calculateBufferCRC } from './helpers/buffer-crc-calculator';
 import { parseResponse } from './helpers/response-parser';

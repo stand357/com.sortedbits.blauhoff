@@ -5,15 +5,15 @@
  * Non-commercial use only
  */
 
+import { IAPI } from '../../../../api/iapi';
 import { IBaseLogger } from '../../../../helpers/log';
-import { IAPI } from '../../../iapi';
+import { defaultValueConverter } from '../../helpers/default-value-converter';
 import { DeviceModel } from '../../models/device-model';
 import { AccessMode } from '../../models/enum/access-mode';
 import { Brand } from '../../models/enum/brand';
 import { RegisterDataType } from '../../models/enum/register-datatype';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
 import { ModbusRegister } from '../../models/modbus-register';
-import { defaultValueConverter } from '../_shared/default-value-converter';
 
 const inputRegisters: ModbusRegister[] = [
     ModbusRegister.default('status_text.inverter_name', 0, 6, RegisterDataType.STRING),
@@ -54,6 +54,7 @@ const inputRegisters: ModbusRegister[] = [
 
 const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.default('status_code.run_mode', 2500, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
+
     ModbusRegister.transform(
         'status_text.ems_mode',
         2500,

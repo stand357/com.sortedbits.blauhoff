@@ -1,7 +1,7 @@
-import { ModbusRegister } from '../models/modbus-register';
-import { orderModbusRegisters } from './order-modbus-registers';
 import { IBaseLogger } from '../../../helpers/log';
 import { AccessMode } from '../models/enum/access-mode';
+import { ModbusRegister } from '../models/modbus-register';
+import { orderModbusRegisters } from './order-modbus-registers';
 
 /**
  * Create register batches for the given registers. This to  elimintate the amount of addresses that need to be read.

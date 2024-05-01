@@ -1,0 +1,30 @@
+{
+    "images": {
+        "small": "{{driverAssetsPath}}/images/small.jpg",
+        "large": "{{driverAssetsPath}}/images/large.jpg",
+        "xlarge": "{{driverAssetsPath}}/images/xlarge.jpg"
+    },
+    "capabilities": ["readable_boolean.device_status"],
+    "pair": [
+        {
+            "id": "device_type"
+        },
+        {
+            "id": "device_model"
+        },
+        {
+            "id": "modbus_information"
+        },
+        {
+            "id": "list_devices",
+            "template": "list_devices",
+            "navigation": {
+                "next": "add_devices"
+            }
+        },
+        {
+            "id": "add_devices",
+            "template": "add_devices"
+        }
+    ]
+}

@@ -4,9 +4,11 @@
  *
  * Non-commercial use only
  */
+import { IAPI } from '../../../../api/iapi';
+import { logBits, writeBitsToBuffer } from '../../../../helpers/bits';
 import { IBaseLogger } from '../../../../helpers/log';
-import { logBits, writeBitsToBuffer } from '../../../blauhoff/helpers/bits';
-import { IAPI } from '../../../iapi';
+import { DeviceRepository } from '../../device-repository';
+import { defaultValueConverter } from '../../helpers/default-value-converter';
 import { DeviceModel } from '../../models/device-model';
 import { AccessMode } from '../../models/enum/access-mode';
 import { Brand } from '../../models/enum/brand';
@@ -14,8 +16,6 @@ import { RegisterDataType } from '../../models/enum/register-datatype';
 import { RegisterType } from '../../models/enum/register-type';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
 import { ModbusRegister } from '../../models/modbus-register';
-import { defaultValueConverter } from '../_shared/default-value-converter';
-import { DeviceRepository } from '../device-repository';
 
 const inputRegisters: ModbusRegister[] = [];
 
