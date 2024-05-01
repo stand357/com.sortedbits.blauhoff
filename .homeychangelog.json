@@ -46,5 +46,8 @@
   },
   "2.0.0": {
     "en": "Support Deye and Afore inverters, over both Modbus and Solarman dongle"
+  },
+  "2.0.1": {
+    "en": "Allow pairing the same device through modbus and solarman"
   }
 }
