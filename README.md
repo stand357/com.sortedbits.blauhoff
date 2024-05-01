@@ -302,10 +302,18 @@ Afore AF XK-TH Three Phase Hybrid Inverter Series with modbus interface
 | 206| 2| UINT32| | -| Yes| status_text.ac_timing_charge| AC timing charge |
 | 206| 2| UINT32| | -| Yes| status_text.timing_charge| Timing charge |
 | 206| 2| UINT32| | -| Yes| status_text.timing_discharge| Timing discharge |
+| 1513| 1| UINT16| | -| No| timeslot.time| undefined |
+| 1514| 1| UINT16| | -| No| timeslot.time| undefined |
+| 1515| 1| UINT16| | -| No| timeslot.time| undefined |
+| 1516| 1| UINT16| | -| No| timeslot.time| undefined |
 | 2500| 1| UINT16| | -| No| status_code.run_mode| Run mode |
 | 2500| 1| UINT16| | -| Yes| status_text.ems_mode| EMS mode |
 | 2501| 1| UINT16| | -| Yes| status_text.charge_command| Charge command |
 | 2502| 2| INT32| W| -| No| measure_power.charge_instructions| Charge command power |
+| 2509| 1| UINT16| | -| Yes| timeslot.time| undefined |
+| 2510| 1| UINT16| | -| No| timeslot.time| undefined |
+| 2511| 1| UINT16| | -| No| timeslot.time| undefined |
+| 2512| 1| UINT16| | -| No| timeslot.time| undefined |
 
 ### Supported flow actions
 
@@ -329,4 +337,12 @@ Set EMS mode to [[mode]].
 | Name | Argument | Description |
 | ------------- | ------------- | --------------- |
 | mode| EMS mode| - |
+
+#### Set times of AC charging timeslot
+For timeslot [[timeslot]] set the start time to [[starttime]] and the end time to [[endtime]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| timeslot| Timeslot| - |
+| starttime| Time| - |
+| endtime| Time| - |
 
