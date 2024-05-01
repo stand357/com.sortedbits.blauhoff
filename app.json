@@ -535,7 +535,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.run_mode,status_text.ems_mode"
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.ems_mode,status_text.run_mode"
           },
           {
             "type": "number",
@@ -1686,6 +1686,36 @@
       ]
     },
     {
+      "images": {
+        "small": "/drivers/blauhoff-modbus/assets/images/small.png",
+        "large": "/drivers/blauhoff-modbus/assets/images/large.png",
+        "xlarge": "/drivers/blauhoff-modbus/assets/images/xlarge.png"
+      },
+      "capabilities": [
+        "readable_boolean.device_status"
+      ],
+      "pair": [
+        {
+          "id": "device_type"
+        },
+        {
+          "id": "device_model"
+        },
+        {
+          "id": "modbus_information"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
       "class": "solarpanel",
       "capabilitiesOptions": {
         "date.record": {
@@ -2259,39 +2289,9 @@
       "connectivity": [
         "lan"
       ],
-      "images": {
-        "small": "/drivers/blauhoff-modbus/assets/images/small.jpg",
-        "large": "/drivers/blauhoff-modbus/assets/images/large.jpg",
-        "xlarge": "/drivers/blauhoff-modbus/assets/images/xlarge.jpg"
-      },
       "name": {
         "en": "Modbus TCP device"
       },
-      "capabilities": [
-        "readable_boolean.device_status"
-      ],
-      "pair": [
-        {
-          "id": "device_type"
-        },
-        {
-          "id": "device_model"
-        },
-        {
-          "id": "modbus_information"
-        },
-        {
-          "id": "list_devices",
-          "template": "list_devices",
-          "navigation": {
-            "next": "add_devices"
-          }
-        },
-        {
-          "id": "add_devices",
-          "template": "add_devices"
-        }
-      ],
       "id": "blauhoff-modbus",
       "settings": [
         {

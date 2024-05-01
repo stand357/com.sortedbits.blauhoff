@@ -1,5 +1,5 @@
-import { DeviceRepository } from '../device-repository/device-repository';
-import { Brand } from '../models/enum/brand';
+import { DeviceRepository } from '../../../repositories/device-repository/device-repository';
+import { Brand } from '../../../repositories/device-repository/models/enum/brand';
 
 describe('device-repository', () => {
     test('get models for brand', async () => {

@@ -7,16 +7,16 @@
 
 import ModbusRTU from 'modbus-serial';
 import { Socket } from 'net';
+import { logBits, writeBitsToBuffer } from '../../helpers/bits';
 import { IBaseLogger } from '../../helpers/log';
-import { logBits, writeBitsToBuffer } from '../blauhoff/helpers/bits';
+import { validateValue } from '../../helpers/validate-value';
+import { DeviceRepository } from '../../repositories/device-repository/device-repository';
+import { createRegisterBatches } from '../../repositories/device-repository/helpers/register-batches';
+import { DeviceModel } from '../../repositories/device-repository/models/device-model';
+import { AccessMode } from '../../repositories/device-repository/models/enum/access-mode';
+import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
+import { ModbusRegister } from '../../repositories/device-repository/models/modbus-register';
 import { IAPI } from '../iapi';
-import { DeviceRepository } from './device-repository/device-repository';
-import { createRegisterBatches } from './helpers/register-batches';
-import { validateValue } from './helpers/validate-value';
-import { DeviceModel } from './models/device-model';
-import { AccessMode } from './models/enum/access-mode';
-import { RegisterType } from './models/enum/register-type';
-import { ModbusRegister } from './models/modbus-register';
 
 /**
  * Represents a Modbus API.

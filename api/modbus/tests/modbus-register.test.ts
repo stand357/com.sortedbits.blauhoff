@@ -1,7 +1,7 @@
 import { Logger } from '../../../helpers/log';
-import { AccessMode } from '../models/enum/access-mode';
-import { RegisterDataType } from '../models/enum/register-datatype';
-import { ModbusRegister } from '../models/modbus-register';
+import { AccessMode } from '../../../repositories/device-repository/models/enum/access-mode';
+import { RegisterDataType } from '../../../repositories/device-repository/models/enum/register-datatype';
+import { ModbusRegister } from '../../../repositories/device-repository/models/modbus-register';
 
 const log = new Logger();
 

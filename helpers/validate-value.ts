@@ -1,4 +1,4 @@
-import { RegisterDataType } from '../models/enum/register-datatype';
+import { RegisterDataType } from '../repositories/device-repository/models/enum/register-datatype';
 
 /**
  * Validate the value based on the data type.

@@ -1,6 +1,6 @@
 import { IBaseLogger } from '../../../helpers/log';
-import { lengthForDataType } from '../../modbus/models/enum/register-datatype';
-import { ModbusRegister } from '../../modbus/models/modbus-register';
+import { lengthForDataType } from '../../../repositories/device-repository/models/enum/register-datatype';
+import { ModbusRegister } from '../../../repositories/device-repository/models/modbus-register';
 
 export const parseResponse2 = (log: IBaseLogger, response: Buffer): Array<number> => {
     const length = response.readUInt8(2);

@@ -5,8 +5,8 @@
  * Non-commercial use only
  */
 
+import { IAPI } from '../../../api/iapi';
 import { IBaseLogger } from '../../../helpers/log';
-import { IAPI } from '../../iapi';
 import { Brand } from './enum/brand';
 import { ModbusDeviceDefinition } from './modbus-device-registers';
 

@@ -5,14 +5,13 @@
  * Non-commercial use only
  */
 
+import { IAPI } from '../../../../api/iapi';
+import { IBaseLogger } from '../../../../helpers/log';
+import { DeviceModel } from '../../models/device-model';
+import { Brand } from '../../models/enum/brand';
 import { RegisterDataType } from '../../models/enum/register-datatype';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
 import { ModbusRegister } from '../../models/modbus-register';
-
-import { IBaseLogger } from '../../../../helpers/log';
-import { IAPI } from '../../../iapi';
-import { DeviceModel } from '../../models/device-model';
-import { Brand } from '../../models/enum/brand';
 import { mod_tl_registers } from './mod-XXXX-tl';
 
 // eslint-disable-next-line camelcase

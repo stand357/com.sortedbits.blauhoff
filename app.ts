@@ -9,10 +9,10 @@
 
 import Homey from 'homey';
 import { ArgumentAutocompleteResults } from 'homey/lib/FlowCard';
-import { getBrand } from './api/modbus/helpers/brand-name';
-import { DeviceRepository } from './api/modbus/device-repository/device-repository';
-import { AccessMode } from './api/modbus/models/enum/access-mode';
-import { getSupportedFlowTypes } from './api/modbus/models/device-model';
+import { DeviceRepository } from './repositories/device-repository/device-repository';
+import { getBrand } from './repositories/device-repository/helpers/brand-name';
+import { getSupportedFlowTypes } from './repositories/device-repository/models/device-model';
+import { AccessMode } from './repositories/device-repository/models/enum/access-mode';
 
 class BlauHoffApp extends Homey.App {
     /**
