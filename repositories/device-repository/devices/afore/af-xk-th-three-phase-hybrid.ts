@@ -111,6 +111,24 @@ const holdingRegisters: ModbusRegister[] = [
     }),
 
     ModbusRegister.default('measure_power.charge_instructions', 2502, 2, RegisterDataType.INT32, AccessMode.ReadWrite),
+
+    ModbusRegister.transform(
+        'timeslot.time',
+        2509,
+        1,
+        RegisterDataType.UINT16,
+        (value, buffer, log) => {
+            log.log('timeslot.time', buffer, buffer.length);
+        },
+        AccessMode.WriteOnly,
+    ),
+    ModbusRegister.default('timeslot.time', 2510, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 2511, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 2512, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 1513, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 1514, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 1515, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 1516, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
 ];
 
 const writeValueToRegister = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
@@ -185,6 +203,52 @@ const setEmsMode = async (origin: IBaseLogger, args: any, client: IAPI): Promise
     }
 };
 
+const setAcChargingTimeslot = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
+    const timeslotStartAddress = 2509;
+    const timeSlotEndAddress = 2510;
+    const registerType = RegisterType.Holding;
+
+    const { timeslot, starttime, endtime } = args;
+    if (timeslot < 1 || timeslot > 4) {
+        origin.error('Value out of range');
+        return;
+    }
+
+    if (!starttime || !endtime) {
+        origin.error('Start or end time not provided');
+        return;
+    }
+
+    const timeToBuffer = (time: string): Buffer => {
+        const [hours, minutes] = time.split(':');
+        const buffer = Buffer.from([parseInt(hours), parseInt(minutes)]);
+        return buffer;
+    };
+
+    const startAddress = timeslotStartAddress + (timeslot - 1) * 2;
+    const endAddress = timeSlotEndAddress + (timeslot - 1) * 2;
+
+    const startBuffer = timeToBuffer(starttime);
+    const endBuffer = timeToBuffer(endtime);
+
+    const startRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), startAddress);
+    const endRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), endAddress);
+
+    if (startRegister === undefined || endRegister === undefined) {
+        origin.error('Register not found');
+        return;
+    }
+
+    try {
+        const startOutput = await client.writeBufferRegister(startRegister, startBuffer);
+        const endOutput = await client.writeBufferRegister(endRegister, endBuffer);
+
+        origin.log('Start and end time output', startOutput, endOutput);
+    } catch (error) {
+        origin.error('Error writing to register', error);
+    }
+};
+
 // eslint-disable-next-line camelcase
 const definition: ModbusDeviceDefinition = {
     inputRegisters,
@@ -206,6 +270,7 @@ export const aforeAFXKTH: DeviceModel = {
             set_charge_command: setChargeCommand,
             write_value_to_register: writeValueToRegister,
             set_ems_mode: setEmsMode,
+            set_ac_charging_timeslot: setAcChargingTimeslot,
         },
     },
 };

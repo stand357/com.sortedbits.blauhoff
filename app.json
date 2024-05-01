@@ -31,6 +31,75 @@
   "flow": {
     "actions": [
       {
+        "id": "set_ac_charging_timeslot",
+        "title": {
+          "en": "Set times of AC charging timeslot"
+        },
+        "titleFormatted": {
+          "en": "For timeslot [[timeslot]] set the start time to [[starttime]] and the end time to [[endtime]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.ems_mode"
+          },
+          {
+            "type": "dropdown",
+            "name": "timeslot",
+            "title": {
+              "en": "Timeslot"
+            },
+            "values": [
+              {
+                "id": "1",
+                "title": {
+                  "en": "1"
+                }
+              },
+              {
+                "id": "2",
+                "title": {
+                  "en": "2"
+                }
+              },
+              {
+                "id": "3",
+                "title": {
+                  "en": "3"
+                }
+              },
+              {
+                "id": "4",
+                "title": {
+                  "en": "4"
+                }
+              }
+            ]
+          },
+          {
+            "type": "time",
+            "name": "starttime",
+            "title": {
+              "en": "Time"
+            },
+            "placeholder": {
+              "en": "08:00"
+            }
+          },
+          {
+            "type": "time",
+            "name": "endtime",
+            "title": {
+              "en": "Time"
+            },
+            "placeholder": {
+              "en": "08:00"
+            }
+          }
+        ]
+      },
+      {
         "id": "set_charge_command",
         "title": {
           "en": "Set charge command with power"
