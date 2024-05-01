@@ -16,7 +16,8 @@
         "port": "Port",
         "unitId": "Unit ID",
         "submit": "Connect",
-        "solarman": "Connect to Solarman dongle"
+        "solarman": "Connect to Solarman dongle",
+        "solarman_serial": "Serial number of your Solarman dongle"
     },
     "device_select": {
         "title": "Select your device type",

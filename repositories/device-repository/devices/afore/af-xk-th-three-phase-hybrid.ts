@@ -7,11 +7,13 @@
 
 import { IAPI } from '../../../../api/iapi';
 import { IBaseLogger } from '../../../../helpers/log';
+import { DeviceRepository } from '../../device-repository';
 import { defaultValueConverter } from '../../helpers/default-value-converter';
 import { DeviceModel } from '../../models/device-model';
 import { AccessMode } from '../../models/enum/access-mode';
 import { Brand } from '../../models/enum/brand';
 import { RegisterDataType } from '../../models/enum/register-datatype';
+import { RegisterType } from '../../models/enum/register-type';
 import { ModbusDeviceDefinition } from '../../models/modbus-device-registers';
 import { ModbusRegister } from '../../models/modbus-register';
 
@@ -95,32 +97,81 @@ const holdingRegisters: ModbusRegister[] = [
         }
         return 'Unknown';
     }),
+
+    ModbusRegister.default('measure_power.charge_instructions', 2502, 2, RegisterDataType.INT32, AccessMode.ReadWrite),
 ];
-
-const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-    const { value } = args;
-
-    // Hier zouden we de waardes moeten wegschrijven
-};
-const setSolarSell = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-    const { enabled } = args;
-
-    // Hier zouden we de waardes moeten wegschrijven
-};
 
 const writeValueToRegister = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
     client.writeValueToRegister(args);
 };
 
-const setEnergyPattern = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-    const { value } = args;
+const setChargeCommand = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
+    const emsAddress = 2500;
+    const commandAddress = 2501;
+    const powerAddress = 2502;
+    const registerType = RegisterType.Holding;
+
+    const emsRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), emsAddress);
+    const commandRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), commandAddress);
+    const powerRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), powerAddress);
+
+    if (commandRegister === undefined || powerRegister === undefined || emsRegister === undefined) {
+        origin.error('Register not found');
+        return;
+    }
+
+    const { value, charge_command } = args;
+
+    if (value < -22000 || value > 22000) {
+        origin.error('Value out of range');
+        return;
+    }
+
+    const commandValue = charge_command === 'charge' ? '00aa' : '00bb';
+    const buffer = Buffer.from(commandValue, 'hex');
+
+    const powerBuffer = Buffer.alloc(4);
+    powerBuffer.writeInt32BE(value);
+
+    origin.log('Setting charge command', buffer, 'and power', powerBuffer);
+
+    try {
+        const powerOutput = await client.writeBufferRegister(powerRegister, powerBuffer);
+        const commandOutput = await client.writeBufferRegister(commandRegister, buffer);
+        const emsModeOutput = await client.writeRegister(emsRegister, 4);
+
+        origin.log('Command and power output', emsModeOutput, commandOutput, powerOutput);
+    } catch (error) {
+        origin.error('Error writing to register', error);
+    }
 };
 
-const setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-    const { value } = args;
-};
+const setEmsMode = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
+    const emsAddress = 2500;
+    const registerType = RegisterType.Holding;
 
-const setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {};
+    const emsRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), emsAddress);
+
+    if (emsRegister === undefined) {
+        origin.error('Register not found');
+        return;
+    }
+
+    const { mode } = args;
+
+    if (mode < 0 || mode > 8) {
+        origin.error('Value out of range');
+        return;
+    }
+
+    try {
+        const emsModeOutput = await client.writeRegister(emsRegister, mode);
+
+        origin.log('Command and power output', emsModeOutput);
+    } catch (error) {
+        origin.error('Error writing to register', error);
+    }
+};
 
 // eslint-disable-next-line camelcase
 const definition: ModbusDeviceDefinition = {
@@ -140,12 +191,9 @@ export const aforeAFXKTH: DeviceModel = {
     definition,
     supportedFlows: {
         actions: {
-            set_max_solar_power: setMaxSolarPower,
-            set_solar_sell: setSolarSell,
+            set_charge_command: setChargeCommand,
             write_value_to_register: writeValueToRegister,
-            set_energy_pattern: setEnergyPattern,
-            set_grid_peak_shaving_on: setGridPeakShavingOn,
-            set_grid_peak_shaving_off: setGridPeakShavingOff,
+            set_ems_mode: setEmsMode,
         },
     },
 };

@@ -1,0 +1,61 @@
+{
+    "id": "set_ems_mode",
+    "title": {
+        "en": "Set EMS mode"
+    },
+    "titleFormatted": {
+        "en": "Set EMS mode to [[mode]]."
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.ems_mode"
+        },
+        {
+            "type": "dropdown",
+            "name": "mode",
+            "title": {
+                "en": "EMS mode"
+            },
+            "values": [
+                {
+                    "id": "0",
+                    "title": { "en": "Self-use" }
+                },
+                {
+                    "id": "1",
+                    "title": { "en": "Charging priority" }
+                },
+                {
+                    "id": "2",
+                    "title": { "en": "Priority in selling" }
+                },
+                {
+                    "id": "3",
+                    "title": { "en": "Battery maintenance" }
+                },
+                {
+                    "id": "4",
+                    "title": { "en": "Command mode" }
+                },
+                {
+                    "id": "5",
+                    "title": { "en": "External EMS" }
+                },
+                {
+                    "id": "6",
+                    "title": { "en": "Peak shaving mode" }
+                },
+                {
+                    "id": "7",
+                    "title": { "en": "Imbalance compensation" }
+                },
+                {
+                    "id": "8",
+                    "title": { "en": "Imbalance compensation" }
+                }
+            ]
+        }
+    ]
+}

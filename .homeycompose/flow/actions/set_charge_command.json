@@ -1,0 +1,44 @@
+{
+    "id": "set_charge_command",
+    "title": {
+        "en": "Set charge command with power"
+    },
+    "titleFormatted": {
+        "en": "Set EMS mode to Charge Command with the command [[charge_command]] using [[value]]."
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.ems_mode"
+        },
+        {
+            "type": "dropdown",
+            "name": "charge_command",
+            "title": {
+                "en": "Charge command"
+            },
+            "values": [
+                {
+                    "id": "charge",
+                    "title": { "en": "Charge/Discharge" }
+                },
+                {
+                    "id": "stop",
+                    "title": { "en": "Stop" }
+                }
+            ]
+        },
+        {
+            "type": "range",
+            "min": -22000,
+            "max": 22000,
+            "step": 100,
+            "name": "value",
+            "label": "W",
+            "labelDecimals": 0,
+            "title": { "en": "Watts" },
+            "placeholder": { "en": "watts" }
+        }
+    ]
+}
