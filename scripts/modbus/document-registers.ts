@@ -10,6 +10,7 @@ import path from 'path';
 import { unitForCapability } from '../../helpers/units';
 import { DeviceRepository } from '../../repositories/device-repository/device-repository';
 import { orderModbusRegisters } from '../../repositories/device-repository/helpers/order-modbus-registers';
+import { getSupportedFlowTypeKeys } from '../../repositories/device-repository/models/device-model';
 import { brands } from '../../repositories/device-repository/models/enum/brand';
 import { findFile } from './helpers/fs-helpers';
 
@@ -37,8 +38,45 @@ for (const file of driverComposeFiles) {
     }
 }
 
+const readFlowInfo = (flowType: string, flowId: string) => {
+    const path = '.homeycompose/flow/' + flowType + '/' + flowId + '.json';
+
+    const json = fs.readFileSync(path, { encoding: 'utf-8' });
+    const obj = JSON.parse(json);
+
+    let result: any = {};
+    result['id'] = obj['id'];
+    result['title'] = obj['title']['en'];
+    result['titleFormatted'] = obj['titleFormatted']['en'];
+
+    const args = obj['args'];
+
+    let argsInfo: any[] = [];
+    for (const arg of args) {
+        if (arg['type'] !== 'device') {
+            let argInfo: any = {};
+
+            argInfo['name'] = arg['name'];
+            if (arg['title']['en']) {
+                argInfo['title'] = arg['title']['en'];
+            }
+            if (arg['hint'] && arg['hint']['en']) {
+                argInfo['hint'] = arg['hint']['en'];
+            }
+
+            argsInfo.push(argInfo);
+        }
+    }
+
+    result['args'] = argsInfo;
+
+    return result;
+};
+
 capabilitiesOptions['measure_power'] = 'Power';
 capabilitiesOptions['meter_power'] = 'Energy';
+
+const allFlowTypes = getSupportedFlowTypeKeys();
 
 brands.forEach((brand) => {
     const models = DeviceRepository.getDevicesByBrand(brand);
@@ -87,6 +125,32 @@ brands.forEach((brand) => {
                 });
             });
         }
+
+        if (model.supportedFlows && model.supportedFlows.actions) {
+            output += '\n### Supported flow actions\n';
+
+            allFlowTypes.forEach((flowType) => {
+                if (model.supportedFlows && model.supportedFlows.actions) {
+                    const flow = model.supportedFlows.actions[flowType];
+
+                    if (flow) {
+                        const flowInfo = readFlowInfo('actions', flowType);
+
+                        output += `\n#### ${flowInfo.title}\n`;
+                        output += `${flowInfo.titleFormatted}\n`;
+                        output += `| Name | Argument | Description |\n`;
+                        output += `| ------------- | ------------- | --------------- |\n`;
+
+                        for (const arg of flowInfo.args) {
+                            output += `| ${arg.name}`;
+                            output += `| ${arg.title}`;
+                            output += `| ${arg.hint ?? '-'} |\n`;
+                        }
+                    }
+                }
+            });
+        }
+
         output += '\n';
     });
 });

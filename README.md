@@ -71,6 +71,45 @@ Three phase Growatt string inverters with MODBUS interface.
 | ------- | ------ | --------- | ---- |----- | -------------- | ------------- | --------------- |
 | 23| 5| STRING| | -| No| serial| Serial number |
 
+### Supported flow actions
+
+#### Set max solar power
+Set max solar power to [[value]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| value| Watts| - |
+
+#### Set solar selling
+Set solar selling to [[enabled]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| enabled| Solar selling| - |
+
+#### Write value to register
+Write [[value]] to [[registerType]] register [[register]]
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| value| Value| - |
+| registerType| The register type where to write to| - |
+| register| Register| - |
+
+#### Set energy pattern
+Set energy pattern to [[value]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| value| Energy pattern| - |
+
+#### Set grid peak shaving on
+Set grid peak shaving on with [[value]] power.
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| value| Watts| - |
+
+#### Set grid peak shaving off
+Set grid peak shaving off.
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+
 # DEYE
 ## Deye Sun *K SG01HP3 EU AM2 Series
 Deye Sun *K SG01HP3 EU AM2 Series with modbus interface
@@ -163,6 +202,82 @@ Deye Sun *K SG01HP3 EU AM2 Series with modbus interface
 | 672| 1| UINT16| W| 10| No| measure_power.pv1| PV 1 power |
 | 673| 1| UINT16| W| 10| No| measure_power.pv2| PV 2 power |
 
+### Supported flow actions
+
+#### Set max solar power
+Set max solar power to [[value]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| value| Watts| - |
+
+#### Set solar selling
+Set solar selling to [[enabled]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| enabled| Solar selling| - |
+
+#### Set max sell power
+Set max sell power to [[value]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| value| Watts| - |
+
+#### Write value to register
+Write [[value]] to [[registerType]] register [[register]]
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| value| Value| - |
+| registerType| The register type where to write to| - |
+| register| Register| - |
+
+#### Set energy pattern
+Set energy pattern to [[value]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| value| Energy pattern| - |
+
+#### Set grid peak shaving on
+Set grid peak shaving on with [[value]] power.
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| value| Watts| - |
+
+#### Set grid peak shaving off
+Set grid peak shaving off.
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+
+#### Set work mode and zero export power
+Set workmode to [[workmode]] and Zero Export Power to [[value]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| value| Watts| - |
+| workmode| Workmode| - |
+
+#### Turn time of use on/off
+Set time of use to [[enabled]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| enabled| Time of use| - |
+
+#### Turn time of use on/off for this day
+Set time of use to [[enabled]] for [[day]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| enabled| Time of use| - |
+| day| Day| - |
+
+#### Set time of use parameters for timeslot
+For timeslot [[timeslot]] set the start time to [[time]]. Set grid charge to [[gridcharge]] and generator charge to [[generatorcharge]]. Power limit is [[powerlimit]] and minimum battery charge is [[batterycharge]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| timeslot| Timeslot| - |
+| time| Time| - |
+| gridcharge| Grid charging| - |
+| generatorcharge| Generator charging| - |
+| powerlimit| Power limit| - |
+| batterycharge| Minimum battery charge| - |
+
 # AFORE
 ## Afore AF XK-TH Three Phase Hybrid Inverter
 Afore AF XK-TH Three Phase Hybrid Inverter Series with modbus interface
@@ -191,4 +306,27 @@ Afore AF XK-TH Three Phase Hybrid Inverter Series with modbus interface
 | 2500| 1| UINT16| | -| Yes| status_text.ems_mode| EMS mode |
 | 2501| 1| UINT16| | -| Yes| status_text.charge_command| Charge command |
 | 2502| 2| INT32| W| -| No| measure_power.charge_instructions| Charge command power |
+
+### Supported flow actions
+
+#### Write value to register
+Write [[value]] to [[registerType]] register [[register]]
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| value| Value| - |
+| registerType| The register type where to write to| - |
+| register| Register| - |
+
+#### Set charge command with power
+Set EMS mode to Charge Command with the command [[charge_command]] using [[value]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| charge_command| Charge command| Select the charge command to set. |
+| value| Watts| - |
+
+#### Set EMS mode
+Set EMS mode to [[mode]].
+| Name | Argument | Description |
+| ------------- | ------------- | --------------- |
+| mode| EMS mode| - |
 
