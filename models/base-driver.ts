@@ -54,6 +54,10 @@ export class BaseDriver extends Homey.Driver {
         this.log('ModbusDriver has been initialized');
     }
 
+    deviceInformationToId = (deviceInformation: ModbusDeviceInformation): string => {
+        return `${this.pairingDeviceBrand}-${this.pairingDeviceModelId}-${deviceInformation.host}-${deviceInformation.port}-${deviceInformation.unitId}-${deviceInformation.solarman}`;
+    };
+
     createPairingDevice = (deviceInformation: ModbusDeviceInformation): any => {
         if (!this.pairingDeviceModelId || !this.pairingDeviceBrand) {
             throw new Error('pairingDeviceModelId or pairingDeviceBrand is not set');
@@ -62,7 +66,7 @@ export class BaseDriver extends Homey.Driver {
         const result = {
             name: getDeviceModelName(this.pairingDeviceBrand, this.pairingDeviceModelId),
             data: {
-                id: `${this.pairingDeviceBrand}-${this.pairingDeviceModelId}-${deviceInformation.host}-${deviceInformation.port}-${deviceInformation.unitId}`,
+                id: this.deviceInformationToId(deviceInformation),
                 deviceType: this.pairingDeviceBrand,
                 modelId: this.pairingDeviceModelId,
             },
