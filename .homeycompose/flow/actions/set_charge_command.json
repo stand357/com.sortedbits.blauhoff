@@ -18,6 +18,9 @@
             "title": {
                 "en": "Charge command"
             },
+            "hint": {
+                "en": "Select the charge command to set."
+            },
             "values": [
                 {
                     "id": "charge",

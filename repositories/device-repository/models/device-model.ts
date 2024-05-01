@@ -30,6 +30,10 @@ export const getSupportedFlowTypes = (): string[] => {
     return Object.keys(SupportedFlowTypes).map((key: string) => SupportedFlowTypes[key as keyof typeof SupportedFlowTypes]);
 };
 
+export const getSupportedFlowTypeKeys = (): SupportedFlowTypes[] => {
+    return Object.keys(SupportedFlowTypes).map((key: string) => SupportedFlowTypes[key as keyof typeof SupportedFlowTypes]);
+};
+
 interface SupportedFlows {
     actions?: {
         [id in SupportedFlowTypes]?: (origin: IBaseLogger, args: any, client: IAPI) => Promise<void>;
