@@ -6,6 +6,7 @@
  */
 
 import { IAPI } from '../../../../api/iapi';
+import { readBitBE } from '../../../../helpers/bits';
 import { IBaseLogger } from '../../../../helpers/log';
 import { DeviceRepository } from '../../device-repository';
 import { defaultValueConverter } from '../../helpers/default-value-converter';
@@ -54,40 +55,51 @@ const inputRegisters: ModbusRegister[] = [
     ModbusRegister.scale('meter_power.total_battery_discharge', 2013, 2, RegisterDataType.UINT32, 0.1),
 ];
 
+// 0x03
 const holdingRegisters: ModbusRegister[] = [
-    ModbusRegister.default('status_code.run_mode', 2500, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-
-    ModbusRegister.transform(
-        'status_text.ems_mode',
-        2500,
-        1,
-        RegisterDataType.UINT16,
-        (value) => {
-            switch (value) {
-                case 0:
-                    return 'Self-use';
-                case 1:
-                    return 'Charging priority';
-                case 2:
-                    return 'Priority in selling electricity';
-                case 3:
-                    return 'Battery maintenance';
-                case 4:
-                    return 'Command mode';
-                case 5:
-                    return 'External EMS';
-                case 6:
-                    return 'Peak Shaving Mode';
-                case 7:
-                    return 'Imbalance compensation';
-                case 8:
-                    return 'Q compensation mode';
-                default:
-                    return 'Unknown';
+    ModbusRegister.transform('status_text.ac_timing_charge', 206, 2, RegisterDataType.UINT32, (_, buffer) => {
+        if (readBitBE(buffer, 4) === 1) {
+            return 'Enabled';
+        }
+        return 'Disabled';
+    })
+        .addTransform('status_text.timing_charge', (_, buffer) => {
+            if (readBitBE(buffer, 5) === 1) {
+                return 'Enabled';
             }
-        },
-        AccessMode.ReadWrite,
-    ),
+            return 'Disabled';
+        })
+        .addTransform('status_text.timing_discharge', (_, buffer) => {
+            if (readBitBE(buffer, 6) === 1) {
+                return 'Enabled';
+            }
+            return 'Disabled';
+        }),
+
+    ModbusRegister.default('status_code.run_mode', 2500, 1, RegisterDataType.UINT16, AccessMode.ReadWrite).addTransform('status_text.ems_mode', (value) => {
+        switch (value) {
+            case 0:
+                return 'Self-use';
+            case 1:
+                return 'Charging priority';
+            case 2:
+                return 'Priority in selling electricity';
+            case 3:
+                return 'Battery maintenance';
+            case 4:
+                return 'Command mode';
+            case 5:
+                return 'External EMS';
+            case 6:
+                return 'Peak Shaving Mode';
+            case 7:
+                return 'Imbalance compensation';
+            case 8:
+                return 'Q compensation mode';
+            default:
+                return 'Unknown';
+        }
+    }),
 
     ModbusRegister.transform('status_text.charge_command', 2501, 1, RegisterDataType.UINT16, (value, buffer, log) => {
         if (buffer.toString('hex') === '00aa') {

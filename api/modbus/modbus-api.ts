@@ -15,7 +15,7 @@ import { createRegisterBatches } from '../../repositories/device-repository/help
 import { DeviceModel } from '../../repositories/device-repository/models/device-model';
 import { AccessMode } from '../../repositories/device-repository/models/enum/access-mode';
 import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
-import { ModbusRegister } from '../../repositories/device-repository/models/modbus-register';
+import { ModbusRegister, ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 import { IAPI } from '../iapi';
 
 /**
@@ -39,7 +39,7 @@ export class ModbusAPI implements IAPI {
         return this.deviceModel;
     }
 
-    setOnDataReceived(onDataReceived: (value: any, buffer: Buffer, register: ModbusRegister) => Promise<void>): void {
+    setOnDataReceived(onDataReceived: (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => Promise<void>): void {
         this.onDataReceived = onDataReceived;
     }
 
@@ -58,7 +58,7 @@ export class ModbusAPI implements IAPI {
      * @param register - The Modbus register associated with the resolved value.
      * @returns A promise that resolves when the callback function completes.
      */
-    onDataReceived?: (value: any, buffer: Buffer, register: ModbusRegister) => Promise<void>;
+    onDataReceived?: (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => Promise<void>;
     onError?: (error: unknown, register: ModbusRegister) => Promise<void>;
     onDisconnect?: () => Promise<void>;
 
@@ -342,7 +342,9 @@ export class ModbusAPI implements IAPI {
                         : this.deviceModel.definition.holdingRegisterResultConversion(this.log, buffer, register);
 
                 if (this.onDataReceived) {
-                    await this.onDataReceived(value, buffer, register);
+                    for (const parseConfiguration of register.parseConfigurations) {
+                        await this.onDataReceived(value, buffer, parseConfiguration);
+                    }
                 }
                 startOffset = end;
             }

@@ -1,15 +1,15 @@
 import { DeviceModel } from '../repositories/device-repository/models/device-model';
 import { RegisterType } from '../repositories/device-repository/models/enum/register-type';
-import { ModbusRegister } from '../repositories/device-repository/models/modbus-register';
+import { ModbusRegister, ModbusRegisterParseConfiguration } from '../repositories/device-repository/models/modbus-register';
 
 export interface IAPI {
     getDeviceModel(): DeviceModel;
 
-    setOnDataReceived(onDataReceived: (value: any, buffer: Buffer, register: ModbusRegister) => Promise<void>): void;
+    setOnDataReceived(onDataReceived: (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => Promise<void>): void;
     setOnError(onError: (error: unknown, register: ModbusRegister) => Promise<void>): void;
     setOnDisconnect(onDisconnect: () => Promise<void>): void;
 
-    readAddress(register: ModbusRegister, registerType: RegisterType): Promise<any>;
+    // readAddress(register: ModbusRegister, registerType: RegisterType): Promise<any>;
     readAddressWithoutConversion(register: ModbusRegister, registerType: RegisterType): Promise<Buffer | undefined>;
     readRegistersInBatch(): Promise<void>;
 

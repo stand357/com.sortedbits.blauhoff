@@ -3,7 +3,7 @@ import { IBaseLogger } from '../../helpers/log';
 import { createRegisterBatches } from '../../repositories/device-repository/helpers/register-batches';
 import { DeviceModel } from '../../repositories/device-repository/models/device-model';
 import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
-import { ModbusRegister } from '../../repositories/device-repository/models/modbus-register';
+import { ModbusRegister, ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 import { IAPI } from '../iapi';
 import { FrameDefinition } from './frame-definition';
 import { calculateBufferCRC } from './helpers/buffer-crc-calculator';
@@ -26,8 +26,7 @@ export class Solarman implements IAPI {
 
     private deviceModel: DeviceModel;
     private frameDefinition: FrameDefinition;
-
-    private onDataReceived?: (value: any, buffer: Buffer, register: ModbusRegister) => Promise<void>;
+    private onDataReceived?: (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => Promise<void>;
     onError?: (error: unknown, register: ModbusRegister) => Promise<void>;
     onDisconnect?: () => Promise<void>;
 
@@ -35,7 +34,7 @@ export class Solarman implements IAPI {
         return true;
     }
 
-    setOnDataReceived(onDataReceived: (value: any, buffer: Buffer, register: ModbusRegister) => Promise<void>): void {
+    setOnDataReceived(onDataReceived: (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => Promise<void>): void {
         this.onDataReceived = onDataReceived;
     }
 
@@ -112,27 +111,6 @@ export class Solarman implements IAPI {
     writeBitsToRegister(register: ModbusRegister, registerType: RegisterType, bits: number[], bitIndex: number): Promise<boolean> {
         throw new Error('Method not implemented.');
     }
-
-    /**
-     * Reads a Modbus register and converts the data.
-     *
-     * @param register - The Modbus register to read.
-     * @param registerType - The type of the register.
-     * @returns A promise that resolves to the converted data or undefined if the read operation failed.
-     */
-    readAddress = async (register: ModbusRegister, registerType: RegisterType): Promise<any> => {
-        this.log.log('Reading address', register.address, 'for:', register.capabilityId);
-        const data = await this.readAddressWithoutConversion(register, registerType);
-
-        if (data) {
-            const convertedValue = this.deviceModel.definition.inputRegisterResultConversion(this.log, data, register);
-            const result = register.calculateValue(convertedValue, data, this.log);
-            this.log.log('Fetched value for ', register.address, ':', result);
-            return result;
-        }
-
-        return undefined;
-    };
 
     /**
      * Reads a Modbus register without converting the data.
@@ -225,7 +203,9 @@ export class Solarman implements IAPI {
 
                         const convertedValue = this.deviceModel.definition.inputRegisterResultConversion(this.log, value, register);
 
-                        await this.onDataReceived(convertedValue, value, register);
+                        for (const configuration of register.parseConfigurations) {
+                            await this.onDataReceived(convertedValue, value, configuration);
+                        }
                     }
                 } else {
                     this.log.error('Mismatch in response length', data.length, batch.length);

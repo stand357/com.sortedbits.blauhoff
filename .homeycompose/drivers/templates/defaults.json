@@ -566,6 +566,56 @@
             "title": {
                 "en": "Grid peak shaving"
             }
+        },
+        "status_text.ac_timing_charge": {
+            "title": {
+                "en": "AC timing charge"
+            }
+        },
+        "status_text.timing_discharge": {
+            "title": {
+                "en": "Timing discharge"
+            }
+        },
+        "status_text.timing_charge": {
+            "title": {
+                "en": "Timing charge"
+            }
+        },
+        "status_text.ems_mode": {
+            "title": {
+                "en": "EMS mode"
+            }
+        },
+        "status_text.inverter_name": {
+            "title": {
+                "en": "Inverter name"
+            }
+        },
+        "status_text.hard_name": {
+            "title": {
+                "en": "Hard name"
+            }
+        },
+        "status_text.charge_command": {
+            "title": {
+                "en": "Charge command"
+            }
+        },
+        "status_text.battery_state": {
+            "title": {
+                "en": "Battery state"
+            }
+        },
+        "measure_power.grid_total_load": {
+            "title": {
+                "en": "Grid total load"
+            }
+        },
+        "measure_power.grid_active_power": {
+            "title": {
+                "en": "Grid active power"
+            }
         }
     },
     "energy": {
