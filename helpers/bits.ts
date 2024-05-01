@@ -4,6 +4,13 @@ export const readBit = (buffer: Buffer, byteIndex: number, bitIndex: number): nu
     return (buffer[byteIndex] >> (7 - bitIndex)) & 1;
 };
 
+export const readBitBE = (buffer: Buffer, bitIndex: number): number => {
+    const byteIndex = buffer.length - 1 - Math.floor(bitIndex / 8);
+    const bitInByteIndex = 7 - (bitIndex % 8);
+
+    return (buffer[byteIndex] >> (7 - bitInByteIndex)) & 1;
+};
+
 export const writeBitsToBuffer = (buffer: Buffer, byteIndex: number, bits: number[], startBitIndex: number = 0): Buffer => {
     const result = Buffer.from(buffer);
 

@@ -55,15 +55,17 @@ brands.forEach((brand) => {
             output += '| Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |\n';
             output += '| ------- | ------ | --------- | ---- | ----- | ------------- | ------------- | --------------- |\n';
             orderModbusRegisters(registers.inputRegisters).forEach((register) => {
-                const unit = unitForCapability(register.capabilityId);
-                output += `| ${register.address}`;
-                output += `| ${register.length}`;
-                output += `| ${register.dataType.toString()}`;
-                output += `| ${unit}`;
-                output += `| ${register.scale ?? '-'}`;
-                output += `| ${register.transformation ? 'Yes' : 'No'}`;
-                output += `| ${register.capabilityId}`;
-                output += `| ${capabilitiesOptions[register.capabilityId]} |\n`;
+                register.parseConfigurations.forEach((config) => {
+                    const unit = unitForCapability(config.capabilityId);
+                    output += `| ${register.address}`;
+                    output += `| ${register.length}`;
+                    output += `| ${register.dataType.toString()}`;
+                    output += `| ${unit}`;
+                    output += `| ${config.scale ?? '-'}`;
+                    output += `| ${config.transformation ? 'Yes' : 'No'}`;
+                    output += `| ${config.capabilityId}`;
+                    output += `| ${capabilitiesOptions[config.capabilityId]} |\n`;
+                });
             });
         }
 
@@ -72,15 +74,17 @@ brands.forEach((brand) => {
             output += '| Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |\n';
             output += '| ------- | ------ | --------- | ---- |----- | -------------- | ------------- | --------------- |\n';
             orderModbusRegisters(registers.holdingRegisters).forEach((register) => {
-                const unit = unitForCapability(register.capabilityId);
-                output += `| ${register.address}`;
-                output += `| ${register.length}`;
-                output += `| ${register.dataType.toString()}`;
-                output += `| ${unit}`;
-                output += `| ${register.scale ?? '-'}`;
-                output += `| ${register.transformation ? 'Yes' : 'No'}`;
-                output += `| ${register.capabilityId}`;
-                output += `| ${capabilitiesOptions[register.capabilityId]} |\n`;
+                register.parseConfigurations.forEach((config) => {
+                    const unit = unitForCapability(config.capabilityId);
+                    output += `| ${register.address}`;
+                    output += `| ${register.length}`;
+                    output += `| ${register.dataType.toString()}`;
+                    output += `| ${unit}`;
+                    output += `| ${config.scale ?? '-'}`;
+                    output += `| ${config.transformation ? 'Yes' : 'No'}`;
+                    output += `| ${config.capabilityId}`;
+                    output += `| ${capabilitiesOptions[config.capabilityId]} |\n`;
+                });
             });
         }
         output += '\n';

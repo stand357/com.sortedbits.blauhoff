@@ -114,17 +114,3 @@ export class FrameDefinition {
         return modbusFrame;
     }
 }
-
-/*
-        self.v5_length = bytes.fromhex("0000")  # placeholder value
-        self.v5_controlcode = struct.pack("<H", 0x4510)
-        self.v5_serial = bytes.fromhex("0000")  # placeholder value
-        self.v5_loggerserial = struct.pack("<I", self.serial)
-        self.v5_frametype = bytes.fromhex("02")
-        self.v5_sensortype = bytes.fromhex("0000")
-        self.v5_deliverytime = bytes.fromhex("00000000")
-        self.v5_powerontime = bytes.fromhex("00000000")
-        self.v5_offsettime = bytes.fromhex("00000000")
-        self.v5_checksum = bytes.fromhex("00")  # placeholder value
-        self.v5_end = bytes.fromhex("15")
-*/

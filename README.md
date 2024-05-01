@@ -170,11 +170,11 @@ Afore AF XK-TH Three Phase Hybrid Inverter Series with modbus interface
 ### Input Registers
 | Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |
 | ------- | ------ | --------- | ---- | ----- | ------------- | ------------- | --------------- |
-| 0| 6| STRING| | -| No| status_text.inverter_name| undefined |
-| 11| 4| STRING| | -| No| status_text.hard_name| undefined |
-| 535| 2| INT32| W| -| No| measure_power.grid_active_power| undefined |
-| 547| 2| INT32| W| -| No| measure_power.grid_total_load| undefined |
-| 2000| 1| UINT16| | -| Yes| status_text.battery_state| undefined |
+| 0| 6| STRING| | -| No| status_text.inverter_name| Inverter name |
+| 11| 4| STRING| | -| No| status_text.hard_name| Hard name |
+| 535| 2| INT32| W| -| No| measure_power.grid_active_power| Grid active power |
+| 547| 2| INT32| W| -| No| measure_power.grid_total_load| Grid total load |
+| 2000| 1| UINT16| | -| Yes| status_text.battery_state| Battery state |
 | 2002| 2| UINT16| %| -| No| measure_percentage.bat_soc| Battery SOC |
 | 2007| 2| INT32| W| -| No| measure_power.battery| Battery power |
 | 2011| 2| UINT32| kWh| 0.1| No| meter_power.total_battery_charge| Total battery charge |
@@ -184,8 +184,11 @@ Afore AF XK-TH Three Phase Hybrid Inverter Series with modbus interface
 ### Holding Registers
 | Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |
 | ------- | ------ | --------- | ---- |----- | -------------- | ------------- | --------------- |
+| 206| 2| UINT32| | -| Yes| status_text.ac_timing_charge| AC timing charge |
+| 206| 2| UINT32| | -| Yes| status_text.timing_charge| Timing charge |
+| 206| 2| UINT32| | -| Yes| status_text.timing_discharge| Timing discharge |
 | 2500| 1| UINT16| | -| No| status_code.run_mode| Run mode |
-| 2500| 1| UINT16| | -| Yes| status_text.ems_mode| undefined |
-| 2501| 1| UINT16| | -| Yes| status_text.charge_command| undefined |
+| 2500| 1| UINT16| | -| Yes| status_text.ems_mode| EMS mode |
+| 2501| 1| UINT16| | -| Yes| status_text.charge_command| Charge command |
 | 2502| 2| INT32| W| -| No| measure_power.charge_instructions| Charge command power |
 

@@ -301,7 +301,7 @@ const setMaxSolarPower = async (origin: IBaseLogger, args: any, client: IAPI): P
     }
 
     try {
-        const payload = register.calculatePayload(value, origin);
+        const payload = value / 10;
         const result = await client.writeRegister(register, payload);
         origin.log('Output', result);
     } catch (error) {
@@ -330,7 +330,7 @@ const setMaxSellPower = async (origin: IBaseLogger, args: any, client: IAPI): Pr
     }
 
     try {
-        const payload = register.calculatePayload(value, origin);
+        const payload = value / 10;
         const result = await client.writeRegister(register, payload);
         origin.log('Output', result);
     } catch (error) {

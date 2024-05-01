@@ -17,7 +17,7 @@ import { DeviceModel, SupportedFlowTypes } from '../repositories/device-reposito
 import { AccessMode } from '../repositories/device-repository/models/enum/access-mode';
 import { Brand } from '../repositories/device-repository/models/enum/brand';
 import { ModbusDeviceDefinition } from '../repositories/device-repository/models/modbus-device-registers';
-import { ModbusRegister } from '../repositories/device-repository/models/modbus-register';
+import { ModbusRegister, ModbusRegisterParseConfiguration } from '../repositories/device-repository/models/modbus-register';
 
 export class BaseDevice extends Device {
     private api?: IAPI;
@@ -59,14 +59,14 @@ export class BaseDevice extends Device {
      * @param register - The Modbus register object.
      * @returns A Promise that resolves when the value is handled.
      */
-    private onDataReceived = async (value: any, buffer: Buffer, register: ModbusRegister) => {
-        const result = register.calculateValue(value, buffer, this);
+    private onDataReceived = async (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => {
+        const result = parseConfiguration.calculateValue(value, buffer, this);
 
         if (this.device.brand === Brand.Deye) {
-            this.filteredLog(register.capabilityId, result);
+            this.filteredLog(parseConfiguration.capabilityId, result);
         }
 
-        await capabilityChange(this, register.capabilityId, result);
+        await capabilityChange(this, parseConfiguration.capabilityId, result);
 
         if (!this.reachable) {
             this.reachable = true;
@@ -100,14 +100,18 @@ export class BaseDevice extends Device {
 
         for (const register of inputRegisters) {
             if (register.accessMode !== AccessMode.WriteOnly) {
-                await addCapabilityIfNotExists(this, register.capabilityId);
+                for (const configuration of register.parseConfigurations) {
+                    await addCapabilityIfNotExists(this, configuration.capabilityId);
+                }
             }
         }
 
         const holdingRegisters = orderModbusRegisters(definition.holdingRegisters);
         for (const register of holdingRegisters) {
             if (register.accessMode !== AccessMode.WriteOnly) {
-                await addCapabilityIfNotExists(this, register.capabilityId);
+                for (const configuration of register.parseConfigurations) {
+                    await addCapabilityIfNotExists(this, configuration.capabilityId);
+                }
             }
         }
     };

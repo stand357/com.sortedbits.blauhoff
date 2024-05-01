@@ -10,7 +10,7 @@ import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { Logger } from '../../helpers/log';
 import { DeviceRepository } from '../../repositories/device-repository/device-repository';
 import { Brand } from '../../repositories/device-repository/models/enum/brand';
-import { ModbusRegister } from '../../repositories/device-repository/models/modbus-register';
+import { ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 
 const host = '10.210.5.16';
 //const host = '88.159.155.195';
@@ -18,9 +18,9 @@ const port = 502;
 const unitId = 1;
 const log = new Logger();
 
-const valueResolved = async (value: any, buffer: Buffer, register: ModbusRegister) => {
-    const result = register.calculateValue(value, buffer, log);
-    log.log(register.capabilityId, result);
+const valueResolved = async (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => {
+    const result = parseConfiguration.calculateValue(value, buffer, log);
+    log.log(parseConfiguration.capabilityId, result);
 };
 
 //const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Deye, 'deye-sun-xk-sg01hp3-eu-am2');

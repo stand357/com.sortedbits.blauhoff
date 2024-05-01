@@ -11,7 +11,7 @@ describe('modbus-register', () => {
         expect(modbusRegister.address).toBe(653);
         expect(modbusRegister.length).toBe(1);
         expect(modbusRegister.dataType).toBe(RegisterDataType.INT16);
-        expect(modbusRegister.capabilityId).toBe('measure_power.load');
+        expect(modbusRegister.parseConfigurations[0].capabilityId).toBe('measure_power.load');
         expect(modbusRegister.accessMode).toBe(AccessMode.ReadOnly);
 
         const calculateValue = modbusRegister.calculateValue(123, Buffer.alloc(0), log);
@@ -27,7 +27,7 @@ describe('modbus-register', () => {
         expect(modbusRegister.address).toBe(145);
         expect(modbusRegister.length).toBe(1);
         expect(modbusRegister.dataType).toBe(RegisterDataType.UINT16);
-        expect(modbusRegister.capabilityId).toBe('status_text.sell_solar');
+        expect(modbusRegister.parseConfigurations[0].capabilityId).toBe('status_text.sell_solar');
         expect(modbusRegister.accessMode).toBe(AccessMode.ReadWrite);
 
         expect(modbusRegister.calculateValue(1, Buffer.alloc(0), log)).toBe('Yes');
@@ -39,9 +39,9 @@ describe('modbus-register', () => {
         expect(modbusRegister.address).toBe(534);
         expect(modbusRegister.length).toBe(2);
         expect(modbusRegister.dataType).toBe(RegisterDataType.UINT16);
-        expect(modbusRegister.capabilityId).toBe('measure_power.total_pv');
+        expect(modbusRegister.parseConfigurations[0].capabilityId).toBe('measure_power.total_pv');
         expect(modbusRegister.accessMode).toBe(AccessMode.ReadOnly);
-        expect(modbusRegister.scale).toBe(0.1);
+        expect(modbusRegister.parseConfigurations[0].scale).toBe(0.1);
 
         expect(modbusRegister.calculateValue(123, Buffer.alloc(0), log)).toBe(12.3);
         expect(modbusRegister.calculateValue(2500, Buffer.alloc(0), log)).toBe(250);
