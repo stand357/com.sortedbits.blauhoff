@@ -24,50 +24,6 @@ The following actions are available in Homey flows:
 
 # Modbus Register information
 
-# BLAUHOFF
-## BlauHoff SPHA
-BlauHoff SPHA series of string inverters with MODBUS interface.
-
-### Input Registers
-| Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |
-| ------- | ------ | --------- | ---- | ----- | ------------- | ------------- | --------------- |
-| 36101| 1| UINT16| | -| No| status_code.run_mode| Run mode |
-| 36103| 1| UINT16| | -| No| status_code.sys_error_code| Error code |
-| 36104| 1| UINT16| | -| No| status_code.sys_bat_error_code| Battery error code |
-| 36108| 1| UINT16| V| 0.1| No| measure_voltage.pv1| PV 1 voltage |
-| 36109| 1| UINT16| A| 0.1| No| measure_current.pv1| PV 1 current |
-| 36110| 1| UINT16| V| 0.1| No| measure_voltage.pv2| PV 2 voltage |
-| 36111| 1| UINT16| A| 0.1| No| measure_current.pv2| PV 2 current |
-| 36112| 1| UINT16| W| -| No| measure_power.pv1| PV 1 power |
-| 36113| 1| UINT16| W| -| No| measure_power.pv2| PV 2 power |
-| 36117| 2| INT32| W| -| No| measure_power.dsp| DSP power |
-| 36124| 2| INT32| W| -| No| measure_power.eps| EPS power |
-| 36131| 2| INT32| W| -| No| measure_power.grid_output| Grid output power |
-| 36138| 2| INT32| W| -| No| measure_power.battery| Battery power |
-| 36151| 1| UINT16| V| 0.1| No| measure_voltage.battery| Battery voltage |
-| 36155| 1| UINT16| %| -| No| measure_percentage.bat_soc| Battery SOC |
-| 36156| 1| UINT16| %| -| No| measure_percentage.bat_soh| State of health |
-| 36161| 1| UINT16| °C| 0.1| No| measure_temperature.battery_high| Battery temperature high |
-| 36163| 1| UINT16| °C| 0.1| No| measure_temperature.battery_low| Battery temperature low |
-| 36201| 2| UINT32| kWh| 0.1| No| meter_power.battery_total_charge| undefined |
-| 36203| 2| UINT32| kWh| 0.1| No| meter_power.battery_total_discharge| undefined |
-| 36205| 2| INT32| W| -| No| measure_power.pv| PV power |
-| 36207| 2| UINT32| kWh| 0.1| No| meter_power.total_to_grid_pv| Total PV to grid |
-| 36209| 2| UINT32| kWh| 0.1| No| meter_power.total_to_grid| Total to grid |
-| 36211| 2| UINT32| kWh| 0.1| No| meter_power.total_from_grid| Total from grid |
-| 36213| 2| UINT32| kWh| 0.1| No| meter_power.pv| Total PV |
-
-### Holding Registers
-| Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |
-| ------- | ------ | --------- | ---- |----- | -------------- | ------------- | --------------- |
-| 60001| 1| UINT16| | -| No| status_code.work_mode| Work mode |
-| 60003| 1| UINT16| %| -| No| measure_percentage.max_feedin_limit| undefined |
-| 60004| 1| INT16| W| -| No| measure_power.battery_power_ref| undefined |
-| 60005| 1| INT16| W| -| No| measure_power.power_ref_inv_limit| undefined |
-| 60007| 1| UINT16| | -| No| measure_xxxtimexxx.vpp_timer| undefined |
-| 60008| 1| UINT16| | -| No| onoff.vpp_timer_enable| undefined |
-| 60009| 1| UINT16| %| 0.01| No| measure_percentage.bat_cap_min| undefined |
-
 # GROWATT
 ## Growatt 1PH MIC TL-X series
 Single phase Growatt string inverters with MODBUS interface.
@@ -214,5 +170,22 @@ Afore AF XK-TH Three Phase Hybrid Inverter Series with modbus interface
 ### Input Registers
 | Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |
 | ------- | ------ | --------- | ---- | ----- | ------------- | ------------- | --------------- |
-| 0| 2| UINT16| | -| No| serial| Serial number |
+| 0| 6| STRING| | -| No| status_text.inverter_name| undefined |
+| 11| 4| STRING| | -| No| status_text.hard_name| undefined |
+| 535| 2| INT32| W| -| No| measure_power.grid_active_power| undefined |
+| 547| 2| INT32| W| -| No| measure_power.grid_total_load| undefined |
+| 2000| 1| UINT16| | -| Yes| status_text.battery_state| undefined |
+| 2002| 2| UINT16| %| -| No| measure_percentage.bat_soc| Battery SOC |
+| 2007| 2| INT32| W| -| No| measure_power.battery| Battery power |
+| 2011| 2| UINT32| kWh| 0.1| No| meter_power.total_battery_charge| Total battery charge |
+| 2013| 2| UINT32| kWh| 0.1| No| meter_power.total_battery_discharge| Total battery discharge |
+| 2500| 1| UINT16| | -| No| status_code.running_state| undefined |
+
+### Holding Registers
+| Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |
+| ------- | ------ | --------- | ---- |----- | -------------- | ------------- | --------------- |
+| 2500| 1| UINT16| | -| No| status_code.run_mode| Run mode |
+| 2500| 1| UINT16| | -| Yes| status_text.ems_mode| undefined |
+| 2501| 1| UINT16| | -| Yes| status_text.charge_command| undefined |
+| 2502| 2| INT32| W| -| No| measure_power.charge_instructions| Charge command power |
 
