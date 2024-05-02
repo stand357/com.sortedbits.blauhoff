@@ -616,6 +616,16 @@
             "title": {
                 "en": "Grid active power"
             }
+        },
+        "measure_percentage.acpchgmax": {
+            "title": {
+                "en": "AC charge max"
+            }
+        },
+        "measure_percentage.acsocmaxchg": {
+            "title": {
+                "en": "AC SOC max charge"
+            }
         }
     },
     "energy": {

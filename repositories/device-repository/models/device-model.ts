@@ -25,6 +25,8 @@ export enum SupportedFlowTypes {
     set_charge_command = 'set_charge_command',
     set_ems_mode = 'set_ems_mode',
     set_ac_charging_timeslot = 'set_ac_charging_timeslot',
+    set_timing_ac_charge_off = 'set_timing_ac_charge_off',
+    set_timing_ac_charge_on = 'set_timing_ac_charge_on',
 }
 
 export const getSupportedFlowTypes = (): string[] => {

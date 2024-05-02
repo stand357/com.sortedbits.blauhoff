@@ -668,6 +668,66 @@
         ]
       },
       {
+        "id": "set_timing_ac_charge_off",
+        "title": {
+          "en": "Set Timing AC Charge OFF"
+        },
+        "titleFormatted": {
+          "en": "Set timing AC charge OFF."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.ems_mode"
+          }
+        ]
+      },
+      {
+        "id": "set_timing_ac_charge_on",
+        "title": {
+          "en": "Set timing AC charge ON with values."
+        },
+        "titleFormatted": {
+          "en": "Set timing AC charging ON with [[acpchgmax]] AcPChgMax and [[acsocmaxchg]] AcSocMaxChg."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.ems_mode"
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 100,
+            "name": "acpchgmax",
+            "label": "%",
+            "labelDecimals": 0,
+            "title": {
+              "en": "AcPChgMax"
+            },
+            "placeholder": {
+              "en": "percentage"
+            }
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 100,
+            "name": "acsocmaxchg",
+            "label": "%",
+            "labelDecimals": 0,
+            "title": {
+              "en": "AcPChgMax"
+            },
+            "placeholder": {
+              "en": "percentage"
+            }
+          }
+        ]
+      },
+      {
         "id": "set_work_mode_and_zero_export_power",
         "title": {
           "en": "Set work mode and zero export power"
@@ -1799,6 +1859,16 @@
           "title": {
             "en": "Grid active power"
           }
+        },
+        "measure_percentage.acpchgmax": {
+          "title": {
+            "en": "AC charge max"
+          }
+        },
+        "measure_percentage.acsocmaxchg": {
+          "title": {
+            "en": "AC SOC max charge"
+          }
         }
       },
       "energy": {
@@ -2585,6 +2655,16 @@
         "measure_power.grid_active_power": {
           "title": {
             "en": "Grid active power"
+          }
+        },
+        "measure_percentage.acpchgmax": {
+          "title": {
+            "en": "AC charge max"
+          }
+        },
+        "measure_percentage.acsocmaxchg": {
+          "title": {
+            "en": "AC SOC max charge"
           }
         }
       },

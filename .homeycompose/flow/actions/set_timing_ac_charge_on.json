@@ -1,0 +1,36 @@
+{
+    "id": "set_timing_ac_charge_on",
+    "title": {
+        "en": "Set timing AC charge ON with values."
+    },
+    "titleFormatted": {
+        "en": "Set timing AC charging ON with [[acpchgmax]] AcPChgMax and [[acsocmaxchg]] AcSocMaxChg."
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.ems_mode"
+        },
+        {
+            "type": "range",
+            "min": 0,
+            "max": 100,
+            "name": "acpchgmax",
+            "label": "%",
+            "labelDecimals": 0,
+            "title": { "en": "AcPChgMax" },
+            "placeholder": { "en": "percentage" }
+        },
+        {
+            "type": "range",
+            "min": 0,
+            "max": 100,
+            "name": "acsocmaxchg",
+            "label": "%",
+            "labelDecimals": 0,
+            "title": { "en": "AcPChgMax" },
+            "placeholder": { "en": "percentage" }
+        }
+    ]
+}

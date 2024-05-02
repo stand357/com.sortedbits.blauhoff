@@ -9,6 +9,7 @@ import { Solarman } from '../../api/solarman/solarman';
 import { Logger } from '../../helpers/log';
 import { DeviceRepository } from '../../repositories/device-repository/device-repository';
 import { Brand } from '../../repositories/device-repository/models/enum/brand';
+import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 
 const host = '10.210.5.17';
@@ -31,13 +32,21 @@ if (!device) {
 const api = new Solarman(log, device, host, '3518024876');
 api.setOnDataReceived(valueResolved);
 
-const workModeRegister = DeviceRepository.getRegisterByTypeAndAddress(device, 'input', 2500);
+const workModeRegister = DeviceRepository.getRegisterByTypeAndAddress(device, RegisterType.Input, 2500);
 
 const perform = async (): Promise<void> => {
     await api.connect();
 
     await api.readRegistersInBatch();
-
+    /*
+    if (device && device.supportedFlows && device.supportedFlows.actions && device.supportedFlows.actions.set_timing_ac_charge_on) {
+        const args = {
+            acpchgmax: 2,
+            acsocmaxchg: 3,
+        };
+        device.supportedFlows.actions.set_timing_ac_charge_on(log, args, api);
+    }
+*/
     //    await api.writeRegister(workModeRegister!, 1);
     /*
     const address = DeviceRepository.getRegisterByTypeAndAddress(device, 'input', 507);

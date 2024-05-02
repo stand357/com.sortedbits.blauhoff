@@ -1,4 +1,5 @@
 import * as net from 'net';
+import { writeBitsToBufferBE } from '../../helpers/bits';
 import { IBaseLogger } from '../../helpers/log';
 import { createRegisterBatches } from '../../repositories/device-repository/helpers/register-batches';
 import { DeviceModel } from '../../repositories/device-repository/models/device-model';
@@ -91,26 +92,52 @@ export class Solarman implements IAPI {
 
     writeRegister = async (register: ModbusRegister, value: number): Promise<boolean> => {
         const request = this.createModbusWriteRequest(register, [value]);
-        const result = await this.performRequest(request);
 
-        this.log.log('Write register', register.address, value, result);
-        //TODO: Make sure we return the right boolean
-        return true;
+        try {
+            const result = await this.performRequest(request);
+            this.log.log('Write register', register.address, value, result);
+            //TODO: Make sure we return the right boolean
+            return true;
+        } catch (error) {
+            this.log.error('Error writing register', error);
+            return false;
+        }
     };
 
     writeBufferRegister = async (register: ModbusRegister, buffer: Buffer): Promise<boolean> => {
         const request = this.createModbusWriteRequest(register, buffer);
-        const result = await this.performRequest(request);
 
-        this.log.log('Write buffer register', register.address, buffer, result);
-
-        //TODO: Make sure we return the right boolean
-        return true;
+        try {
+            await this.performRequest(request);
+            return true;
+        } catch (error) {
+            this.log.error('Error writing buffer', error);
+            return false;
+        }
     };
 
-    writeBitsToRegister(register: ModbusRegister, registerType: RegisterType, bits: number[], bitIndex: number): Promise<boolean> {
-        throw new Error('Method not implemented.');
-    }
+    writeBitsToRegister = async (register: ModbusRegister, registerType: RegisterType, bits: number[], bitIndex: number): Promise<boolean> => {
+        const readBuffer = await this.readAddressWithoutConversion(register, registerType);
+
+        if (readBuffer === undefined) {
+            this.log.error('Failed to read current value');
+            return false;
+        }
+
+        if (readBuffer.length * 8 < bitIndex + bits.length) {
+            this.log.error('Bit index out of range');
+            return false;
+        }
+
+        const result = writeBitsToBufferBE(readBuffer, bits, bitIndex);
+
+        try {
+            return await this.writeBufferRegister(register, result);
+        } catch (error) {
+            this.log.error('Error writing bits', error);
+        }
+        return false;
+    };
 
     /**
      * Reads a Modbus register without converting the data.
@@ -120,13 +147,12 @@ export class Solarman implements IAPI {
      * @returns A promise that resolves to the read data or undefined if the read operation failed.
      */
     readAddressWithoutConversion = async (register: ModbusRegister, registerType: RegisterType): Promise<Buffer | undefined> => {
-        const request = this.createModbusReadRequest(register, 1, registerType);
+        const request = this.createModbusReadRequest(register, register.length, registerType);
         const buffer = await this.performRequest(request);
 
         if (buffer) {
             const response = parseResponse(this.log, buffer, [register]);
             if (response.length === 1) {
-                this.log.log('Fetched value for ', register.address, ':', response[0]);
                 return response[0];
             }
         }

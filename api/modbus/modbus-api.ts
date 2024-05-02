@@ -388,7 +388,9 @@ export class ModbusAPI implements IAPI {
             return;
         }
 
-        const foundRegister = DeviceRepository.getRegisterByTypeAndAddress(device.device, registerType, register.address);
+        const rType = registerType === 'holding' ? RegisterType.Holding : RegisterType.Input;
+
+        const foundRegister = DeviceRepository.getRegisterByTypeAndAddress(device.device, rType, register.address);
 
         if (!foundRegister) {
             this.log.error('Register not found');
@@ -426,7 +428,7 @@ export class ModbusAPI implements IAPI {
             return false;
         }
 
-        logBits(this.log, readBuffer, readBuffer.length);
+        logBits(this.log, readBuffer);
 
         if (readBuffer.length * 8 < bitIndex + bits.length) {
             this.log.error('Bit index out of range');
@@ -439,7 +441,7 @@ export class ModbusAPI implements IAPI {
         this.log.log('writeBitsToRegister', registerType, bits, startBitIndex, byteIndex);
 
         const result = writeBitsToBuffer(readBuffer, byteIndex, bits, startBitIndex);
-        logBits(this.log, result, result.length);
+        logBits(this.log, result);
 
         return await this.writeBufferRegister(register, result);
     };

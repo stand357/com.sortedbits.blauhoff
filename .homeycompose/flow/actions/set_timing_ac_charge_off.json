@@ -1,0 +1,16 @@
+{
+    "id": "set_timing_ac_charge_off",
+    "title": {
+        "en": "Set Timing AC Charge OFF"
+    },
+    "titleFormatted": {
+        "en": "Set timing AC charge OFF."
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.ems_mode"
+        }
+    ]
+}
