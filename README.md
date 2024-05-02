@@ -75,40 +75,38 @@ Three phase Growatt string inverters with MODBUS interface.
 
 #### Set max solar power
 Set max solar power to [[value]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| value| Watts| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| value | Watts | range | - |
 
 #### Set solar selling
 Set solar selling to [[enabled]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| enabled| Solar selling| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| enabled | Solar selling | checkbox | - |
 
 #### Write value to register
 Write [[value]] to [[registerType]] register [[register]]
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| value| Value| - |
-| registerType| The register type where to write to| - |
-| register| Register| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| value | Value | number | - |
+| registerType | The register type where to write to | dropdown | - |
+| register | Register | autocomplete | - |
 
 #### Set energy pattern
 Set energy pattern to [[value]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| value| Energy pattern| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| value | Energy pattern | dropdown | - |
 
 #### Set grid peak shaving on
 Set grid peak shaving on with [[value]] power.
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| value| Watts| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| value | Watts | range | - |
 
 #### Set grid peak shaving off
 Set grid peak shaving off.
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
 
 # DEYE
 ## Deye Sun *K SG01HP3 EU AM2 Series
@@ -206,77 +204,75 @@ Deye Sun *K SG01HP3 EU AM2 Series with modbus interface
 
 #### Set max solar power
 Set max solar power to [[value]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| value| Watts| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| value | Watts | range | - |
 
 #### Set solar selling
 Set solar selling to [[enabled]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| enabled| Solar selling| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| enabled | Solar selling | checkbox | - |
 
 #### Set max sell power
 Set max sell power to [[value]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| value| Watts| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| value | Watts | range | - |
 
 #### Write value to register
 Write [[value]] to [[registerType]] register [[register]]
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| value| Value| - |
-| registerType| The register type where to write to| - |
-| register| Register| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| value | Value | number | - |
+| registerType | The register type where to write to | dropdown | - |
+| register | Register | autocomplete | - |
 
 #### Set energy pattern
 Set energy pattern to [[value]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| value| Energy pattern| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| value | Energy pattern | dropdown | - |
 
 #### Set grid peak shaving on
 Set grid peak shaving on with [[value]] power.
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| value| Watts| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| value | Watts | range | - |
 
 #### Set grid peak shaving off
 Set grid peak shaving off.
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
 
 #### Set work mode and zero export power
 Set workmode to [[workmode]] and Zero Export Power to [[value]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| value| Watts| - |
-| workmode| Workmode| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| value | Watts | range | - |
+| workmode | Workmode | dropdown | - |
 
 #### Turn time of use on/off
 Set time of use to [[enabled]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| enabled| Time of use| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| enabled | Time of use | dropdown | - |
 
 #### Turn time of use on/off for this day
 Set time of use to [[enabled]] for [[day]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| enabled| Time of use| - |
-| day| Day| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| enabled | Time of use | dropdown | - |
+| day | Day | dropdown | - |
 
 #### Set time of use parameters for timeslot
 For timeslot [[timeslot]] set the start time to [[time]]. Set grid charge to [[gridcharge]] and generator charge to [[generatorcharge]]. Power limit is [[powerlimit]] and minimum battery charge is [[batterycharge]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| timeslot| Timeslot| - |
-| time| Time| - |
-| gridcharge| Grid charging| - |
-| generatorcharge| Generator charging| - |
-| powerlimit| Power limit| - |
-| batterycharge| Minimum battery charge| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| timeslot | Timeslot | dropdown | - |
+| time | Time | time | - |
+| gridcharge | Grid charging | dropdown | - |
+| generatorcharge | Generator charging | dropdown | - |
+| powerlimit | Power limit | range | - |
+| batterycharge | Minimum battery charge | range | - |
 
 # AFORE
 ## Afore AF XK-TH Three Phase Hybrid Inverter
@@ -310,6 +306,8 @@ Afore AF XK-TH Three Phase Hybrid Inverter Series with modbus interface
 | 2500| 1| UINT16| | -| Yes| status_text.ems_mode| EMS mode |
 | 2501| 1| UINT16| | -| Yes| status_text.charge_command| Charge command |
 | 2502| 2| INT32| W| -| No| measure_power.charge_instructions| Charge command power |
+| 2504| 1| UINT16| %| 0.1| No| measure_percentage.acpchgmax| AC charge max |
+| 2505| 1| UINT16| %| 0.1| No| measure_percentage.acsocmaxchg| AC SOC max charge |
 | 2509| 1| UINT16| | -| Yes| timeslot.time| undefined |
 | 2510| 1| UINT16| | -| No| timeslot.time| undefined |
 | 2511| 1| UINT16| | -| No| timeslot.time| undefined |
@@ -319,30 +317,40 @@ Afore AF XK-TH Three Phase Hybrid Inverter Series with modbus interface
 
 #### Write value to register
 Write [[value]] to [[registerType]] register [[register]]
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| value| Value| - |
-| registerType| The register type where to write to| - |
-| register| Register| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| value | Value | number | - |
+| registerType | The register type where to write to | dropdown | - |
+| register | Register | autocomplete | - |
 
 #### Set charge command with power
 Set EMS mode to Charge Command with the command [[charge_command]] using [[value]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| charge_command| Charge command| Select the charge command to set. |
-| value| Watts| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| charge_command | Charge command | dropdown | Select the charge command to set. |
+| value | Watts | range | - |
 
 #### Set EMS mode
 Set EMS mode to [[mode]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| mode| EMS mode| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| mode | EMS mode | dropdown | - |
 
 #### Set times of AC charging timeslot
 For timeslot [[timeslot]] set the start time to [[starttime]] and the end time to [[endtime]].
-| Name | Argument | Description |
-| ------------- | ------------- | --------------- |
-| timeslot| Timeslot| - |
-| starttime| Time| - |
-| endtime| Time| - |
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| timeslot | Timeslot | dropdown | - |
+| starttime | Time | time | - |
+| endtime | Time | time | - |
+
+#### Set Timing AC Charge OFF
+Set timing AC charge OFF.
+
+#### Set timing AC charge ON with values.
+Set timing AC charging ON with [[acpchgmax]] AcPChgMax and [[acsocmaxchg]] AcSocMaxChg.
+| Name | Argument | Type |  Description |
+| ------------- | ----- | ------------- | --------------- |
+| acpchgmax | AcPChgMax | range | - |
+| acsocmaxchg | AcPChgMax | range | - |
 
