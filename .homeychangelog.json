@@ -55,5 +55,8 @@
   },
   "2.1.1": {
     "en": "For Afore, allow AC charging timeslot setting"
+  },
+  "2.1.2": {
+    "en": "Afore AC Timing Charge flows added"
   }
 }
