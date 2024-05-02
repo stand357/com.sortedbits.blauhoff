@@ -57,7 +57,7 @@ const inputRegisters: ModbusRegister[] = [
 
 // 0x03
 const holdingRegisters: ModbusRegister[] = [
-    ModbusRegister.transform('status_text.ac_timing_charge', 206, 2, RegisterDataType.UINT32, (_, buffer) => {
+    ModbusRegister.transform('status_text.ac_timing_charge', 206, 2, RegisterDataType.UINT32, (_, buffer, log) => {
         if (readBitBE(buffer, 4) === 1) {
             return 'Enabled';
         }
@@ -111,6 +111,8 @@ const holdingRegisters: ModbusRegister[] = [
     }),
 
     ModbusRegister.default('measure_power.charge_instructions', 2502, 2, RegisterDataType.INT32, AccessMode.ReadWrite),
+    ModbusRegister.scale('measure_percentage.acpchgmax', 2504, 1, RegisterDataType.UINT16, 0.1, AccessMode.ReadWrite),
+    ModbusRegister.scale('measure_percentage.acsocmaxchg', 2505, 1, RegisterDataType.UINT16, 0.1, AccessMode.ReadWrite),
 
     ModbusRegister.transform(
         'timeslot.time',
@@ -141,9 +143,9 @@ const setChargeCommand = async (origin: IBaseLogger, args: any, client: IAPI): P
     const powerAddress = 2502;
     const registerType = RegisterType.Holding;
 
-    const emsRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), emsAddress);
-    const commandRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), commandAddress);
-    const powerRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), powerAddress);
+    const emsRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType, emsAddress);
+    const commandRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType, commandAddress);
+    const powerRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType, powerAddress);
 
     if (commandRegister === undefined || powerRegister === undefined || emsRegister === undefined) {
         origin.error('Register not found');
@@ -180,7 +182,7 @@ const setEmsMode = async (origin: IBaseLogger, args: any, client: IAPI): Promise
     const emsAddress = 2500;
     const registerType = RegisterType.Holding;
 
-    const emsRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), emsAddress);
+    const emsRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType, emsAddress);
 
     if (emsRegister === undefined) {
         origin.error('Register not found');
@@ -231,8 +233,8 @@ const setAcChargingTimeslot = async (origin: IBaseLogger, args: any, client: IAP
     const startBuffer = timeToBuffer(starttime);
     const endBuffer = timeToBuffer(endtime);
 
-    const startRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), startAddress);
-    const endRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType.toString(), endAddress);
+    const startRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType, startAddress);
+    const endRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType, endAddress);
 
     if (startRegister === undefined || endRegister === undefined) {
         origin.error('Register not found');
@@ -244,6 +246,54 @@ const setAcChargingTimeslot = async (origin: IBaseLogger, args: any, client: IAP
         const endOutput = await client.writeBufferRegister(endRegister, endBuffer);
 
         origin.log('Start and end time output', startOutput, endOutput);
+    } catch (error) {
+        origin.error('Error writing to register', error);
+    }
+};
+
+const setTimingAcChargeOff = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
+    const address = 206;
+    const registerType = RegisterType.Holding;
+
+    const register = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), registerType, address);
+
+    if (register === undefined) {
+        origin.error('Register not found');
+        return;
+    }
+
+    try {
+        const output = await client.writeBitsToRegister(register, registerType, [0], 4);
+        origin.log('Output', output);
+    } catch (error) {
+        origin.error('Error writing to register', error);
+    }
+};
+
+const setTimingAcChargeOn = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
+    const enabledRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), RegisterType.Holding, 206);
+    const acpchgmaxRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), RegisterType.Holding, 2504);
+    const acsocmaxchgRegister = DeviceRepository.getRegisterByTypeAndAddress(client.getDeviceModel(), RegisterType.Holding, 2505);
+
+    if (enabledRegister === undefined || acpchgmaxRegister === undefined || acsocmaxchgRegister === undefined) {
+        origin.error('Register not found');
+        return;
+    }
+
+    const { acpchgmax, acsocmaxchg } = args;
+
+    if (acpchgmax < 0 || acpchgmax > 100 || acsocmaxchg < 0 || acsocmaxchg > 100) {
+        origin.error('Value out of range');
+        return;
+    }
+
+    try {
+        const output = await client.writeBitsToRegister(enabledRegister, RegisterType.Holding, [1], 4);
+
+        const acpchgmaxOutput = await client.writeRegister(acpchgmaxRegister, acpchgmaxRegister.calculatePayload(acpchgmax, origin));
+        const acsocmaxchgOutput = await client.writeRegister(acsocmaxchgRegister, acsocmaxchgRegister.calculatePayload(acsocmaxchg, origin));
+
+        origin.log('Output', output, acpchgmaxOutput, acsocmaxchgOutput);
     } catch (error) {
         origin.error('Error writing to register', error);
     }
@@ -271,6 +321,8 @@ export const aforeAFXKTH: DeviceModel = {
             write_value_to_register: writeValueToRegister,
             set_ems_mode: setEmsMode,
             set_ac_charging_timeslot: setAcChargingTimeslot,
+            set_timing_ac_charge_off: setTimingAcChargeOff,
+            set_timing_ac_charge_on: setTimingAcChargeOn,
         },
     },
 };

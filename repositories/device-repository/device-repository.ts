@@ -11,6 +11,7 @@ import { growattTL } from './devices/growatt/mod-XXXX-tl';
 import { growattTL3 } from './devices/growatt/mod-XXXX-tl3';
 import { DeviceModel } from './models/device-model';
 import { Brand } from './models/enum/brand';
+import { RegisterType } from './models/enum/register-type';
 import { ModbusRegister } from './models/modbus-register';
 
 export class DeviceRepository {
@@ -32,11 +33,11 @@ export class DeviceRepository {
         return this.devices.find((device) => device.brand === brand && device.id === model);
     }
 
-    public static getRegisterByTypeAndAddress(device: DeviceModel, type: string, address: number): ModbusRegister | undefined {
+    public static getRegisterByTypeAndAddress(device: DeviceModel, type: RegisterType, address: number): ModbusRegister | undefined {
         switch (type) {
-            case 'input':
+            case RegisterType.Input:
                 return device.definition.inputRegisters.find((register) => register.address === address);
-            case 'holding':
+            case RegisterType.Holding:
                 return device.definition.holdingRegisters.find((register) => register.address === address);
             default:
                 return undefined;
