@@ -64,6 +64,19 @@ const readFlowInfo = (flowType: string, flowId: string) => {
                 argInfo['hint'] = arg['hint']['en'];
             }
 
+            argInfo['type'] = arg['type'];
+
+            let description = '';
+            if (arg['type'] == 'dropdown' && arg['values']) {
+                const values = arg['values'];
+
+                values.forEach((value: any) => {
+                    description = description.concat(value['title']['en'], '<br/>');
+                });
+            }
+
+            argInfo['description'] = description;
+
             argsInfo.push(argInfo);
         }
     }
@@ -138,13 +151,18 @@ brands.forEach((brand) => {
 
                         output += `\n#### ${flowInfo.title}\n`;
                         output += `${flowInfo.titleFormatted}\n`;
-                        output += `| Name | Argument | Description |\n`;
-                        output += `| ------------- | ------------- | --------------- |\n`;
 
-                        for (const arg of flowInfo.args) {
-                            output += `| ${arg.name}`;
-                            output += `| ${arg.title}`;
-                            output += `| ${arg.hint ?? '-'} |\n`;
+                        if (flowInfo.args.length > 0) {
+                            output += `| Name | Argument | Type |  Description |\n`;
+                            output += `| ------------- | ----- | ------------- | --------------- |\n`;
+
+                            for (const arg of flowInfo.args) {
+                                console.log(arg);
+                                output += `| ${arg.name} `;
+                                output += `| ${arg.title} `;
+                                output += `| ${arg.type} `;
+                                output += `| ${arg.hint ?? '-'} |\n`;
+                            }
                         }
                     }
                 }
