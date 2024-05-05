@@ -173,14 +173,14 @@ Deye Sun *K SG01HP3 EU AM2 Series with modbus interface
 | 500| 1| UINT16| | -| Yes| status_text.run_mode| Run mode |
 | 514| 1| UINT16| kWh| 0.1| No| meter_power.daily_battery_charge| Daily battery charge |
 | 515| 1| UINT16| kWh| 0.1| No| meter_power.daily_battery_discharge| Daily battery discharge |
-| 516| 2| UINT16| kWh| 0.1| No| meter_power.total_battery_charge| Total battery charge |
-| 518| 2| UINT16| kWh| 0.1| No| meter_power.total_battery_discharge| Total battery discharge |
+| 516| 1| UINT16| kWh| 0.1| No| meter_power.total_battery_charge| Total battery charge |
+| 518| 1| UINT16| kWh| 0.1| No| meter_power.total_battery_discharge| Total battery discharge |
 | 520| 1| UINT16| kWh| 0.1| No| meter_power.daily_from_grid| Daily from grid |
 | 521| 1| UINT16| kWh| 0.1| No| meter_power.daily_to_grid| Daily to grid |
-| 522| 2| UINT16| kWh| 0.1| No| meter_power.total_from_grid| Total from grid |
-| 524| 2| UINT16| kWh| 0.1| No| meter_power.total_to_grid| Total to grid |
+| 522| 1| UINT16| kWh| 0.1| No| meter_power.total_from_grid| Total from grid |
+| 524| 1| UINT16| kWh| 0.1| No| meter_power.total_to_grid| Total to grid |
 | 526| 1| UINT16| kWh| 0.1| No| meter_power.daily_to_load| Daily to load |
-| 527| 2| UINT16| kWh| 0.1| No| meter_power.total_to_load| Total to load |
+| 527| 1| UINT16| kWh| 0.1| No| meter_power.total_to_load| Total to load |
 | 529| 1| UINT16| kWh| 0.1| No| meter_power.daily_pv| Daily PV |
 | 534| 2| UINT16| kWh| 0.1| No| meter_power.total_pv| Total PV |
 | 540| 1| UINT16| °C| 0.01| No| measure_temperature.dc| DC temperature |
