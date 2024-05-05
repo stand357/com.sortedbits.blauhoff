@@ -58,5 +58,8 @@
   },
   "2.1.2": {
     "en": "Afore AC Timing Charge flows added"
+  },
+  "2.1.3": {
+    "en": "Fix Deye reading through Solarman"
   }
 }
