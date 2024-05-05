@@ -64,5 +64,8 @@
   },
   "2.1.4": {
     "en": "Removed old device, updated texts, documentation, etc"
+  },
+  "2.2.0": {
+    "en": "Update the loo"
   }
 }
