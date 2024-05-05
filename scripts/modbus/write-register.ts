@@ -8,15 +8,29 @@
 import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { Logger } from '../../helpers/log';
 import { DeviceRepository } from '../../repositories/device-repository/device-repository';
-import { Brand } from '../../repositories/device-repository/models/enum/brand';
 import { RegisterDataType } from '../../repositories/device-repository/models/enum/register-datatype';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 
-//const host = '10.210.5.12';
-const host = '88.159.155.195';
-const port = 502;
-const unitId = 1;
+require('dotenv').config();
+
 const log = new Logger();
+
+if (!process.env.HOST || !process.env.PORT || !process.env.SERIAL || !process.env.PORT || !process.env.DEVICE_ID || !process.env.UNIT_ID) {
+    log.error('Missing environment variables');
+    process.exit(1);
+}
+
+const host = process.env.HOST;
+const port = process.env.PORT;
+const deviceId = process.env.DEVICE_ID;
+const unitId = process.env.UNIT_ID;
+
+const device = DeviceRepository.getDeviceById(deviceId);
+
+if (!device) {
+    log.error('Device not found');
+    process.exit(1);
+}
 
 const registerAddress = 145;
 
@@ -25,12 +39,9 @@ const valueResolved = async (value: any, buffer: Buffer, parseConfiguration: Mod
     log.log(parseConfiguration.capabilityId, result);
 };
 
-// const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Growatt, 'growatt-tl3');
-const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Deye, 'deye-sun-xk-sg01hp3-eu-am2');
-
 const addressInfo = ModbusRegister.default('', registerAddress, 1, RegisterDataType.INT16);
 
-const api = new ModbusAPI(log, host, port, unitId, device!);
+const api = new ModbusAPI(log, host, Number(port), Number(unitId), device);
 
 const perform = async (): Promise<void> => {
     api.onDataReceived = valueResolved;
