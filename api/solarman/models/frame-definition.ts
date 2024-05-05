@@ -1,4 +1,4 @@
-import { calculateFrameChecksum } from './helpers/frame-crc-calculator';
+import { calculateFrameChecksum } from '../helpers/frame-crc-calculator';
 
 export class FrameDefinition {
     readonly start: Buffer;

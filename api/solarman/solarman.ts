@@ -6,9 +6,9 @@ import { DeviceModel } from '../../repositories/device-repository/models/device-
 import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 import { IAPI } from '../iapi';
-import { FrameDefinition } from './frame-definition';
 import { calculateBufferCRC } from './helpers/buffer-crc-calculator';
 import { parseResponse } from './helpers/response-parser';
+import { FrameDefinition } from './models/frame-definition';
 
 /*
  * Attempting to port the amazing pysolarmanv5 library to TypeScript

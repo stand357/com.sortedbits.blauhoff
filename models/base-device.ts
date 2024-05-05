@@ -307,7 +307,7 @@ export class BaseDevice extends Device {
         // First we check if the DeviceModel supports this called action
 
         if (!this.api) {
-            this.error('ModbusAPI is not initialized');
+            this.error('API is not initialized');
             return;
         }
 
