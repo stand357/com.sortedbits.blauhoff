@@ -1,5 +1,10 @@
-Connect your BlauHoff Battery to Homey.
+BlauHoff provides smart home and business battery solutions.
 
-Currently there is only support for BlauHoff installations with an API connection.
+This app adds support for the following hybrid inverters.
 
-If you need support, you can use the links at the bottom of this page.
+1. Deye Sun *K SG01HP3 EU AM2 Series
+2. Afore AF XK-TH Three Phase Hybrid Inverter
+
+These devices are supported both using a Modbus to Modbus TCP adapter, or using the Solarman Network adapter.
+
+When you are using Solarman, you need to enter the INTERNAL IP address of your Solarman network adapter and (probably) port 8899.

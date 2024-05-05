@@ -7,14 +7,12 @@
 
 import fs from 'fs';
 import path from 'path';
-import { unitForCapability } from '../../helpers/units';
-import { DeviceRepository } from '../../repositories/device-repository/device-repository';
-import { orderModbusRegisters } from '../../repositories/device-repository/helpers/order-modbus-registers';
-import { getSupportedFlowTypeKeys } from '../../repositories/device-repository/models/device-model';
-import { brands } from '../../repositories/device-repository/models/enum/brand';
-import { findFile } from './helpers/fs-helpers';
-
-let output = '';
+import { unitForCapability } from '../helpers/units';
+import { DeviceRepository } from '../repositories/device-repository/device-repository';
+import { orderModbusRegisters } from '../repositories/device-repository/helpers/order-modbus-registers';
+import { getSupportedFlowTypeKeys } from '../repositories/device-repository/models/device-model';
+import { brands } from '../repositories/device-repository/models/enum/brand';
+import { findFile } from './modbus/helpers/fs-helpers';
 
 const capabilitiesOptions: { [key: string]: any } = {};
 
@@ -94,8 +92,11 @@ const allFlowTypes = getSupportedFlowTypeKeys();
 brands.forEach((brand) => {
     const models = DeviceRepository.getDevicesByBrand(brand);
 
-    output += `# ${brand.toLocaleUpperCase()}\n`;
     models.forEach((model) => {
+        let output = '';
+
+        const filename = `docs/${brand.toLocaleLowerCase()}/${model.id}.md`;
+
         output += `## ${model.name}\n`;
         output += `${model.description}\n\n`;
 
@@ -170,11 +171,7 @@ brands.forEach((brand) => {
         }
 
         output += '\n';
+
+        fs.writeFileSync(filename, output);
     });
 });
-
-fs.writeFileSync('./.build/modbus-registers.md', output);
-
-const readme = fs.readFileSync('./docs/README-template.md', 'utf8');
-
-fs.writeFileSync('./README.md', readme.replace('{{MODBUS_REGISTERS}}', output));

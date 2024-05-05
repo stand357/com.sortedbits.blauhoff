@@ -309,7 +309,7 @@ const definition: ModbusDeviceDefinition = {
 };
 
 export const aforeAFXKTH: DeviceModel = {
-    id: 'afore-hybrid-inverter',
+    id: 'af-xk-th-three-phase-hybrid',
     brand: Brand.Afore,
     name: 'Afore AF XK-TH Three Phase Hybrid Inverter',
     description: 'Afore AF XK-TH Three Phase Hybrid Inverter Series with modbus interface',

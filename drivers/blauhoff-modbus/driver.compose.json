@@ -1,6 +1,6 @@
 {
     "name": {
-        "en": "Modbus TCP device"
+        "en": "BlauHoff Hybrid Inverter"
     },
     "$extends": ["base-compose", "defaults"]
 }
