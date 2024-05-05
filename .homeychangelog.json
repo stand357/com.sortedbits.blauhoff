@@ -61,5 +61,8 @@
   },
   "2.1.3": {
     "en": "Fix Deye reading through Solarman"
+  },
+  "2.1.4": {
+    "en": "Removed old device, updated texts, documentation, etc"
   }
 }
