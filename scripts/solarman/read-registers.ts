@@ -4,24 +4,71 @@
  *
  * Non-commercial use only
  */
+import fs from 'fs';
 
+import { ModbusAPI } from '../../api/modbus/modbus-api';
 import { Solarman } from '../../api/solarman/solarman';
 import { Logger } from '../../helpers/log';
 import { DeviceRepository } from '../../repositories/device-repository/device-repository';
 import { Brand } from '../../repositories/device-repository/models/enum/brand';
-import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 
-const host = '10.210.5.17';
-const log = new Logger();
+//const host = '10.210.5.17';
+//const serial = '3518024876';
 
-const valueResolved = async (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => {
+const host = '88.159.155.195';
+const serial = '2782776185';
+
+const log = new Logger();
+const unitId = 1;
+
+interface MixedResult {
+    guid: string;
+    solarman: any;
+    modbus: any;
+    capabilityId: string;
+}
+
+const mixedResults: MixedResult[] = [];
+
+const valueSolarmanResolved = async (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => {
     const result = parseConfiguration.calculateValue(value, buffer, log);
     log.log(parseConfiguration.capabilityId, ':', result);
+
+    const mixedResult = mixedResults.find((x) => x.guid === parseConfiguration.guid);
+    if (!mixedResult) {
+        const newMixedResult: MixedResult = {
+            guid: parseConfiguration.guid,
+            solarman: result,
+            modbus: undefined,
+            capabilityId: parseConfiguration.capabilityId,
+        };
+        mixedResults.push(newMixedResult);
+    } else {
+        mixedResult.solarman = result;
+    }
 };
 
-//const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Deye, 'deye-sun-xk-sg01hp3-eu-am2');
-const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Afore, 'afore-hybrid-inverter');
+const valueModbusResolved = async (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => {
+    const result = parseConfiguration.calculateValue(value, buffer, log);
+    log.log(parseConfiguration.capabilityId, ':', result);
+
+    const mixedResult = mixedResults.find((x) => x.guid === parseConfiguration.guid);
+    if (!mixedResult) {
+        const newMixedResult: MixedResult = {
+            guid: parseConfiguration.guid,
+            solarman: undefined,
+            modbus: result,
+            capabilityId: parseConfiguration.capabilityId,
+        };
+        mixedResults.push(newMixedResult);
+    } else {
+        mixedResult.modbus = result;
+    }
+};
+
+const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Deye, 'deye-sun-xk-sg01hp3-eu-am2');
+//const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Afore, 'afore-hybrid-inverter');
 //const device = DeviceRepository.getDeviceByBrandAndModel(Brand.Growatt, 'growatt-tl3');
 
 if (!device) {
@@ -29,15 +76,19 @@ if (!device) {
     process.exit(1);
 }
 
-const api = new Solarman(log, device, host, '3518024876');
-api.setOnDataReceived(valueResolved);
+const solarmanApi = new Solarman(log, device, host, serial, 8899, unitId);
+solarmanApi.setOnDataReceived(valueSolarmanResolved);
 
-const workModeRegister = DeviceRepository.getRegisterByTypeAndAddress(device, RegisterType.Input, 2500);
+const modbusApi = new ModbusAPI(log, host, 502, unitId, device);
 
 const perform = async (): Promise<void> => {
-    await api.connect();
+    await solarmanApi.connect();
+    await solarmanApi.readRegistersInBatch();
 
-    await api.readRegistersInBatch();
+    modbusApi.onDataReceived = valueModbusResolved;
+    await modbusApi.connect();
+
+    await modbusApi.readRegistersInBatch();
     /*
     if (device && device.supportedFlows && device.supportedFlows.actions && device.supportedFlows.actions.set_timing_ac_charge_on) {
         const args = {
@@ -62,7 +113,20 @@ const perform = async (): Promise<void> => {
 perform()
     .then(() => {
         log.log('Registers read');
-        api.disconnect();
+        solarmanApi.disconnect();
     })
     .catch(log.error)
-    .finally(() => {});
+    .finally(() => {
+        modbusApi.disconnect();
+        solarmanApi.disconnect();
+
+        let output = '';
+
+        output += '| Capability | Modbus | Solarman | \n';
+        output += '| ---------- | ------ | -------- | \n';
+        mixedResults.forEach((result) => {
+            output += '| ' + result.capabilityId + ' | ' + result.modbus + ' | ' + result.solarman + '| \n';
+        });
+
+        fs.writeFileSync('./.build/diff.md', output);
+    });

@@ -156,16 +156,16 @@ const holdingRegisters: ModbusRegister[] = [
     // meters
     ModbusRegister.scale('meter_power.daily_from_grid', 520, 1, RegisterDataType.UINT16, 0.1), // day gridbuy
     ModbusRegister.scale('meter_power.daily_to_grid', 521, 1, RegisterDataType.UINT16, 0.1), // day gridsell
-    ModbusRegister.scale('meter_power.total_from_grid', 522, 2, RegisterDataType.UINT16, 0.1), // total gridbuy
-    ModbusRegister.scale('meter_power.total_to_grid', 524, 2, RegisterDataType.UINT16, 0.1), // total gridsell
+    ModbusRegister.scale('meter_power.total_from_grid', 522, 1, RegisterDataType.UINT16, 0.1), // total gridbuy
+    ModbusRegister.scale('meter_power.total_to_grid', 524, 1, RegisterDataType.UINT16, 0.1), // total gridsell
     ModbusRegister.scale('meter_power.daily_to_load', 526, 1, RegisterDataType.UINT16, 0.1), // consumption day
-    ModbusRegister.scale('meter_power.total_to_load', 527, 2, RegisterDataType.UINT16, 0.1), // total consumption
+    ModbusRegister.scale('meter_power.total_to_load', 527, 1, RegisterDataType.UINT16, 0.1), // total consumption
     ModbusRegister.scale('meter_power.daily_pv', 529, 1, RegisterDataType.UINT16, 0.1), // day pv power
     ModbusRegister.scale('meter_power.total_pv', 534, 2, RegisterDataType.UINT16, 0.1), // total PV power
     ModbusRegister.scale('meter_power.daily_battery_charge', 514, 1, RegisterDataType.UINT16, 0.1), // day batt charge
     ModbusRegister.scale('meter_power.daily_battery_discharge', 515, 1, RegisterDataType.UINT16, 0.1), // day batt discharge
-    ModbusRegister.scale('meter_power.total_battery_charge', 516, 2, RegisterDataType.UINT16, 0.1), // total batt charge
-    ModbusRegister.scale('meter_power.total_battery_discharge', 518, 2, RegisterDataType.UINT16, 0.1), // total batt discharge
+    ModbusRegister.scale('meter_power.total_battery_charge', 516, 1, RegisterDataType.UINT16, 0.1), // total batt charge
+    ModbusRegister.scale('meter_power.total_battery_discharge', 518, 1, RegisterDataType.UINT16, 0.1), // total batt discharge
 
     // pv
     ModbusRegister.scale('measure_power.pv1', 672, 1, RegisterDataType.UINT16, 10),
