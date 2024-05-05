@@ -5,6 +5,7 @@
  * Non-commercial use only
  */
 
+import { randomUUID } from 'crypto';
 import { IBaseLogger } from '../../../helpers/log';
 import { AccessMode } from './enum/access-mode';
 import { RegisterDataType } from './enum/register-datatype';
@@ -13,14 +14,16 @@ export type Transformation = (value: any, buffer: Buffer, log: IBaseLogger) => a
 
 export class ModbusRegisterParseConfiguration {
     capabilityId: string;
-
     transformation?: Transformation;
     scale?: number;
+    guid: string;
 
     constructor(capabilityId: string, transformation?: Transformation, scale?: number) {
         this.capabilityId = capabilityId;
         this.transformation = transformation;
         this.scale = scale;
+
+        this.guid = randomUUID();
     }
 
     calculateValue(value: any, buffer: Buffer, log: IBaseLogger): any {
