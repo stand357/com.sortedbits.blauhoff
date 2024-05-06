@@ -24,7 +24,7 @@ const port = process.env.PORT;
 const deviceId = process.env.DEVICE_ID;
 const unitId = process.env.UNIT_ID;
 
-const device = DeviceRepository.getDeviceById(deviceId);
+const device = DeviceRepository.getInstance().getDeviceById(deviceId);
 
 if (!device) {
     log.error('Device not found');

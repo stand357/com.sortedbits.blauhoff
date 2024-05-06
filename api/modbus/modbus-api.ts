@@ -10,9 +10,8 @@ import { Socket } from 'net';
 import { logBits, writeBitsToBuffer } from '../../helpers/bits';
 import { IBaseLogger } from '../../helpers/log';
 import { validateValue } from '../../helpers/validate-value';
-import { DeviceRepository } from '../../repositories/device-repository/device-repository';
 import { createRegisterBatches } from '../../repositories/device-repository/helpers/register-batches';
-import { DeviceModel } from '../../repositories/device-repository/models/device-model';
+import { DeviceInformation } from '../../repositories/device-repository/models/device-information';
 import { AccessMode } from '../../repositories/device-repository/models/enum/access-mode';
 import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
@@ -28,15 +27,15 @@ export class ModbusAPI implements IAPI {
     private port: number;
     private unitId: number;
     private log: IBaseLogger;
-    private deviceModel: DeviceModel;
+    private device: DeviceInformation;
     private disconnecting: boolean = false;
 
     isConnected(): boolean {
         return this.client.isOpen;
     }
 
-    getDeviceModel(): DeviceModel {
-        return this.deviceModel;
+    getDeviceModel(): DeviceInformation {
+        return this.device;
     }
 
     setOnDataReceived(onDataReceived: (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => Promise<void>): void {
@@ -76,13 +75,13 @@ export class ModbusAPI implements IAPI {
      * @param unitId - The unit ID.
      * @param deviceModel - The Modbus device information.
      */
-    constructor(log: IBaseLogger, host: string, port: number, unitId: number, deviceModel: DeviceModel) {
+    constructor(log: IBaseLogger, host: string, port: number, unitId: number, device: DeviceInformation) {
         this.host = host;
         this.port = port;
         this.unitId = unitId;
         this.client = new ModbusRTU();
         this.log = log;
-        this.deviceModel = deviceModel;
+        this.device = device;
     }
 
     /**
@@ -177,7 +176,7 @@ export class ModbusAPI implements IAPI {
         const buffer = await this.readAddressWithoutConversion(register, registerType);
 
         if (buffer) {
-            const result = this.deviceModel.definition.inputRegisterResultConversion(this.log, buffer, register);
+            const result = this.device.converter(this.log, buffer, register);
             this.log.log('Conversion result', result);
             return result;
         }
@@ -201,13 +200,13 @@ export class ModbusAPI implements IAPI {
             this.log.error('No valueResolved function set');
         }
 
-        const inputBatches = createRegisterBatches(this.log, this.deviceModel.definition.inputRegisters);
+        const inputBatches = createRegisterBatches(this.log, this.device.inputRegisters);
 
         for (const batch of inputBatches) {
             await this.readBatch(batch, RegisterType.Input);
         }
 
-        const holdingBatches = createRegisterBatches(this.log, this.deviceModel.definition.holdingRegisters);
+        const holdingBatches = createRegisterBatches(this.log, this.device.holdingRegisters);
 
         for (const batch of holdingBatches) {
             await this.readBatch(batch, RegisterType.Holding);
@@ -289,11 +288,11 @@ export class ModbusAPI implements IAPI {
             this.log.error('No valueResolved function set');
         }
 
-        for (const register of this.deviceModel.definition.inputRegisters.filter((x) => x.accessMode !== AccessMode.WriteOnly)) {
+        for (const register of this.device.inputRegisters.filter((x) => x.accessMode !== AccessMode.WriteOnly)) {
             await this.readBatch([register], RegisterType.Input);
         }
 
-        for (const register of this.deviceModel.definition.holdingRegisters.filter((x) => x.accessMode !== AccessMode.WriteOnly)) {
+        for (const register of this.device.holdingRegisters.filter((x) => x.accessMode !== AccessMode.WriteOnly)) {
             await this.readBatch([register], RegisterType.Holding);
         }
 
@@ -337,9 +336,7 @@ export class ModbusAPI implements IAPI {
                 const buffer = batch.length > 1 ? results.buffer.subarray(startOffset, end) : results.buffer;
 
                 const value =
-                    registerType === RegisterType.Input
-                        ? this.deviceModel.definition.inputRegisterResultConversion(this.log, buffer, register)
-                        : this.deviceModel.definition.holdingRegisterResultConversion(this.log, buffer, register);
+                    registerType === RegisterType.Input ? this.device.converter(this.log, buffer, register) : this.device.converter(this.log, buffer, register);
 
                 if (this.onDataReceived) {
                     for (const parseConfiguration of register.parseConfigurations) {
@@ -390,7 +387,7 @@ export class ModbusAPI implements IAPI {
 
         const rType = registerType === 'holding' ? RegisterType.Holding : RegisterType.Input;
 
-        const foundRegister = DeviceRepository.getRegisterByTypeAndAddress(device.device, rType, register.address);
+        const foundRegister = this.device.getRegisterByTypeAndAddress(rType, register.address);
 
         if (!foundRegister) {
             this.log.error('Register not found');

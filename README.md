@@ -8,8 +8,8 @@ Adds support for BlauHoff Inverter and Battery devices.
 
 The following devices are supported through both a Modbus connection or using a Solarman Wifi dongle.
 
-1. [Deye Sun \*K SG01HP3 EU AM2 Series](docs/deye/deye-sun-xk-sg01hp3-eu-am2.md)
-2. [Afore AF XK-TH Three Phase Hybrid Inverter](docs/afore/af-xk-th-three-phase-hybrid.md)
+1. [Deye Sun \*K SG01HP3 EU AM2 Series](repositories/device-repository/devices/deye/sun-xk-sg01hp3-eu-am2/README.md)
+2. [Afore AF XK-TH Three Phase Hybrid Inverter](repositories/device-repository/devices/afore/af-xk-th-three-phase-hybrid/README.md)
 
 ### Solarman
 
@@ -20,6 +20,10 @@ This allows us to read and write to the inverter, without using a cloud connecti
 ### Modbus
 
 When you want to use the Modbus connection, you need a device like the [Waveshare RS232/RS485 to POE ETH](<https://www.waveshare.com/wiki/RS232_RS485_TO_POE_ETH_(B)>). We tested the linked the device and had a nice experience with it. The linked version supports Power over Ethernet which allows you to just run a single ethernet wire to it.
+
+### Fixed IP address
+
+Because there is no way to discover either a Modbus adapter OR an Solarman dongle on the network, you need to specify an IP address during the pairing process. It is recommended to give your device a static IP address, so it will not change, for example with a power outage.
 
 ### Installation
 
@@ -59,5 +63,5 @@ If you install the test version of the app, using the [Homey Store link](https:/
 
 During the development of the Modbus implementation, we used Growatt inverters to test reading data from a Modbus to ethernet connected device. These devices van still be used to read some basic properties.
 
-1. [Growatt 1PH MIC TL-X series](docs/growatt/growatt-tl.md)
-2. [Growatt 3PH MOD TL3-X series](docs/growatt/growatt-tl3.md)
+1. [Growatt 1PH MIC TL-X series](repositories/device-repository/devices/growatt/growatt-tl/README.md)
+2. [Growatt 3PH MOD TL3-X series](repositories/device-repository/devices/growatt/growatt-tl3/README.md)

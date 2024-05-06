@@ -11,19 +11,18 @@ import { IAPI } from '../api/iapi';
 import { ModbusAPI } from '../api/modbus/modbus-api';
 import { Solarman } from '../api/solarman/solarman';
 import { DeviceRepository } from '../repositories/device-repository/device-repository';
-import { getBrand } from '../repositories/device-repository/helpers/brand-name';
 import { orderModbusRegisters } from '../repositories/device-repository/helpers/order-modbus-registers';
-import { DeviceModel, SupportedFlowTypes } from '../repositories/device-repository/models/device-model';
+import { DeviceInformation } from '../repositories/device-repository/models/device-information';
 import { AccessMode } from '../repositories/device-repository/models/enum/access-mode';
 import { Brand } from '../repositories/device-repository/models/enum/brand';
-import { ModbusDeviceDefinition } from '../repositories/device-repository/models/modbus-device-registers';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../repositories/device-repository/models/modbus-register';
+import { SupportedFlowTypes } from '../repositories/device-repository/models/supported-flows';
 
 export class BaseDevice extends Device {
     private api?: IAPI;
     private reachable: boolean = false;
     private readRegisterTimeout: NodeJS.Timeout | undefined;
-    private device!: DeviceModel;
+    private device!: DeviceInformation;
 
     public filteredLog(...args: any[]) {
         if (this.device.brand === Brand.Growatt) {
@@ -95,8 +94,8 @@ export class BaseDevice extends Device {
      * Initializes the capabilities of the Modbus device based on the provided definition.
      * @param definition The Modbus device definition.
      */
-    private initializeCapabilities = async (definition: ModbusDeviceDefinition) => {
-        const inputRegisters = orderModbusRegisters(definition.inputRegisters);
+    private initializeCapabilities = async () => {
+        const inputRegisters = orderModbusRegisters(this.device.inputRegisters);
 
         for (const register of inputRegisters) {
             if (register.accessMode !== AccessMode.WriteOnly) {
@@ -106,7 +105,7 @@ export class BaseDevice extends Device {
             }
         }
 
-        const holdingRegisters = orderModbusRegisters(definition.holdingRegisters);
+        const holdingRegisters = orderModbusRegisters(this.device.holdingRegisters);
         for (const register of holdingRegisters) {
             if (register.accessMode !== AccessMode.WriteOnly) {
                 for (const configuration of register.parseConfigurations) {
@@ -130,7 +129,7 @@ export class BaseDevice extends Device {
 
         this.log('ModbusDevice', host, port, unitId, deviceType, modelId);
 
-        await this.initializeCapabilities(this.device.definition);
+        await this.initializeCapabilities();
 
         this.api = solarman ? new Solarman(this, this.device, host, serial, 8899, 1) : new ModbusAPI(this, host, port, unitId, this.device);
         this.api.setOnDataReceived(this.onDataReceived);
@@ -150,18 +149,12 @@ export class BaseDevice extends Device {
     async onInit() {
         await super.onInit();
 
-        const { deviceType, modelId } = this.getData();
+        const { modelId } = this.getData();
 
-        const brand = getBrand(deviceType);
-        if (!brand) {
-            this.error('Unknown device type', deviceType);
-            throw new Error('Unknown device type');
-        }
+        const result = DeviceRepository.getInstance().getDeviceById(modelId);
 
-        const result = DeviceRepository.getDeviceByBrandAndModel(brand, modelId);
-
-        if (!result || !result?.definition) {
-            this.error('Unknown device type', deviceType);
+        if (!result) {
+            this.error('Unknown device type', modelId);
             throw new Error('Unknown device type');
         }
 
@@ -172,7 +165,7 @@ export class BaseDevice extends Device {
         await addCapabilityIfNotExists(this, 'readable_boolean.device_status');
         await addCapabilityIfNotExists(this, 'date.record');
 
-        const deprecated = this.device.definition.deprecatedCapabilities;
+        const deprecated = this.device.deprecatedCapabilities;
         this.log('Deprecated capabilities', deprecated);
         if (deprecated) {
             for (const capability of deprecated) {
@@ -212,25 +205,6 @@ export class BaseDevice extends Device {
 
         this.readRegisterTimeout = await this.homey.setTimeout(this.readRegisters.bind(this), interval);
     };
-
-    /*    async writeRegisterByAddress(address: number, registerType: 'input' | 'holding', value: number) {
-        this.log('writeRegisterByAddress', address, registerType, value);
-        const registers = registerType === 'input' ? this.device.definition.inputRegisters : this.device.definition.holdingRegisters;
-        const register = registers.find((r) => r.address === address);
-
-        if (!register || register.accessMode === 'ReadOnly') {
-            this.error('Register not found or read only', address);
-            return;
-        }
-
-        if (!this.api) {
-            this.error('ModbusAPI is not initialized');
-            return;
-        }
-
-        await this.api.writeRegister(register, value);
-    }
-*/
 
     /**
      * onAdded is called when the user adds the device, called just after pairing.

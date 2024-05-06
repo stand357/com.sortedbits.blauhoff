@@ -11,7 +11,7 @@ import { ModbusAPI } from '../api/modbus/modbus-api';
 import { Solarman } from '../api/solarman/solarman';
 import { DeviceRepository } from '../repositories/device-repository/device-repository';
 import { getBrand, getDeviceModelName, iconForBrand } from '../repositories/device-repository/helpers/brand-name';
-import { DeviceModel } from '../repositories/device-repository/models/device-model';
+import { DeviceInformation } from '../repositories/device-repository/models/device-information';
 import { Brand } from '../repositories/device-repository/models/enum/brand';
 
 interface DeviceTypeFormData {
@@ -113,9 +113,9 @@ export class BaseDriver extends Homey.Driver {
 
             this.log('Set pairing device model', this.pairingDeviceModelId);
 
-            const device = DeviceRepository.getDeviceByBrandAndModel(this.pairingDeviceBrand, this.pairingDeviceModelId);
+            const device = DeviceRepository.getInstance().getDeviceById(this.pairingDeviceModelId);
 
-            if (!device?.definition) {
+            if (!device) {
                 return { success: false, message: 'Unknown device type' };
             }
 
@@ -126,7 +126,7 @@ export class BaseDriver extends Homey.Driver {
         session.setHandler('list_models', async (): Promise<DeviceModelDTO[]> => {
             this.log('Listing models for', this.pairingDeviceBrand);
 
-            const models = DeviceRepository.getDevicesByBrand(this.pairingDeviceBrand);
+            const models = DeviceRepository.getInstance().getDevicesByBrand(this.pairingDeviceBrand);
 
             return models.map((model) => {
                 return {
@@ -151,8 +151,8 @@ export class BaseDriver extends Homey.Driver {
             throw new Error('pairingDeviceModelId is not set');
         }
 
-        const device = DeviceRepository.getDeviceByBrandAndModel(this.pairingDeviceBrand, this.pairingDeviceModelId);
-        if (!device?.definition) {
+        const device = DeviceRepository.getInstance().getDeviceById(this.pairingDeviceModelId);
+        if (!device) {
             this.error('Unknown device type', this.pairingDeviceBrand, this.pairingDeviceModelId);
             throw new Error('Unknown device type');
         }
@@ -166,7 +166,14 @@ export class BaseDriver extends Homey.Driver {
         return { success: false, message: 'Failed to connect to the device' };
     };
 
-    verifyConnection = async (host: string, port: number, unitId: number, deviceModel: DeviceModel, solarman: boolean, serial: string): Promise<boolean> => {
+    verifyConnection = async (
+        host: string,
+        port: number,
+        unitId: number,
+        deviceModel: DeviceInformation,
+        solarman: boolean,
+        serial: string,
+    ): Promise<boolean> => {
         this.log('verifyConnection', host, port, unitId, deviceModel.id, solarman, serial);
 
         const api = solarman ? new Solarman(this, deviceModel, host, serial /*'3518024876'*/) : new ModbusAPI(this, host, port, unitId, deviceModel);

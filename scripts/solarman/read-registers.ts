@@ -30,7 +30,7 @@ const valueSolarmanResolved = async (value: any, buffer: Buffer, parseConfigurat
     log.log(parseConfiguration.capabilityId, ':', result);
 };
 
-const device = DeviceRepository.getDeviceById(deviceId);
+const device = DeviceRepository.getInstance().getDeviceById(deviceId);
 
 if (!device) {
     log.error('Device not found');

@@ -25,7 +25,7 @@ const port = process.env.PORT;
 const deviceId = process.env.DEVICE_ID;
 const unitId = process.env.UNIT_ID;
 
-const device = DeviceRepository.getDeviceById(deviceId);
+const device = DeviceRepository.getInstance().getDeviceById(deviceId);
 
 if (!device) {
     log.error('Device not found');
@@ -48,7 +48,7 @@ const perform = async (): Promise<void> => {
 
     await api.connect();
 
-    const address = device?.definition.holdingRegisters.find((r) => r.address === 142);
+    const address = device?.holdingRegisters.find((r) => r.address === 142);
 
     if (!address) {
         log.error('Address not found');

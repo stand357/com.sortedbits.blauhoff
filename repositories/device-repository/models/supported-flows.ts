@@ -1,14 +1,5 @@
-/*
- * Created on Wed Mar 20 2024
- * Copyright © 2024 Wim Haanstra
- *
- * Non-commercial use only
- */
-
 import { IAPI } from '../../../api/iapi';
 import { IBaseLogger } from '../../../helpers/log';
-import { Brand } from './enum/brand';
-import { ModbusDeviceDefinition } from './modbus-device-registers';
 
 export enum SupportedFlowTypes {
     set_max_solar_power = 'set_max_solar_power',
@@ -37,20 +28,8 @@ export const getSupportedFlowTypeKeys = (): SupportedFlowTypes[] => {
     return Object.keys(SupportedFlowTypes).map((key: string) => SupportedFlowTypes[key as keyof typeof SupportedFlowTypes]);
 };
 
-interface SupportedFlows {
+export interface SupportedFlows {
     actions?: {
         [id in SupportedFlowTypes]?: (origin: IBaseLogger, args: any, client: IAPI) => Promise<void>;
     };
-}
-
-export interface DeviceModel {
-    id: string;
-    brand: Brand;
-    name: string;
-    description: string;
-    debug: boolean;
-
-    definition: ModbusDeviceDefinition;
-
-    supportedFlows?: SupportedFlows;
 }

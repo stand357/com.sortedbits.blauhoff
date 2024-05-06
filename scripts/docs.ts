@@ -10,8 +10,8 @@ import path from 'path';
 import { unitForCapability } from '../helpers/units';
 import { DeviceRepository } from '../repositories/device-repository/device-repository';
 import { orderModbusRegisters } from '../repositories/device-repository/helpers/order-modbus-registers';
-import { getSupportedFlowTypeKeys } from '../repositories/device-repository/models/device-model';
 import { brands } from '../repositories/device-repository/models/enum/brand';
+import { getSupportedFlowTypeKeys } from '../repositories/device-repository/models/supported-flows';
 import { findFile } from './modbus/helpers/fs-helpers';
 
 const capabilitiesOptions: { [key: string]: any } = {};
@@ -90,23 +90,21 @@ capabilitiesOptions['meter_power'] = 'Energy';
 const allFlowTypes = getSupportedFlowTypeKeys();
 
 brands.forEach((brand) => {
-    const models = DeviceRepository.getDevicesByBrand(brand);
+    const models = DeviceRepository.getInstance().getDevicesByBrand(brand);
 
     models.forEach((model) => {
         let output = '';
 
-        const filename = `docs/${brand.toLocaleLowerCase()}/${model.id}.md`;
+        const filename = `repositories/device-repository/devices/${brand.toLocaleLowerCase()}/${model.id}/README.md`;
 
         output += `## ${model.name}\n`;
         output += `${model.description}\n\n`;
 
-        const registers = model.definition;
-
-        if (registers.inputRegisters.length > 0) {
+        if (model.inputRegisters.length > 0) {
             output += '### Input Registers\n';
             output += '| Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |\n';
             output += '| ------- | ------ | --------- | ---- | ----- | ------------- | ------------- | --------------- |\n';
-            orderModbusRegisters(registers.inputRegisters).forEach((register) => {
+            orderModbusRegisters(model.inputRegisters).forEach((register) => {
                 register.parseConfigurations.forEach((config) => {
                     const unit = unitForCapability(config.capabilityId);
                     output += `| ${register.address}`;
@@ -121,11 +119,11 @@ brands.forEach((brand) => {
             });
         }
 
-        if (registers.holdingRegisters.length > 0) {
+        if (model.holdingRegisters.length > 0) {
             output += '\n### Holding Registers\n';
             output += '| Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |\n';
             output += '| ------- | ------ | --------- | ---- |----- | -------------- | ------------- | --------------- |\n';
-            orderModbusRegisters(registers.holdingRegisters).forEach((register) => {
+            orderModbusRegisters(model.holdingRegisters).forEach((register) => {
                 register.parseConfigurations.forEach((config) => {
                     const unit = unitForCapability(config.capabilityId);
                     output += `| ${register.address}`;

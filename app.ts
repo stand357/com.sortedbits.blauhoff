@@ -11,8 +11,8 @@ import Homey from 'homey';
 import { ArgumentAutocompleteResults } from 'homey/lib/FlowCard';
 import { DeviceRepository } from './repositories/device-repository/device-repository';
 import { getBrand } from './repositories/device-repository/helpers/brand-name';
-import { getSupportedFlowTypes } from './repositories/device-repository/models/device-model';
 import { AccessMode } from './repositories/device-repository/models/enum/access-mode';
+import { getSupportedFlowTypes } from './repositories/device-repository/models/supported-flows';
 
 class BlauHoffApp extends Homey.App {
     /**
@@ -45,8 +45,8 @@ class BlauHoffApp extends Homey.App {
                 throw new Error('Unknown device type');
             }
 
-            const deviceModel = DeviceRepository.getDeviceByBrandAndModel(brand, modelId);
-            if (!deviceModel || !deviceModel?.definition) {
+            const deviceModel = DeviceRepository.getInstance().getDeviceById(modelId);
+            if (!deviceModel) {
                 this.error('Unknown device type', deviceType);
                 throw new Error('Unknown device type');
             }
@@ -55,7 +55,7 @@ class BlauHoffApp extends Homey.App {
                 this.error('No register type specified');
                 return [];
             } else {
-                const registers = args['registerType'] === 'holding' ? deviceModel.definition.holdingRegisters : deviceModel.definition.inputRegisters;
+                const registers = args['registerType'] === 'holding' ? deviceModel.holdingRegisters : deviceModel.inputRegisters;
                 const filtered = registers.filter((r) => r.accessMode !== AccessMode.ReadOnly).filter((r) => r.address.toString().includes(query));
 
                 return filtered.map((r) => {

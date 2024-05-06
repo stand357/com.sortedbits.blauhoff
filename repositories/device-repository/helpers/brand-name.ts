@@ -35,7 +35,7 @@ export const getBrand = (brandName: string): Brand | undefined => {
  * @returns The device model name or a string indicating an unknown device.
  */
 export const getDeviceModelName = (brandName: Brand, modelId: string): string => {
-    const model = DeviceRepository.getDeviceByBrandAndModel(brandName, modelId);
+    const model = DeviceRepository.getInstance().getDeviceById(modelId);
 
     if (model) {
         return model.name;

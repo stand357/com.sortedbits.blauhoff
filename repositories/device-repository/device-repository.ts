@@ -5,42 +5,46 @@
  * Non-commercial use only
  */
 
-import { aforeAFXKTH } from './devices/afore/af-xk-th-three-phase-hybrid';
-import { deyeSunXKSG01HP3 } from './devices/deye/sun-xk-sg01hp3-eu-am2';
-import { growattTL } from './devices/growatt/mod-XXXX-tl';
-import { growattTL3 } from './devices/growatt/mod-XXXX-tl3';
-import { DeviceModel } from './models/device-model';
+import { AforeAFXKTH } from './devices/afore/af-xk-th-three-phase-hybrid/af-xk-th-three-phase-hybrid';
+import { DeyeSunXKSG01HP3 } from './devices/deye/sun-xk-sg01hp3-eu-am2/sun-xk-sg01hp3-eu-am2';
+import { GrowattTLX } from './devices/growatt/growatt-tl/mic-XXXX-tl';
+import { GrowattTL3X } from './devices/growatt/growatt-tl3/mod-XXXX-tl3';
+import { DeviceInformation } from './models/device-information';
 import { Brand } from './models/enum/brand';
 import { RegisterType } from './models/enum/register-type';
 import { ModbusRegister } from './models/modbus-register';
 
 export class DeviceRepository {
-    private static devices: DeviceModel[] = [growattTL, growattTL3, deyeSunXKSG01HP3, aforeAFXKTH];
+    private static instance: DeviceRepository;
 
-    public static getDevices(): DeviceModel[] {
-        return this.devices;
+    public static getInstance(): DeviceRepository {
+        if (!this.instance) {
+            this.instance = new DeviceRepository();
+        }
+
+        return this.instance;
     }
 
-    public static getDeviceById(id: string): DeviceModel | undefined {
+    private devices: DeviceInformation[] = [];
+
+    constructor() {
+        this.devices.push(new AforeAFXKTH());
+        this.devices.push(new DeyeSunXKSG01HP3());
+        this.devices.push(new GrowattTLX());
+        this.devices.push(new GrowattTL3X());
+
+        /* When adding a new device, make sure to add it to the devices array */
+    }
+
+    public getDeviceById(id: string): DeviceInformation | undefined {
         return this.devices.find((device) => device.id === id);
     }
 
-    public static getDevicesByBrand(brand: Brand): DeviceModel[] {
+    public getDevicesByBrand(brand: Brand): DeviceInformation[] {
         return this.devices.filter((device) => device.brand === brand);
     }
 
-    public static getDeviceByBrandAndModel(brand: Brand, model: string): DeviceModel | undefined {
-        return this.devices.find((device) => device.brand === brand && device.id === model);
-    }
-
-    public static getRegisterByTypeAndAddress(device: DeviceModel, type: RegisterType, address: number): ModbusRegister | undefined {
-        switch (type) {
-            case RegisterType.Input:
-                return device.definition.inputRegisters.find((register) => register.address === address);
-            case RegisterType.Holding:
-                return device.definition.holdingRegisters.find((register) => register.address === address);
-            default:
-                return undefined;
-        }
+    public getRegisteryTypeAndAddress(device: DeviceInformation, type: RegisterType, address: number): ModbusRegister | undefined {
+        return device.getRegisterByTypeAndAddress(type, address);
     }
 }

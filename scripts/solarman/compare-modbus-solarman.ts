@@ -71,7 +71,7 @@ const valueModbusResolved = async (value: any, buffer: Buffer, parseConfiguratio
     }
 };
 
-const device = DeviceRepository.getDeviceById(deviceId);
+const device = DeviceRepository.getInstance().getDeviceById(deviceId);
 
 if (!device) {
     log.error('Device not found');

@@ -2,7 +2,7 @@ import * as net from 'net';
 import { writeBitsToBufferBE } from '../../helpers/bits';
 import { IBaseLogger } from '../../helpers/log';
 import { createRegisterBatches } from '../../repositories/device-repository/helpers/register-batches';
-import { DeviceModel } from '../../repositories/device-repository/models/device-model';
+import { DeviceInformation } from '../../repositories/device-repository/models/device-information';
 import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 import { IAPI } from '../iapi';
@@ -25,7 +25,7 @@ export class Solarman implements IAPI {
     private timeout: number;
     private log: IBaseLogger;
 
-    private deviceModel: DeviceModel;
+    private device: DeviceInformation;
     private frameDefinition: FrameDefinition;
     private onDataReceived?: (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => Promise<void>;
     onError?: (error: unknown, register: ModbusRegister) => Promise<void>;
@@ -59,7 +59,7 @@ export class Solarman implements IAPI {
      */
     constructor(
         log: IBaseLogger,
-        deviceModel: DeviceModel,
+        device: DeviceInformation,
         ipAddress: string,
         serialNumber: string,
         port: number = 8899,
@@ -72,15 +72,15 @@ export class Solarman implements IAPI {
         this.slaveId = slaveId;
         this.timeout = timeout;
         this.log = log;
-        this.deviceModel = deviceModel;
+        this.device = device;
 
         this.frameDefinition = new FrameDefinition(this.serialNumber);
     }
     writeValueToRegister(args: any): Promise<void> {
         throw new Error('Method not implemented.');
     }
-    getDeviceModel(): DeviceModel {
-        return this.deviceModel;
+    getDeviceModel(): DeviceInformation {
+        return this.device;
     }
     connect(): Promise<boolean> {
         this.log.log('Connecting');
@@ -174,12 +174,12 @@ export class Solarman implements IAPI {
         }
 
         // this.fakeBatches(this.deviceModel.definition.inputRegisters); //
-        const inputBatches = createRegisterBatches(this.log, this.deviceModel.definition.inputRegisters);
+        const inputBatches = createRegisterBatches(this.log, this.device.inputRegisters);
         for (const batch of inputBatches) {
             await this.readBatch(batch, RegisterType.Input);
         }
 
-        const holidingBatches = createRegisterBatches(this.log, this.deviceModel.definition.holdingRegisters);
+        const holidingBatches = createRegisterBatches(this.log, this.device.holdingRegisters);
         for (const batch of holidingBatches) {
             await this.readBatch(batch, RegisterType.Holding);
         }
@@ -227,7 +227,7 @@ export class Solarman implements IAPI {
                         const register = batch[i];
                         const value = data[i];
 
-                        const convertedValue = this.deviceModel.definition.inputRegisterResultConversion(this.log, value, register);
+                        const convertedValue = this.device.converter(this.log, value, register);
 
                         for (const configuration of register.parseConfigurations) {
                             await this.onDataReceived(convertedValue, value, configuration);
