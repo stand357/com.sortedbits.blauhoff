@@ -10,6 +10,7 @@ import { readBitBE } from '../../../../helpers/bits';
 import { IBaseLogger } from '../../../../helpers/log';
 import { DeviceRepository } from '../../device-repository';
 import { defaultValueConverter } from '../../helpers/default-value-converter';
+import { DeviceInformation } from '../../models/device-information';
 import { DeviceModel } from '../../models/device-model';
 import { AccessMode } from '../../models/enum/access-mode';
 import { Brand } from '../../models/enum/brand';
@@ -326,3 +327,13 @@ export const aforeAFXKTH: DeviceModel = {
         },
     },
 };
+
+export const AforeAFXKTH = new DeviceInformation(
+    'af-xk-th-three-phase-hybrid',
+    Brand.Afore,
+    'Afore AF XK-TH Three Phase Hybrid Inverter',
+    'Afore AF XK-TH Three Phase Hybrid Inverter Series with modbus interface',
+    {
+        supportsSolarman: true,
+    },
+);

@@ -1,0 +1,53 @@
+<script type="application/javascript">
+    function submitForm() {
+        var connection_type = document.querySelector('input[name="connection_type"]:checked').value;
+
+        if (connection_type === 'solarman') {
+            Homey.showView('solarman_information');
+        } else if (connection_type === 'modbus') {
+            Homey.showView('modbus_information');
+        }
+    }
+</script>
+
+<style>
+    .homey-form {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .intro {
+        color: rgb(147, 147, 154);
+    }
+</style>
+
+<form class="homey-form">
+    <div class="top-aligned">
+        <fieldset class="homey-form-fieldset">
+            <legend class="homey-form-legend" data-i18n="connection_type.title"></legend>
+        </fieldset>
+
+        <div class="modbus-device-types">
+            <div class="homey-form-group">
+                <label class="homey-form-radio">
+                    <input class="homey-form-radio-input" type="radio" name="connection_type" id="connection_type" value="solarman" selected="selected" />
+                    <span class="homey-form-radio-checkmark"></span>
+                    <span class="homey-form-radio-text">Solarman</span>
+                </label>
+                <div class="device-description" data-i18n="connection_type.solarman"></div>
+            </div>
+
+            <div class="homey-form-group">
+                <label class="homey-form-radio">
+                    <input class="homey-form-radio-input" type="radio" name="connection_type" id="connection_type" value="modbus" selected="selected" />
+                    <span class="homey-form-radio-checkmark"></span>
+                    <span class="homey-form-radio-text">Modbus</span>
+                </label>
+                <div class="device-description" data-i18n="connection_type.modbus"></div>
+            </div>
+        </div>
+    </div>
+    <button id="submit-button" type="button" onclick="submitForm()" class="homey-button-primary-full" data-i18n="connection_type.submit"></button>
+</form>

@@ -158,9 +158,9 @@ export class BaseDriver extends Homey.Driver {
         }
 
         const result = await this.verifyConnection(data.host, data.port, data.unitId, device, data.solarman, data.serial);
-
+        this.log('Pairing result', result);
         if (result) {
-            await session.nextView();
+            //            await session.nextView();
             return { success: true };
         }
         return { success: false, message: 'Failed to connect to the device' };

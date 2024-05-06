@@ -19,6 +19,12 @@
         "solarman": "Connect to Solarman dongle",
         "solarman_serial": "Serial number of your Solarman dongle"
     },
+    "connection_type": {
+        "title": "Select your connection type",
+        "solarman": "Select this when you are using the Solarman dongle to connect Homey to your device.",
+        "modbus": "Select this when you are using a Modbus to TCP adapter to connect Homey to your device",
+        "submit": "Next"
+    },
     "device_select": {
         "title": "Select your device type",
         "submit": "Next"
