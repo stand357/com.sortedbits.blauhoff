@@ -7,13 +7,13 @@
 
 import { IAPI } from '../../../../../api/iapi';
 import { IBaseLogger } from '../../../../../helpers/log';
-import { DeviceInformation } from '../../../models/device-information';
+import { Device } from '../../../models/device';
 import { Brand } from '../../../models/enum/brand';
 import { RegisterType } from '../../../models/enum/register-type';
 import { holdingRegisters } from './holding-registers';
 import { inputRegisters } from './input-registers';
 
-export class AforeAFXKTH extends DeviceInformation {
+export class AforeAFXKTH extends Device {
     constructor() {
         super(
             'af-xk-th-three-phase-hybrid',
@@ -45,14 +45,9 @@ export class AforeAFXKTH extends DeviceInformation {
     };
 
     setChargeCommand = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-        const emsAddress = 2500;
-        const commandAddress = 2501;
-        const powerAddress = 2502;
-        const registerType = RegisterType.Holding;
-
-        const emsRegister = this.getRegisterByTypeAndAddress(registerType, emsAddress);
-        const commandRegister = this.getRegisterByTypeAndAddress(registerType, commandAddress);
-        const powerRegister = this.getRegisterByTypeAndAddress(registerType, powerAddress);
+        const emsRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, 2500);
+        const commandRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, 2501);
+        const powerRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, 2502);
 
         if (commandRegister === undefined || powerRegister === undefined || emsRegister === undefined) {
             origin.error('Register not found');
@@ -86,10 +81,7 @@ export class AforeAFXKTH extends DeviceInformation {
     };
 
     setEmsMode = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-        const emsAddress = 2500;
-        const registerType = RegisterType.Holding;
-
-        const emsRegister = this.getRegisterByTypeAndAddress(registerType, emsAddress);
+        const emsRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, 2500);
 
         if (emsRegister === undefined) {
             origin.error('Register not found');
@@ -113,10 +105,6 @@ export class AforeAFXKTH extends DeviceInformation {
     };
 
     setAcChargingTimeslot = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-        const timeslotStartAddress = 2509;
-        const timeSlotEndAddress = 2510;
-        const registerType = RegisterType.Holding;
-
         const { timeslot, starttime, endtime } = args;
         if (timeslot < 1 || timeslot > 4) {
             origin.error('Value out of range');
@@ -134,14 +122,14 @@ export class AforeAFXKTH extends DeviceInformation {
             return buffer;
         };
 
-        const startAddress = timeslotStartAddress + (timeslot - 1) * 2;
-        const endAddress = timeSlotEndAddress + (timeslot - 1) * 2;
+        const startAddress = 2509 + (timeslot - 1) * 2;
+        const endAddress = 2510 + (timeslot - 1) * 2;
 
         const startBuffer = timeToBuffer(starttime);
         const endBuffer = timeToBuffer(endtime);
 
-        const startRegister = this.getRegisterByTypeAndAddress(registerType, startAddress);
-        const endRegister = this.getRegisterByTypeAndAddress(registerType, endAddress);
+        const startRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, startAddress);
+        const endRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, endAddress);
 
         if (startRegister === undefined || endRegister === undefined) {
             origin.error('Register not found');
@@ -159,10 +147,7 @@ export class AforeAFXKTH extends DeviceInformation {
     };
 
     setTimingAcChargeOff = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-        const address = 206;
-        const registerType = RegisterType.Holding;
-
-        const register = this.getRegisterByTypeAndAddress(registerType, address);
+        const register = this.getRegisterByTypeAndAddress(RegisterType.Holding, 206);
 
         if (register === undefined) {
             origin.error('Register not found');
@@ -170,7 +155,7 @@ export class AforeAFXKTH extends DeviceInformation {
         }
 
         try {
-            const output = await client.writeBitsToRegister(register, registerType, [0], 4);
+            const output = await client.writeBitsToRegister(register, [0], 4);
             origin.log('Output', output);
         } catch (error) {
             origin.error('Error writing to register', error);
@@ -195,7 +180,7 @@ export class AforeAFXKTH extends DeviceInformation {
         }
 
         try {
-            const output = await client.writeBitsToRegister(enabledRegister, RegisterType.Holding, [1], 4);
+            const output = await client.writeBitsToRegister(enabledRegister, [1], 4);
 
             const acpchgmaxOutput = await client.writeRegister(acpchgmaxRegister, acpchgmaxRegister.calculatePayload(acpchgmax, origin));
             const acsocmaxchgOutput = await client.writeRegister(acsocmaxchgRegister, acsocmaxchgRegister.calculatePayload(acsocmaxchg, origin));

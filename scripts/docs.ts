@@ -10,7 +10,6 @@ import path from 'path';
 import { unitForCapability } from '../helpers/units';
 import { DeviceRepository } from '../repositories/device-repository/device-repository';
 import { orderModbusRegisters } from '../repositories/device-repository/helpers/order-modbus-registers';
-import { brands } from '../repositories/device-repository/models/enum/brand';
 import { getSupportedFlowTypeKeys } from '../repositories/device-repository/models/supported-flows';
 import { findFile } from './modbus/helpers/fs-helpers';
 
@@ -88,6 +87,8 @@ capabilitiesOptions['measure_power'] = 'Power';
 capabilitiesOptions['meter_power'] = 'Energy';
 
 const allFlowTypes = getSupportedFlowTypeKeys();
+
+const brands = DeviceRepository.getInstance().getBrands();
 
 brands.forEach((brand) => {
     const models = DeviceRepository.getInstance().getDevicesByBrand(brand);

@@ -13,5 +13,3 @@ export enum Brand {
     Deye = 'deye',
     Afore = 'afore',
 }
-
-export const brands = [Brand.Growatt, Brand.Deye, Brand.Afore];

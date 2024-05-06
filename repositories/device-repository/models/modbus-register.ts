@@ -9,6 +9,7 @@ import { randomUUID } from 'crypto';
 import { IBaseLogger } from '../../../helpers/log';
 import { AccessMode } from './enum/access-mode';
 import { RegisterDataType } from './enum/register-datatype';
+import { RegisterType } from './enum/register-type';
 
 export type Transformation = (value: any, buffer: Buffer, log: IBaseLogger) => any;
 
@@ -47,6 +48,8 @@ export class ModbusRegister {
     length: number;
     dataType: RegisterDataType;
     accessMode: AccessMode;
+
+    registerType: RegisterType = RegisterType.Input;
 
     parseConfigurations: ModbusRegisterParseConfiguration[] = [];
 

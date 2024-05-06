@@ -11,7 +11,7 @@ import { logBits, writeBitsToBuffer } from '../../helpers/bits';
 import { IBaseLogger } from '../../helpers/log';
 import { validateValue } from '../../helpers/validate-value';
 import { createRegisterBatches } from '../../repositories/device-repository/helpers/register-batches';
-import { DeviceInformation } from '../../repositories/device-repository/models/device-information';
+import { Device } from '../../repositories/device-repository/models/device';
 import { AccessMode } from '../../repositories/device-repository/models/enum/access-mode';
 import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
@@ -27,14 +27,14 @@ export class ModbusAPI implements IAPI {
     private port: number;
     private unitId: number;
     private log: IBaseLogger;
-    private device: DeviceInformation;
+    private device: Device;
     private disconnecting: boolean = false;
 
     isConnected(): boolean {
         return this.client.isOpen;
     }
 
-    getDeviceModel(): DeviceInformation {
+    getDeviceModel(): Device {
         return this.device;
     }
 
@@ -75,7 +75,7 @@ export class ModbusAPI implements IAPI {
      * @param unitId - The unit ID.
      * @param deviceModel - The Modbus device information.
      */
-    constructor(log: IBaseLogger, host: string, port: number, unitId: number, device: DeviceInformation) {
+    constructor(log: IBaseLogger, host: string, port: number, unitId: number, device: Device) {
         this.host = host;
         this.port = port;
         this.unitId = unitId;
@@ -151,9 +151,9 @@ export class ModbusAPI implements IAPI {
      * @param registerType - The type of the register.
      * @returns A promise that resolves to the read data or undefined if the read operation failed.
      */
-    readAddressWithoutConversion = async (register: ModbusRegister, registerType: RegisterType): Promise<Buffer | undefined> => {
+    readAddressWithoutConversion = async (register: ModbusRegister): Promise<Buffer | undefined> => {
         const data =
-            registerType === RegisterType.Input
+            register.registerType === RegisterType.Input
                 ? await this.client.readInputRegisters(register.address, register.length)
                 : await this.client.readHoldingRegisters(register.address, register.length);
 
@@ -172,8 +172,8 @@ export class ModbusAPI implements IAPI {
      * @param registerType - The type of the register.
      * @returns A promise that resolves to the converted data or undefined if the read operation failed.
      */
-    readAddress = async (register: ModbusRegister, registerType: RegisterType): Promise<any> => {
-        const buffer = await this.readAddressWithoutConversion(register, registerType);
+    readAddress = async (register: ModbusRegister): Promise<any> => {
+        const buffer = await this.readAddressWithoutConversion(register);
 
         if (buffer) {
             const result = this.device.converter(this.log, buffer, register);
@@ -417,8 +417,8 @@ export class ModbusAPI implements IAPI {
      * @param bitIndex - The index at which to start writing the bits.
      * @returns A promise that resolves to a boolean indicating whether the write operation was successful.
      */
-    writeBitsToRegister = async (register: ModbusRegister, registerType: RegisterType, bits: number[], bitIndex: number): Promise<boolean> => {
-        const readBuffer = await this.readAddressWithoutConversion(register, registerType);
+    writeBitsToRegister = async (register: ModbusRegister, bits: number[], bitIndex: number): Promise<boolean> => {
+        const readBuffer = await this.readAddressWithoutConversion(register);
 
         if (readBuffer === undefined) {
             this.log.error('Failed to read current value');
@@ -435,7 +435,7 @@ export class ModbusAPI implements IAPI {
         const byteIndex = readBuffer.length - 1 - Math.floor(bitIndex / 8);
         const startBitIndex = bitIndex % 8;
 
-        this.log.log('writeBitsToRegister', registerType, bits, startBitIndex, byteIndex);
+        this.log.log('writeBitsToRegister', register.registerType, bits, startBitIndex, byteIndex);
 
         const result = writeBitsToBuffer(readBuffer, byteIndex, bits, startBitIndex);
         logBits(this.log, result);

@@ -2,7 +2,7 @@ import * as net from 'net';
 import { writeBitsToBufferBE } from '../../helpers/bits';
 import { IBaseLogger } from '../../helpers/log';
 import { createRegisterBatches } from '../../repositories/device-repository/helpers/register-batches';
-import { DeviceInformation } from '../../repositories/device-repository/models/device-information';
+import { Device } from '../../repositories/device-repository/models/device';
 import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 import { IAPI } from '../iapi';
@@ -25,7 +25,7 @@ export class Solarman implements IAPI {
     private timeout: number;
     private log: IBaseLogger;
 
-    private device: DeviceInformation;
+    private device: Device;
     private frameDefinition: FrameDefinition;
     private onDataReceived?: (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => Promise<void>;
     onError?: (error: unknown, register: ModbusRegister) => Promise<void>;
@@ -57,15 +57,7 @@ export class Solarman implements IAPI {
      * @param {number} timeout Socket timeout in seconds (default: 60)
      * @memberof Solarman
      */
-    constructor(
-        log: IBaseLogger,
-        device: DeviceInformation,
-        ipAddress: string,
-        serialNumber: string,
-        port: number = 8899,
-        slaveId: number = 1,
-        timeout: number = 5,
-    ) {
+    constructor(log: IBaseLogger, device: Device, ipAddress: string, serialNumber: string, port: number = 8899, slaveId: number = 1, timeout: number = 5) {
         this.ipAddress = ipAddress;
         this.port = port;
         this.serialNumber = serialNumber;
@@ -79,7 +71,7 @@ export class Solarman implements IAPI {
     writeValueToRegister(args: any): Promise<void> {
         throw new Error('Method not implemented.');
     }
-    getDeviceModel(): DeviceInformation {
+    getDeviceModel(): Device {
         return this.device;
     }
     connect(): Promise<boolean> {
@@ -116,8 +108,8 @@ export class Solarman implements IAPI {
         }
     };
 
-    writeBitsToRegister = async (register: ModbusRegister, registerType: RegisterType, bits: number[], bitIndex: number): Promise<boolean> => {
-        const readBuffer = await this.readAddressWithoutConversion(register, registerType);
+    writeBitsToRegister = async (register: ModbusRegister, bits: number[], bitIndex: number): Promise<boolean> => {
+        const readBuffer = await this.readAddressWithoutConversion(register);
 
         if (readBuffer === undefined) {
             this.log.error('Failed to read current value');
@@ -146,8 +138,8 @@ export class Solarman implements IAPI {
      * @param registerType - The type of the register.
      * @returns A promise that resolves to the read data or undefined if the read operation failed.
      */
-    readAddressWithoutConversion = async (register: ModbusRegister, registerType: RegisterType): Promise<Buffer | undefined> => {
-        const request = this.createModbusReadRequest(register, register.length, registerType);
+    readAddressWithoutConversion = async (register: ModbusRegister): Promise<Buffer | undefined> => {
+        const request = this.createModbusReadRequest(register, register.length);
         const buffer = await this.performRequest(request);
 
         if (buffer) {
@@ -176,12 +168,12 @@ export class Solarman implements IAPI {
         // this.fakeBatches(this.deviceModel.definition.inputRegisters); //
         const inputBatches = createRegisterBatches(this.log, this.device.inputRegisters);
         for (const batch of inputBatches) {
-            await this.readBatch(batch, RegisterType.Input);
+            await this.readBatch(batch);
         }
 
         const holidingBatches = createRegisterBatches(this.log, this.device.holdingRegisters);
         for (const batch of holidingBatches) {
-            await this.readBatch(batch, RegisterType.Holding);
+            await this.readBatch(batch);
         }
     };
 
@@ -200,7 +192,7 @@ export class Solarman implements IAPI {
      * @param batch - The batch of Modbus registers to read.
      * @param registerType - The type of the registers.
      */
-    readBatch = async (batch: ModbusRegister[], registerType: RegisterType): Promise<void> => {
+    readBatch = async (batch: ModbusRegister[]): Promise<void> => {
         if (batch.length === 0) {
             return;
         }
@@ -216,7 +208,7 @@ export class Solarman implements IAPI {
         const length = lastRegister.address + lastRegister.length - firstRegister.address + 1;
 
         try {
-            const request = this.createModbusReadRequest(firstRegister, length, registerType);
+            const request = this.createModbusReadRequest(firstRegister, length);
             const response = await this.performRequest(request);
 
             if (response) {
@@ -310,8 +302,8 @@ export class Solarman implements IAPI {
         return request;
     }
 
-    createModbusReadRequest(startRegister: ModbusRegister, length: number, registerType: RegisterType): Buffer {
-        const command = registerType === RegisterType.Input ? 0x04 : 0x03;
+    createModbusReadRequest(startRegister: ModbusRegister, length: number): Buffer {
+        const command = startRegister.registerType === RegisterType.Input ? 0x04 : 0x03;
         const modbusFrame = this.createModbusFrame(startRegister, length, command);
         const request = this.frameDefinition.wrapModbusFrame(modbusFrame);
         return request;

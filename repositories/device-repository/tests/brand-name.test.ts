@@ -1,5 +1,5 @@
-import { getBrand, getDeviceModelName, iconForBrand } from '../../../repositories/device-repository/helpers/brand-name';
-import { Brand } from '../../../repositories/device-repository/models/enum/brand';
+import { getBrand, getDeviceModelName } from '../helpers/brand-name';
+import { Brand } from '../models/enum/brand';
 
 describe('brand-name', () => {
     test('get-brand with existing name', async () => {
@@ -13,7 +13,7 @@ describe('brand-name', () => {
     });
 
     test('get-device-model-name with existing model', async () => {
-        const model = getDeviceModelName(Brand.Deye, 'deye-sun-xk-sg01hp3-eu-am2');
+        const model = getDeviceModelName(Brand.Deye, 'sun-xk-sg01hp3-eu-am2');
         expect(model).toBe('Deye Sun *K SG01HP3 EU AM2 Series');
     });
 
@@ -23,13 +23,5 @@ describe('brand-name', () => {
 
         const kstar = getDeviceModelName(Brand.Afore, 'non existing model');
         expect(kstar).toBe('Unknown Afore device');
-    });
-
-    test('icon-for-brand', async () => {
-        const afore = iconForBrand(Brand.Afore);
-        expect(afore).toBe('afore-device.svg');
-
-        const deye = iconForBrand(Brand.Deye);
-        expect(deye).toBe('deye-device.svg');
     });
 });

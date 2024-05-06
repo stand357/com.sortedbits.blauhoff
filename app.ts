@@ -10,7 +10,6 @@
 import Homey from 'homey';
 import { ArgumentAutocompleteResults } from 'homey/lib/FlowCard';
 import { DeviceRepository } from './repositories/device-repository/device-repository';
-import { getBrand } from './repositories/device-repository/helpers/brand-name';
 import { AccessMode } from './repositories/device-repository/models/enum/access-mode';
 import { getSupportedFlowTypes } from './repositories/device-repository/models/supported-flows';
 
@@ -38,12 +37,6 @@ class BlauHoffApp extends Homey.App {
         card.registerArgumentAutocompleteListener('register', async (query, args): Promise<ArgumentAutocompleteResults> => {
             const device = args.device as Homey.Device;
             const { deviceType, modelId } = device.getData();
-
-            const brand = getBrand(deviceType);
-            if (!brand) {
-                this.error('Unknown device type', deviceType);
-                throw new Error('Unknown device type');
-            }
 
             const deviceModel = DeviceRepository.getInstance().getDeviceById(modelId);
             if (!deviceModel) {

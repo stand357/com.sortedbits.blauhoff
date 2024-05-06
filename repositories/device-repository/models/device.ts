@@ -7,35 +7,13 @@ import { SupportedFlows } from './supported-flows';
 
 export type DataConverter = (log: IBaseLogger, buffer: Buffer, register: ModbusRegister) => any;
 
-export interface DeviceOptions {
+export class Device {
     /**
      * The converter to use to convert the data read from the device
      *
      * @type {DataConverter}
      * @memberof DeviceInformation
      */
-    converter?: DataConverter;
-
-    /**
-     * Does the device support the Solarman protocol
-     *
-     * @type {boolean}
-     * @memberof DeviceInformation
-     */
-    supportsSolarman?: boolean;
-
-    /**
-     * Which capabilities are removed and should be removed from Homey.
-     *
-     * @type {string[]}
-     * @memberof DeviceInformation
-     */
-    deprecatedCapabilities?: string[];
-
-    supportedFlows?: SupportedFlows;
-}
-
-export class DeviceInformation {
     public readonly converter: DataConverter = defaultValueConverter;
 
     /**
@@ -70,10 +48,44 @@ export class DeviceInformation {
      */
     description: string;
 
+    /**
+     * Does the device support the Solarman protocol
+     *
+     * @type {boolean}
+     * @memberof DeviceInformation
+     */
     public supportsSolarman: boolean = true;
+
+    /**
+     * Which capabilities are removed and should be removed from Homey.
+     *
+     * @type {string[]}
+     * @memberof DeviceInformation
+     */
     public deprecatedCapabilities: string[] = [];
+
+    /**
+     * The input registers of the device
+     *
+     * @type {ModbusRegister[]}
+     * @memberof Device
+     */
     public inputRegisters: ModbusRegister[] = [];
+
+    /**
+     * The holding registers of the device
+     *
+     * @type {ModbusRegister[]}
+     * @memberof Device
+     */
     public holdingRegisters: ModbusRegister[] = [];
+
+    /**
+     * The supported flows of the device
+     *
+     * @type {SupportedFlows}
+     * @memberof Device
+     */
     public supportedFlows: SupportedFlows = {};
 
     constructor(id: string, brand: Brand, name: string, description: string) {
@@ -83,12 +95,16 @@ export class DeviceInformation {
         this.description = description;
     }
 
-    addInputRegisters(registers: ModbusRegister[]): DeviceInformation {
+    addInputRegisters(registers: ModbusRegister[]): Device {
+        registers.forEach((register) => (register.registerType = RegisterType.Input));
+
         this.inputRegisters.push(...registers);
         return this;
     }
 
-    addHoldingRegisters(registers: ModbusRegister[]): DeviceInformation {
+    addHoldingRegisters(registers: ModbusRegister[]): Device {
+        registers.forEach((register) => (register.registerType = RegisterType.Holding));
+
         this.holdingRegisters.push(...registers);
         return this;
     }

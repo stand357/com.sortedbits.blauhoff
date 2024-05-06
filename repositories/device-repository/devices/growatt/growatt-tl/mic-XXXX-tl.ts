@@ -5,12 +5,12 @@
  * Non-commercial use only
  */
 
-import { DeviceInformation } from '../../../models/device-information';
+import { Device } from '../../../models/device';
 import { Brand } from '../../../models/enum/brand';
 import { holdingRegisters } from './holding-registers';
 import { inputRegisters } from './input-registers';
 
-export class GrowattTLX extends DeviceInformation {
+export class GrowattTLX extends Device {
     constructor() {
         super('growatt-tl', Brand.Growatt, 'Growatt 1PH MIC TL-X series', 'Single phase Growatt string inverters with MODBUS interface.');
 

@@ -14,16 +14,7 @@ import { Brand } from '../models/enum/brand';
  * @returns The corresponding Brand enum value, or undefined if no match is found.
  */
 export const getBrand = (brandName: string): Brand | undefined => {
-    switch (brandName.toLocaleLowerCase()) {
-        case 'growatt':
-            return Brand.Growatt;
-        case 'afore':
-            return Brand.Afore;
-        case 'deye':
-            return Brand.Deye;
-        default:
-            return undefined;
-    }
+    return (Object.values(Brand) as unknown as string[]).includes(brandName) ? (brandName as unknown as Brand) : undefined;
 };
 
 /**
@@ -43,20 +34,4 @@ export const getDeviceModelName = (brandName: Brand, modelId: string): string =>
 
     const output = brandName.charAt(0).toUpperCase() + brandName.slice(1);
     return `Unknown ${output} device`;
-};
-
-/**
- * Returns the icon file name for a given brand.
- * @param brandName - The brand name.
- * @returns The icon file name.
- */
-export const iconForBrand = (brandName: Brand): string => {
-    switch (brandName) {
-        case Brand.Growatt:
-        case Brand.Afore:
-        case Brand.Deye:
-            return `${brandName}-device.svg`;
-        default:
-            return 'icon.svg';
-    }
 };

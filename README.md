@@ -65,3 +65,21 @@ During the development of the Modbus implementation, we used Growatt inverters t
 
 1. [Growatt 1PH MIC TL-X series](repositories/device-repository/devices/growatt/growatt-tl/README.md)
 2. [Growatt 3PH MOD TL3-X series](repositories/device-repository/devices/growatt/growatt-tl3/README.md)
+
+## Adding support for more devices
+
+Currently we only support limited devices, if you want to add support for more devices, there are a couple of things you need to do:
+
+#### Add the device brand
+
+If the device is of a new brand, which isn't included in the brands list yet, it should be added to the `Brand` enum. Update the [Brand.ts](https://github.com/sorted-bits/com.sortedbits.blauhoff/blob/91cc139cabd8e998db376726de3e3a4d58847611/repositories/device-repository/models/enum/brand.ts#L11) file.
+
+#### Create a `DeviceInformation` class
+
+In the folder `repositories/device-repository/devices/<brand>/<model>/` create a file called `<model>.ts`.
+
+For example in the case of the `Afore AF XK-TH Three Phase Hybrid Inverter`, the file [`af-xk-th-three-phase-hybrid.ts`](https://github.com/sorted-bits/com.sortedbits.blauhoff/blob/main/repositories/device-repository/devices/afore/af-xk-th-three-phase-hybrid/af-xk-th-three-phase-hybrid.ts) is placed in `repositories/device-repository/devices/afore/af-xk-th-three-phase-hybrid/`
+
+#### Input and Holding registers
+
+While defining the `Input` and `Holding` registers, it is really important that you make sure both the lengths and datatype for each register is correct. This information is used to fetch the correct amount of bytes and this could cause wrong data to show up.

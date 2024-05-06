@@ -7,12 +7,12 @@
 import { IAPI } from '../../../../../api/iapi';
 import { logBits, writeBitsToBuffer } from '../../../../../helpers/bits';
 import { IBaseLogger } from '../../../../../helpers/log';
-import { DeviceInformation } from '../../../models/device-information';
+import { Device } from '../../../models/device';
 import { Brand } from '../../../models/enum/brand';
 import { RegisterType } from '../../../models/enum/register-type';
 import { holdingRegisters } from './holding-registers';
 
-export class DeyeSunXKSG01HP3 extends DeviceInformation {
+export class DeyeSunXKSG01HP3 extends Device {
     constructor() {
         super('sun-xk-sg01hp3-eu-am2', Brand.Deye, 'Deye Sun *K SG01HP3 EU AM2 Series', 'Deye Sun *K SG01HP3 EU AM2 Series with modbus interface');
 
@@ -39,11 +39,7 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
     }
 
     setMaxSolarPower = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-        const address = 340;
-        const registerType = RegisterType.Holding;
-
-        const register = this.getRegisterByTypeAndAddress(registerType, address);
-        // const register = client.getAddressByType(registerType, address);
+        const register = this.getRegisterByTypeAndAddress(RegisterType.Holding, 340);
 
         if (register === undefined) {
             origin.error('Register not found');
@@ -69,10 +65,7 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
     };
 
     setMaxSellPower = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-        const address = 143;
-        const registerType = RegisterType.Holding;
-
-        const register = this.getRegisterByTypeAndAddress(registerType, address);
+        const register = this.getRegisterByTypeAndAddress(RegisterType.Holding, 143);
 
         if (register === undefined) {
             origin.error('Register not found');
@@ -98,10 +91,7 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
     };
 
     setSolarSell = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-        const address = 145;
-        const registerType = RegisterType.Holding;
-
-        const register = this.getRegisterByTypeAndAddress(registerType, address);
+        const register = this.getRegisterByTypeAndAddress(RegisterType.Holding, 145);
         if (register === undefined) {
             origin.error('Register not found');
             return;
@@ -124,10 +114,7 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
     };
 
     setEnergyPattern = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-        const address = 141;
-        const registerType = RegisterType.Holding;
-
-        const register = this.getRegisterByTypeAndAddress(registerType, address);
+        const register = this.getRegisterByTypeAndAddress(RegisterType.Holding, 141);
 
         if (register === undefined) {
             origin.error('Register not found');
@@ -146,7 +133,7 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
         const newBits = value === 'batt_first' ? [0] : [1];
 
         try {
-            const readBuffer = await client.readAddressWithoutConversion(register, RegisterType.Holding);
+            const readBuffer = await client.readAddressWithoutConversion(register);
 
             if (!readBuffer) {
                 throw new Error('Error reading current value');
@@ -167,9 +154,6 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
     };
 
     setWorkmodeAndZeroExportPower = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-        const modeAddress = 142;
-        const powerAddress = 104;
-        const registerType = RegisterType.Holding;
         const workmodes = [
             { id: 'selling_first', value: 0 },
             {
@@ -182,8 +166,8 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
             },
         ];
 
-        const modeRegister = this.getRegisterByTypeAndAddress(registerType, modeAddress);
-        const powerRegister = this.getRegisterByTypeAndAddress(registerType, powerAddress);
+        const modeRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, 142);
+        const powerRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, 104);
 
         if (!modeRegister || !powerRegister) {
             origin.error('Register not found');
@@ -221,12 +205,8 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
     };
 
     setGridPeakShavingOn = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-        const modeAddress = 178;
-        const powerAddress = 191;
-        const registerType = RegisterType.Holding;
-
-        const modeRegister = this.getRegisterByTypeAndAddress(registerType, modeAddress);
-        const powerRegister = this.getRegisterByTypeAndAddress(registerType, powerAddress);
+        const modeRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, 178);
+        const powerRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, 191);
 
         if (!modeRegister || !powerRegister) {
             origin.error('Register not found');
@@ -245,7 +225,7 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
         origin.log('Setting Grid Peak Shaving mode on with ', value, 'W');
 
         try {
-            const result = await client.writeBitsToRegister(modeRegister, registerType, bits, bitIndex);
+            const result = await client.writeBitsToRegister(modeRegister, bits, bitIndex);
             origin.log('Set `grid peak shaving on` result', result);
 
             if (result) {
@@ -259,10 +239,7 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
     };
 
     setGridPeakShavingOff = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-        const modeAddress = 178;
-        const registerType = RegisterType.Holding;
-
-        const modeRegister = this.getRegisterByTypeAndAddress(registerType, modeAddress);
+        const modeRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, 178);
 
         if (!modeRegister) {
             origin.error('Register not found');
@@ -275,7 +252,7 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
         const bitIndex = 4;
 
         try {
-            const result = await client.writeBitsToRegister(modeRegister, registerType, bits, bitIndex);
+            const result = await client.writeBitsToRegister(modeRegister, bits, bitIndex);
             origin.log('Set `grid peak shaving off` result', result);
         } catch (error) {
             origin.error('Error setting grid peak shaving mode', error);
@@ -283,10 +260,7 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
     };
 
     setTimeOfUseEnabled = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-        const address = 146;
-        const registerType = RegisterType.Holding;
-
-        const register = this.getRegisterByTypeAndAddress(registerType, address);
+        const register = this.getRegisterByTypeAndAddress(RegisterType.Holding, 146);
 
         if (register === undefined) {
             origin.error('Register not found');
@@ -298,7 +272,7 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
         const bits = enabled === 'true' ? [1] : [0];
 
         try {
-            const result = await client.writeBitsToRegister(register, registerType, bits, 0);
+            const result = await client.writeBitsToRegister(register, bits, 0);
             origin.log('Set time of use enabled result', result);
         } catch (error) {
             origin.error('Error setting workmode or power', error);
@@ -306,10 +280,7 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
     };
 
     setTimeOfUseDayEnabled = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
-        const address = 146;
-        const registerType = RegisterType.Holding;
-
-        const register = this.getRegisterByTypeAndAddress(registerType, address);
+        const register = this.getRegisterByTypeAndAddress(RegisterType.Holding, 146);
 
         if (register === undefined) {
             origin.error('Register not found');
@@ -326,7 +297,7 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
         const bits = enabled === 'true' ? [1] : [0];
 
         try {
-            const result = await client.writeBitsToRegister(register, registerType, bits, bitIndex);
+            const result = await client.writeBitsToRegister(register, bits, bitIndex);
             origin.log('Set time of use for day enabled result', result);
         } catch (error) {
             origin.error('Error setting workmode or power', error);
@@ -395,7 +366,7 @@ export class DeyeSunXKSG01HP3 extends DeviceInformation {
         });
 
         try {
-            const chargeResult = await client.writeBitsToRegister(chargeRegister, RegisterType.Holding, chargeBits, 0);
+            const chargeResult = await client.writeBitsToRegister(chargeRegister, chargeBits, 0);
             origin.log('Set timeslot charge result', chargeResult);
 
             const powerResult = await client.writeRegister(powerRegister, powerPayload);

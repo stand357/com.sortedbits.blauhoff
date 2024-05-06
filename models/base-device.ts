@@ -5,24 +5,26 @@
  * Non-commercial use only
  */
 
-import { addCapabilityIfNotExists, capabilityChange, deprecateCapability, Device } from 'homey-helpers';
+import Homey from 'homey';
+import { addCapabilityIfNotExists, capabilityChange, deprecateCapability } from 'homey-helpers';
+
 import { DateTime } from 'luxon';
 import { IAPI } from '../api/iapi';
 import { ModbusAPI } from '../api/modbus/modbus-api';
 import { Solarman } from '../api/solarman/solarman';
 import { DeviceRepository } from '../repositories/device-repository/device-repository';
 import { orderModbusRegisters } from '../repositories/device-repository/helpers/order-modbus-registers';
-import { DeviceInformation } from '../repositories/device-repository/models/device-information';
+import { Device } from '../repositories/device-repository/models/device';
 import { AccessMode } from '../repositories/device-repository/models/enum/access-mode';
 import { Brand } from '../repositories/device-repository/models/enum/brand';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../repositories/device-repository/models/modbus-register';
 import { SupportedFlowTypes } from '../repositories/device-repository/models/supported-flows';
 
-export class BaseDevice extends Device {
+export class BaseDevice extends Homey.Device {
     private api?: IAPI;
     private reachable: boolean = false;
     private readRegisterTimeout: NodeJS.Timeout | undefined;
-    private device!: DeviceInformation;
+    private device!: Device;
 
     public filteredLog(...args: any[]) {
         if (this.device.brand === Brand.Growatt) {
