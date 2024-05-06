@@ -176,7 +176,7 @@ export class BaseDriver extends Homey.Driver {
     ): Promise<boolean> => {
         this.log('verifyConnection', host, port, unitId, deviceModel.id, solarman, serial);
 
-        const api = solarman ? new Solarman(this, deviceModel, host, serial /*'3518024876'*/) : new ModbusAPI(this, host, port, unitId, deviceModel);
+        const api = solarman ? new Solarman(this, deviceModel, host, serial) : new ModbusAPI(this, host, port, unitId, deviceModel);
 
         this.log('Connecting...');
         const result = await api.connect();
