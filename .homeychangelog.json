@@ -70,5 +70,8 @@
   },
   "2.3.0": {
     "en": "Easy Solarman and Modbus pairing"
+  },
+  "2.4.0": {
+    "en": "Clean up and better performance."
   }
 }
