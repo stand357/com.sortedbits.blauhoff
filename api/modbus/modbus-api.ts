@@ -335,14 +335,16 @@ export class ModbusAPI implements IAPI {
                 const end = startOffset + register.length * 2;
                 const buffer = batch.length > 1 ? results.buffer.subarray(startOffset, end) : results.buffer;
 
-                const value =
-                    registerType === RegisterType.Input ? this.device.converter(this.log, buffer, register) : this.device.converter(this.log, buffer, register);
+                const value = this.device.converter(this.log, buffer, register);
 
-                if (this.onDataReceived) {
+                if (validateValue(value, register.dataType)) {
                     for (const parseConfiguration of register.parseConfigurations) {
-                        await this.onDataReceived(value, buffer, parseConfiguration);
+                        await this.onDataReceived!(value, buffer, parseConfiguration);
                     }
+                } else {
+                    this.log.error('Invalid value', value, 'for address', register.address, register.dataType);
                 }
+
                 startOffset = end;
             }
         } catch (error) {

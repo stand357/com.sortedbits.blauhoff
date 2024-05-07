@@ -1,8 +1,10 @@
 import * as net from 'net';
 import { writeBitsToBufferBE } from '../../helpers/bits';
 import { IBaseLogger } from '../../helpers/log';
+import { validateValue } from '../../helpers/validate-value';
 import { createRegisterBatches } from '../../repositories/device-repository/helpers/register-batches';
 import { Device } from '../../repositories/device-repository/models/device';
+import { AccessMode } from '../../repositories/device-repository/models/enum/access-mode';
 import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 import { IAPI } from '../iapi';
@@ -90,6 +92,15 @@ export class Solarman implements IAPI {
     }
 
     writeRegister = async (register: ModbusRegister, value: number): Promise<boolean> => {
+        if (register.accessMode === AccessMode.ReadOnly) {
+            return false;
+        }
+
+        if (!validateValue(value, register.dataType)) {
+            this.log.error('Unable to write register, invalid value', value, register.dataType);
+            return false;
+        }
+
         const request = this.createModbusWriteRequest(register, [value]);
 
         try {
@@ -229,11 +240,15 @@ export class Solarman implements IAPI {
                         try {
                             const convertedValue = this.device.converter(this.log, value, register);
 
-                            for (const configuration of register.parseConfigurations) {
-                                await this.onDataReceived(convertedValue, value, configuration);
+                            if (validateValue(convertedValue, register.dataType)) {
+                                for (const configuration of register.parseConfigurations) {
+                                    await this.onDataReceived(convertedValue, value, configuration);
+                                }
+                            } else {
+                                this.log.error('Invalid value', convertedValue, register.registerType);
                             }
                         } catch (error) {
-                            this.log.error('Error converting value', error, value, register);
+                            this.log.error('Invalid value', value, 'for address', register.address, register.dataType);
                         }
                     }
                 } else {

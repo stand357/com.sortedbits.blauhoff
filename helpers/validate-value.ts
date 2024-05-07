@@ -21,8 +21,8 @@ export const validateValue = (value: any, dataType: RegisterDataType): boolean =
         case RegisterDataType.FLOAT32:
             return typeof value === 'number';
         case RegisterDataType.STRING:
-            return false;
+            return true;
         default:
-            return false;
+            return true;
     }
 };

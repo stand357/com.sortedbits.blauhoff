@@ -14,6 +14,8 @@ export class FrameDefinition {
     readonly serialNumber: Buffer;
     private sequenceNumber = 1;
 
+    private ignoreProtocolErrors = false;
+
     constructor(serialNumber: string) {
         this.start = Buffer.from('A5', 'hex');
         this.controlCode = Buffer.from('1045', 'hex');
@@ -72,9 +74,9 @@ export class FrameDefinition {
         const headerLength = 13;
 
         if (frameLength !== headerLength + payloadLength) {
-            //            if (!this.ignoreProtocolErrors) {
-            //                throw new Error('Frame length does not match payload length.');
-            //            }
+            if (!this.ignoreProtocolErrors) {
+                throw new Error('Frame length does not match payload length.');
+            }
 
             frameLength = headerLength + payloadLength;
         }
@@ -88,9 +90,9 @@ export class FrameDefinition {
         }
 
         if (responseFrame[5] !== this.sequenceNumber) {
-            //            if (!this.ignoreProtocolErrors) {
-            //                throw new Error('Frame contains invalid sequence number.');
-            //            }
+            if (!this.ignoreProtocolErrors) {
+                throw new Error('Frame contains invalid sequence number.');
+            }
         }
 
         if (responseFrame.subarray(7, 11).toString() !== this.serialNumber.toString()) {
