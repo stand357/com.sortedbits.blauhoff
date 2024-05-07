@@ -17,6 +17,8 @@ import { FrameDefinition } from './models/frame-definition';
  * https://github.com/jmccrohan/pysolarmanv5
  *
  */
+const MAX_CURRENT_REQUESTS = 2;
+
 export class Solarman implements IAPI {
     private ipAddress: string;
     private port: number;
@@ -30,6 +32,8 @@ export class Solarman implements IAPI {
     private onDataReceived?: (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => Promise<void>;
     onError?: (error: unknown, register: ModbusRegister) => Promise<void>;
     onDisconnect?: () => Promise<void>;
+
+    runningRequests = 0;
 
     isConnected(): boolean {
         return true;
@@ -71,13 +75,16 @@ export class Solarman implements IAPI {
     writeValueToRegister(args: any): Promise<void> {
         throw new Error('Method not implemented.');
     }
+
     getDeviceModel(): Device {
         return this.device;
     }
+
     connect(): Promise<boolean> {
         this.log.log('Connecting');
         return Promise.resolve(true);
     }
+
     disconnect(): void {
         this.log.log('Disconnecting');
     }
@@ -219,10 +226,14 @@ export class Solarman implements IAPI {
                         const register = batch[i];
                         const value = data[i];
 
-                        const convertedValue = this.device.converter(this.log, value, register);
+                        try {
+                            const convertedValue = this.device.converter(this.log, value, register);
 
-                        for (const configuration of register.parseConfigurations) {
-                            await this.onDataReceived(convertedValue, value, configuration);
+                            for (const configuration of register.parseConfigurations) {
+                                await this.onDataReceived(convertedValue, value, configuration);
+                            }
+                        } catch (error) {
+                            this.log.error('Error converting value', error, value, register);
                         }
                     }
                 } else {
@@ -240,9 +251,10 @@ export class Solarman implements IAPI {
         const client = new net.Socket();
         client.setTimeout(this.timeout * 1000);
 
-        return new Promise<Buffer | undefined>((resolve, reject) => {
+        return new Promise<Buffer | undefined>(async (resolve, reject) => {
             client.on('data', (data) => {
                 client.end();
+
                 try {
                     const buffer = this.frameDefinition.unwrapResponseFrame(data);
                     resolve(buffer);
@@ -255,16 +267,28 @@ export class Solarman implements IAPI {
             client.on('timeout', () => {
                 this.log.error('Timeout');
                 client.end();
+
                 reject(undefined);
             });
 
             client.on('error', (error) => {
                 this.log.error('Error', error);
                 client.end();
+
                 resolve(undefined);
             });
 
+            client.on('close', () => {
+                this.runningRequests--;
+            });
+
+            while (this.runningRequests >= MAX_CURRENT_REQUESTS) {
+                await new Promise((resolve) => setTimeout(resolve, 150));
+            }
+
             client.connect(this.port, this.ipAddress, () => {
+                this.runningRequests++;
+
                 client.write(request);
             });
         });
