@@ -1,6 +1,7 @@
 import * as net from 'net';
 import { writeBitsToBufferBE } from '../../helpers/bits';
 import { IBaseLogger } from '../../helpers/log';
+import { Queue } from '../../helpers/queue';
 import { validateValue } from '../../helpers/validate-value';
 import { createRegisterBatches } from '../../repositories/device-repository/helpers/register-batches';
 import { Device } from '../../repositories/device-repository/models/device';
@@ -34,8 +35,6 @@ export class Solarman implements IAPI {
     private onDataReceived?: (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => Promise<void>;
     onError?: (error: unknown, register: ModbusRegister) => Promise<void>;
     onDisconnect?: () => Promise<void>;
-
-    runningRequests = 0;
 
     isConnected(): boolean {
         return true;
@@ -262,14 +261,20 @@ export class Solarman implements IAPI {
         }
     };
 
-    performRequest = async (request: Buffer) => {
+    performRequest = async (request: Buffer): Promise<Buffer | undefined> => {
+        return new Promise<Buffer | undefined>(async (resolve, reject) => {
+            Queue.enqueue(async () => {
+                this.performRequestQueued(request).then(resolve).catch(reject);
+            });
+        });
+    };
+
+    performRequestQueued = async (request: Buffer): Promise<Buffer | undefined> => {
         const client = new net.Socket();
         client.setTimeout(this.timeout * 1000);
 
         return new Promise<Buffer | undefined>(async (resolve, reject) => {
             client.on('data', (data) => {
-                client.end();
-
                 try {
                     const buffer = this.frameDefinition.unwrapResponseFrame(data);
                     resolve(buffer);
@@ -277,6 +282,7 @@ export class Solarman implements IAPI {
                     this.log.error('Error parsing response', error);
                     resolve(undefined);
                 }
+                client.end();
             });
 
             client.on('timeout', () => {
@@ -293,17 +299,9 @@ export class Solarman implements IAPI {
                 resolve(undefined);
             });
 
-            client.on('close', () => {
-                this.runningRequests--;
-            });
-
-            while (this.runningRequests >= MAX_CURRENT_REQUESTS) {
-                await new Promise((resolve) => setTimeout(resolve, 150));
-            }
+            client.on('close', () => {});
 
             client.connect(this.port, this.ipAddress, () => {
-                this.runningRequests++;
-
                 client.write(request);
             });
         });

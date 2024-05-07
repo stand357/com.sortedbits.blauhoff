@@ -14,7 +14,7 @@ export class FrameDefinition {
     readonly serialNumber: Buffer;
     private sequenceNumber = 1;
 
-    private ignoreProtocolErrors = false;
+    private ignoreProtocolErrors = true;
 
     constructor(serialNumber: string) {
         this.start = Buffer.from('A5', 'hex');
@@ -91,7 +91,7 @@ export class FrameDefinition {
 
         if (responseFrame[5] !== this.sequenceNumber) {
             if (!this.ignoreProtocolErrors) {
-                throw new Error('Frame contains invalid sequence number.');
+                throw new Error('Frame contains invalid sequence number. Got ' + responseFrame[5] + ', expected ' + this.sequenceNumber + '.');
             }
         }
 
