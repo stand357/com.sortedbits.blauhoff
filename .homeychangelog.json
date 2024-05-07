@@ -73,5 +73,8 @@
   },
   "2.4.0": {
     "en": "Clean up and better performance."
+  },
+  "2.4.1": {
+    "en": "Enable queing for Solarman requests"
   }
 }
