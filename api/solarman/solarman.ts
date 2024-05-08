@@ -1,6 +1,5 @@
 import { writeBitsToBufferBE } from '../../helpers/bits';
 import { IBaseLogger } from '../../helpers/log';
-import { Queue } from '../../helpers/queue';
 import { validateValue } from '../../helpers/validate-value';
 import { createRegisterBatches } from '../../repositories/device-repository/helpers/register-batches';
 import { Device } from '../../repositories/device-repository/models/device';
@@ -20,9 +19,9 @@ import { FrameDefinition } from './models/frame-definition';
  * https://github.com/jmccrohan/pysolarmanv5
  *
  */
-const MAX_CURRENT_REQUESTS = 2;
-
 export class Solarman implements IAPI {
+    private runningRequest = false;
+
     private ipAddress: string;
     private port: number;
     private serialNumber: string;
@@ -177,6 +176,19 @@ export class Solarman implements IAPI {
         return result;
     };
 
+    readAllAtOnce = async (): Promise<void> => {
+        // this.fakeBatches(this.deviceModel.definition.inputRegisters); //
+        const inputBatches = createRegisterBatches(this.log, this.device.inputRegisters);
+        for (const batch of inputBatches) {
+            this.readBatch(batch);
+        }
+
+        const holidingBatches = createRegisterBatches(this.log, this.device.holdingRegisters);
+        for (const batch of holidingBatches) {
+            this.readBatch(batch);
+        }
+    };
+
     readRegistersInBatch = async (): Promise<void> => {
         if (!this.onDataReceived) {
             this.log.error('No valueResolved function set');
@@ -262,11 +274,14 @@ export class Solarman implements IAPI {
     };
 
     performRequest = async (request: Buffer): Promise<Buffer | undefined> => {
-        return new Promise<Buffer | undefined>(async (resolve, reject) => {
-            Queue.enqueue(async () => {
-                this.performRequestQueued(request).then(resolve).catch(reject);
-            });
-        });
+        while (this.runningRequest) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+
+        this.runningRequest = true;
+        const result = await this.performRequestQueued(request);
+        this.runningRequest = false;
+        return result;
     };
 
     performRequestQueued = async (request: Buffer): Promise<Buffer | undefined> => {
@@ -274,12 +289,13 @@ export class Solarman implements IAPI {
         try {
             await socket.connect();
 
-            const data = await socket.write(request);
-            const buffer = this.frameDefinition.unwrapResponseFrame(data);
+            const wrapped = this.frameDefinition.wrapModbusFrame(request);
 
-            this.log.log('Response', buffer);
+            const data = await socket.write(wrapped.buffer);
 
-            return buffer;
+            const unwrapped = this.frameDefinition.unwrapResponseFrame(data);
+
+            return unwrapped.buffer;
         } catch (error) {
             this.log.error('Error performing request', error);
 
@@ -287,43 +303,6 @@ export class Solarman implements IAPI {
         } finally {
             socket.disconnect();
         }
-        /*
-        const client = new net.Socket();
-        client.setTimeout(this.timeout * 1000);
-
-        return new Promise<Buffer | undefined>(async (resolve, reject) => {
-            client.on('data', (data) => {
-                try {
-                    const buffer = this.frameDefinition.unwrapResponseFrame(data);
-                    resolve(buffer);
-                } catch (error) {
-                    this.log.error('Error parsing response', error);
-                    resolve(undefined);
-                }
-                client.end();
-            });
-
-            client.on('timeout', () => {
-                this.log.error('Timeout');
-                client.end();
-
-                reject(undefined);
-            });
-
-            client.on('error', (error) => {
-                this.log.error('Error', error);
-                client.end();
-
-                resolve(undefined);
-            });
-
-            client.on('close', () => {});
-
-            client.connect(this.port, this.ipAddress, () => {
-                client.write(request);
-            });
-        });
-        */
     };
 
     createModbusWriteRequest(register: ModbusRegister, value: Buffer | Array<number>): Buffer {
@@ -352,17 +331,14 @@ export class Solarman implements IAPI {
         }
 
         buffer.writeUInt16LE(calculateBufferCRC(buffer.subarray(0, -2)), codeLength);
-        this.log.log('Write request', buffer);
 
-        const request = this.frameDefinition.wrapModbusFrame(buffer);
-        return request;
+        return buffer;
     }
 
     createModbusReadRequest(startRegister: ModbusRegister, length: number): Buffer {
         const command = startRegister.registerType === RegisterType.Input ? 0x04 : 0x03;
         const modbusFrame = this.createModbusFrame(startRegister, length, command);
-        const request = this.frameDefinition.wrapModbusFrame(modbusFrame);
-        return request;
+        return modbusFrame;
     }
 
     //requestHoldingRegisters

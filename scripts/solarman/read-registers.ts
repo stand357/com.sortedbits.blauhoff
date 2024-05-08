@@ -42,7 +42,7 @@ solarmanApi.setOnDataReceived(valueSolarmanResolved);
 
 const perform = async (): Promise<void> => {
     await solarmanApi.connect();
-    await solarmanApi.readRegistersInBatch();
+    await solarmanApi.readAllAtOnce();
 };
 
 perform()

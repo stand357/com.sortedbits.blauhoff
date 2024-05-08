@@ -1,5 +1,10 @@
 import { calculateFrameChecksum } from '../helpers/frame-crc-calculator';
 
+interface WrappedResult {
+    buffer: Buffer;
+    sequenceNumber: number;
+}
+
 export class FrameDefinition {
     readonly start: Buffer;
     readonly controlCode: Buffer;
@@ -31,14 +36,16 @@ export class FrameDefinition {
         this.serialNumber.writeUInt32LE(Number(serialNumber), 0);
     }
 
-    wrapModbusFrame(modbusFrame: Buffer): Buffer {
+    wrapModbusFrame(modbusFrame: Buffer): WrappedResult {
         this.sequenceNumber += 1;
         if (this.sequenceNumber > 255) {
             this.sequenceNumber = 1;
         }
 
+        const sequenceNr = this.sequenceNumber;
+
         const sequence = Buffer.alloc(2);
-        sequence.writeUInt16LE(this.sequenceNumber, 0);
+        sequence.writeUInt16LE(sequenceNr, 0);
 
         const length = Buffer.alloc(2);
         length.writeUInt16LE(modbusFrame.length + 15, 0);
@@ -64,14 +71,19 @@ export class FrameDefinition {
 
         frame[frame.length - 2] = calculateFrameChecksum(frame);
 
-        return frame;
+        return {
+            buffer: frame,
+            sequenceNumber: sequenceNr,
+        };
     }
 
-    unwrapResponseFrame(responseFrame: Buffer): Buffer {
+    unwrapResponseFrame(responseFrame: Buffer): WrappedResult {
         let frameLength = responseFrame.length;
         const payloadLength = responseFrame.readUInt16LE(1);
 
         const headerLength = 13;
+
+        let sequenceNr = responseFrame[5];
 
         if (frameLength !== headerLength + payloadLength) {
             if (!this.ignoreProtocolErrors) {
@@ -113,6 +125,9 @@ export class FrameDefinition {
             throw new Error('Frame does not contain a valid Modbus RTU frame.');
         }
 
-        return modbusFrame;
+        return {
+            buffer: modbusFrame,
+            sequenceNumber: sequenceNr,
+        };
     }
 }
