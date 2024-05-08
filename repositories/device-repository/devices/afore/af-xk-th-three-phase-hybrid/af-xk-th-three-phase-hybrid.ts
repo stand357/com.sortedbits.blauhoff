@@ -80,7 +80,7 @@ export class AforeAFXKTH extends Device {
         }
     };
 
-    setEmsMode = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
+    setEmsMode = async (origin: IBaseLogger, args: { mode: number }, client: IAPI): Promise<void> => {
         const emsRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, 2500);
 
         if (emsRegister === undefined) {
@@ -98,7 +98,7 @@ export class AforeAFXKTH extends Device {
         try {
             const emsModeOutput = await client.writeRegister(emsRegister, mode);
 
-            origin.log('Command and power output', emsModeOutput);
+            origin.log('setEmsModeOutput', emsModeOutput);
         } catch (error) {
             origin.error('Error writing to register', error);
         }
