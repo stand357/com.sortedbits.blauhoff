@@ -88,5 +88,8 @@
   },
   "2.4.5": {
     "en": "Better Solarman queueing :) "
+  },
+  "2.4.6": {
+    "en": "Fix for requests being done out of order"
   }
 }
