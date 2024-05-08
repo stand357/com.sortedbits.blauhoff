@@ -43,7 +43,7 @@ solarmanApi.setOnDataReceived(valueSolarmanResolved);
 
 const perform = async (): Promise<void> => {
     await solarmanApi.connect();
-    await solarmanApi.readRegistersInBatch();
+    //    await solarmanApi.readRegistersInBatch();
 
     /* SELF USE */
     await device.setEmsMode(log, { mode: 0 }, solarmanApi);

@@ -1,4 +1,3 @@
-import * as net from 'net';
 import { writeBitsToBufferBE } from '../../helpers/bits';
 import { IBaseLogger } from '../../helpers/log';
 import { Queue } from '../../helpers/queue';
@@ -8,6 +7,7 @@ import { Device } from '../../repositories/device-repository/models/device';
 import { AccessMode } from '../../repositories/device-repository/models/enum/access-mode';
 import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
+import { AsyncSocket } from '../async-socket/async-socket';
 import { IAPI } from '../iapi';
 import { calculateBufferCRC } from './helpers/buffer-crc-calculator';
 import { parseResponse } from './helpers/response-parser';
@@ -270,6 +270,24 @@ export class Solarman implements IAPI {
     };
 
     performRequestQueued = async (request: Buffer): Promise<Buffer | undefined> => {
+        const socket = new AsyncSocket(this.port, this.ipAddress);
+        try {
+            await socket.connect();
+
+            const data = await socket.write(request);
+            const buffer = this.frameDefinition.unwrapResponseFrame(data);
+
+            this.log.log('Response', buffer);
+
+            return buffer;
+        } catch (error) {
+            this.log.error('Error performing request', error);
+
+            return undefined;
+        } finally {
+            socket.disconnect();
+        }
+        /*
         const client = new net.Socket();
         client.setTimeout(this.timeout * 1000);
 
@@ -305,6 +323,7 @@ export class Solarman implements IAPI {
                 client.write(request);
             });
         });
+        */
     };
 
     createModbusWriteRequest(register: ModbusRegister, value: Buffer | Array<number>): Buffer {
