@@ -82,5 +82,8 @@
   },
   "2.4.3": {
     "en": "Keep requests in the right order"
+  },
+  "2.4.4": {
+    "en": "Add more properties for the Afore inverter"
   }
 }
