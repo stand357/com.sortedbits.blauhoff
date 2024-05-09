@@ -97,5 +97,8 @@
   },
   "2.4.8": {
     "en": "Catch disconnect errors"
+  },
+  "2.4.9": {
+    "en": "Connection details changed"
   }
 }
