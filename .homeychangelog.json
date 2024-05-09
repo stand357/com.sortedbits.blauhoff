@@ -91,5 +91,8 @@
   },
   "2.4.6": {
     "en": "Fix for requests being done out of order"
+  },
+  "2.4.7": {
+    "en": "Handle disconnects gracefully"
   }
 }
