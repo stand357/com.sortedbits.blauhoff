@@ -7,6 +7,8 @@ export class AsyncSocket {
 
     private socket?: Socket;
 
+    public connected: boolean = false;
+
     constructor(port: number, host: string, timeout: number = 5) {
         this.port = port;
         this.host = host;
@@ -17,9 +19,14 @@ export class AsyncSocket {
         this.socket = new Socket();
         this.socket.setTimeout(this.timeout * 1000);
 
+        this.socket.on('end', () => {
+            this.connected = false;
+        });
+
         return new Promise((resolve, reject) => {
             try {
                 this.socket?.connect(this.port, this.host, () => {
+                    this.connected = true;
                     resolve(true);
                 });
             } catch (error) {
@@ -57,7 +64,7 @@ export class AsyncSocket {
                     resolve();
                 });
             } catch (error) {
-                reject(error);
+                resolve();
             }
         });
     }

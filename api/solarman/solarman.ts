@@ -301,7 +301,9 @@ export class Solarman implements IAPI {
 
             return undefined;
         } finally {
-            socket.disconnect();
+            if (socket.connected) {
+                socket.disconnect();
+            }
         }
     };
 
