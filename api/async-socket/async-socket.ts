@@ -45,7 +45,7 @@ export class AsyncSocket {
                 reject(new Error('Timeout'));
             });
 
-            this.socket?.once('error', (error) => {
+            this.socket?.on('error', (error) => {
                 reject(error);
             });
 
