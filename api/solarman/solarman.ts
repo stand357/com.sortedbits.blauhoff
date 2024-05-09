@@ -295,6 +295,8 @@ export class Solarman implements IAPI {
 
             const unwrapped = this.frameDefinition.unwrapResponseFrame(data);
 
+            this.log.log('Successfully performed request', unwrapped.buffer.length, 'bytes');
+
             return unwrapped.buffer;
         } catch (error) {
             this.log.error('Error performing request', error);

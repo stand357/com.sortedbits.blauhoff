@@ -27,7 +27,7 @@ export class BaseDevice extends Homey.Device {
     private device!: Device;
 
     public filteredLog(...args: any[]) {
-        if (this.device.brand === Brand.Growatt) {
+        if (this.device.brand === Brand.Afore) {
             this.log(args);
         }
     }
@@ -202,7 +202,6 @@ export class BaseDevice extends Homey.Device {
 
         const { refreshInterval } = this.getSettings();
 
-        this.filteredLog('Setting timeout', refreshInterval, this.reachable);
         const interval = this.reachable ? refreshInterval * 1000 : 60000;
 
         this.readRegisterTimeout = await this.homey.setTimeout(this.readRegisters.bind(this), interval);

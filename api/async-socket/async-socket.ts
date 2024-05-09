@@ -23,6 +23,11 @@ export class AsyncSocket {
             this.connected = false;
         });
 
+        this.socket.once('error', () => {
+            console.log('error while connecting?');
+            return Promise.reject('Error while connecting');
+        });
+
         return new Promise((resolve, reject) => {
             try {
                 this.socket?.connect(this.port, this.host, () => {
