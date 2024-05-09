@@ -196,8 +196,6 @@ export class BaseDevice extends Homey.Device {
 
         await capabilityChange(this, 'date.record', localDate.toFormat('HH:mm:ss'));
 
-        this.filteredLog('Reading registers for ', this.getName());
-
         await this.api.readRegistersInBatch();
 
         const { refreshInterval } = this.getSettings();

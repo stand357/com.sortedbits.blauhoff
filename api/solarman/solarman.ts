@@ -6,12 +6,12 @@ import { Device } from '../../repositories/device-repository/models/device';
 import { AccessMode } from '../../repositories/device-repository/models/enum/access-mode';
 import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
-import { AsyncSocket } from '../async-socket/async-socket';
 import { IAPI } from '../iapi';
 import { calculateBufferCRC } from './helpers/buffer-crc-calculator';
 import { parseResponse } from './helpers/response-parser';
 import { FrameDefinition } from './models/frame-definition';
 
+import { Socket } from 'net';
 /*
  * Attempting to port the amazing pysolarmanv5 library to TypeScript
  *
@@ -285,6 +285,40 @@ export class Solarman implements IAPI {
     };
 
     performRequestQueued = async (request: Buffer): Promise<Buffer | undefined> => {
+        const client = new Socket();
+        client.setTimeout(this.timeout * 1000);
+
+        return new Promise<Buffer | undefined>((resolve, reject) => {
+            client.on('data', (data) => {
+                client.end();
+                try {
+                    const wrapped = this.frameDefinition.unwrapResponseFrame(data);
+                    resolve(wrapped.buffer);
+                } catch (error) {
+                    this.log.error('Error parsing response', error);
+                    resolve(undefined);
+                }
+            });
+
+            client.on('timeout', () => {
+                this.log.error('Timeout');
+                client.end();
+                reject(undefined);
+            });
+
+            client.on('error', (error) => {
+                this.log.error('Error', error);
+                client.end();
+                resolve(undefined);
+            });
+
+            client.connect(this.port, this.ipAddress, () => {
+                const wrapped = this.frameDefinition.wrapModbusFrame(request);
+                client.write(wrapped.buffer);
+            });
+        });
+
+        /*
         const socket = new AsyncSocket(this.port, this.ipAddress);
         try {
             await socket.connect();
@@ -307,6 +341,7 @@ export class Solarman implements IAPI {
                 socket.disconnect();
             }
         }
+        */
     };
 
     createModbusWriteRequest(register: ModbusRegister, value: Buffer | Array<number>): Buffer {

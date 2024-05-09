@@ -347,8 +347,10 @@ export class ModbusAPI implements IAPI {
 
                 startOffset = end;
             }
-        } catch (error) {
-            this.log.error('Error reading batch', error);
+        } catch (error: any) {
+            if (!error.name || error.name !== 'TransactionTimedOutError') {
+                this.log.error('Error reading batch', error);
+            }
         }
     };
 
