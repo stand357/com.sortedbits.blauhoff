@@ -94,5 +94,8 @@
   },
   "2.4.7": {
     "en": "Handle disconnects gracefully"
+  },
+  "2.4.8": {
+    "en": "Catch disconnect errors"
   }
 }
