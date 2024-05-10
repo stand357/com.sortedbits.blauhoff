@@ -100,5 +100,8 @@
   },
   "2.4.9": {
     "en": "Connection details changed"
+  },
+  "2.4.10": {
+    "en": "Recover better after an exception"
   }
 }
