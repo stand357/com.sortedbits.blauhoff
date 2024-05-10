@@ -103,5 +103,8 @@
   },
   "2.4.10": {
     "en": "Recover better after an exception"
+  },
+  "2.4.11": {
+    "en": "Perform value checking and make sure connections are restarted on Solarman"
   }
 }
