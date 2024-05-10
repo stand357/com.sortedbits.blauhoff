@@ -1,13 +1,16 @@
+import { IAPI } from '../../../api/iapi';
 import { IBaseLogger } from '../../../helpers/log';
 import { defaultValueConverter } from '../helpers/default-value-converter';
 import { Brand } from './enum/brand';
 import { RegisterType } from './enum/register-type';
 import { ModbusRegister } from './modbus-register';
-import { SupportedFlows } from './supported-flows';
+import { SupportedFlowTypes, SupportedFlows } from './supported-flows';
 
 export type DataConverter = (log: IBaseLogger, buffer: Buffer, register: ModbusRegister) => any;
 
 export class Device {
+    private isRunningAction = false;
+
     /**
      * The converter to use to convert the data read from the device
      *
@@ -94,6 +97,34 @@ export class Device {
         this.name = name;
         this.description = description;
     }
+
+    callAction = async (origin: IBaseLogger, action: string, args: any, api: IAPI): Promise<void> => {
+        const flowType = SupportedFlowTypes[action as keyof typeof SupportedFlowTypes];
+
+        if (!this.supportedFlows?.actions) {
+            origin.filteredError('No supported actions found');
+            return;
+        }
+
+        const deviceAction = this.supportedFlows.actions[flowType];
+        if (!deviceAction) {
+            origin.filteredError('Unsupported action', action);
+            return;
+        }
+
+        while (this.isRunningAction) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+
+        this.isRunningAction = true;
+        try {
+            await deviceAction(origin, args, api);
+        } catch (error) {
+            origin.error('Error running action', action, error);
+        } finally {
+            this.isRunningAction = false;
+        }
+    };
 
     addInputRegisters(registers: ModbusRegister[]): Device {
         registers.forEach((register) => (register.registerType = RegisterType.Input));

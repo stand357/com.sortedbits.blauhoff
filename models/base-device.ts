@@ -18,7 +18,6 @@ import { Device } from '../repositories/device-repository/models/device';
 import { AccessMode } from '../repositories/device-repository/models/enum/access-mode';
 import { Brand } from '../repositories/device-repository/models/enum/brand';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../repositories/device-repository/models/modbus-register';
-import { SupportedFlowTypes } from '../repositories/device-repository/models/supported-flows';
 
 export class BaseDevice extends Homey.Device {
     private api?: IAPI;
@@ -281,28 +280,21 @@ export class BaseDevice extends Homey.Device {
             delete cleanArgs.device;
         }
 
-        this.filteredLog('callAction', this.device.name, action, JSON.stringify(cleanArgs));
-
-        // First we check if the DeviceModel supports this called action
+        this.filteredLog('callAction', this.device.name, action);
 
         if (!this.api) {
             this.filteredError('API is not initialized');
             return;
         }
 
-        if (!this.device.supportedFlows?.actions) {
-            this.filteredError('No supported actions found');
-            return;
+        if (args.device && args.device.device) {
+            try {
+                await (args.device as BaseDevice).device.callAction(this, action, args, this.api);
+            } catch (error) {
+                this.filteredError('Error calling action', error);
+            }
+        } else {
+            this.filteredError('No args.device.device found');
         }
-
-        const flowType = SupportedFlowTypes[action as keyof typeof SupportedFlowTypes];
-
-        const deviceAction = this.device.supportedFlows.actions[flowType];
-        if (!deviceAction) {
-            this.filteredError('Unsupported action', action);
-            return;
-        }
-
-        await deviceAction(this, args, this.api);
     };
 }
