@@ -90,13 +90,22 @@ export class AforeAFXKTH extends Device {
 
         const { mode } = args;
 
-        if (mode < 0 || mode > 8) {
+        const modeNumber = Number(mode);
+
+        if (isNaN(modeNumber)) {
+            origin.error('Trying to set an invalid EMS mode', mode);
+            return;
+        }
+
+        if (modeNumber < 0 || modeNumber > 8) {
             origin.error('Value out of range');
             return;
         }
 
+        origin.filteredLog('Setting EMS mode to', modeNumber, typeof modeNumber);
+
         try {
-            const emsModeOutput = await client.writeRegister(emsRegister, mode);
+            const emsModeOutput = await client.writeRegister(emsRegister, modeNumber);
 
             origin.log('setEmsModeOutput', emsModeOutput);
         } catch (error) {

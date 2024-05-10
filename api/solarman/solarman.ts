@@ -106,6 +106,9 @@ export class Solarman implements IAPI {
             return false;
         }
 
+        const valid = validateValue(value, register.dataType);
+        this.log.filteredLog('Validating value', value, 'for register', register.address, 'with data type', register.dataType, 'result', valid);
+
         if (!validateValue(value, register.dataType)) {
             this.log.filteredError('Unable to write register, invalid value', value, register.dataType);
             return false;
