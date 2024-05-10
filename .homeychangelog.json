@@ -112,5 +112,8 @@
   },
   "2.4.13": {
     "en": "Enable extensive logging for Deye"
+  },
+  "2.4.14": {
+    "en": "Strategic logging"
   }
 }
