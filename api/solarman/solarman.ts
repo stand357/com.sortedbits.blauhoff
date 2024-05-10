@@ -81,12 +81,24 @@ export class Solarman implements IAPI {
     }
 
     connect(): Promise<boolean> {
-        this.log.log('Connecting');
+        this.log.filteredLog(
+            'Connecting Solarman to ',
+            this.ipAddress,
+            'on port',
+            this.port,
+            'with serial number',
+            this.serialNumber,
+            'and slave ID',
+            this.slaveId,
+            'and timeout',
+            this.timeout,
+            'seconds',
+        );
         return Promise.resolve(true);
     }
 
     disconnect(): void {
-        this.log.log('Disconnecting');
+        this.log.filteredError('Disconnecting');
     }
 
     writeRegister = async (register: ModbusRegister, value: number): Promise<boolean> => {
@@ -95,7 +107,7 @@ export class Solarman implements IAPI {
         }
 
         if (!validateValue(value, register.dataType)) {
-            this.log.error('Unable to write register, invalid value', value, register.dataType);
+            this.log.filteredError('Unable to write register, invalid value', value, register.dataType);
             return false;
         }
 
@@ -103,11 +115,11 @@ export class Solarman implements IAPI {
 
         try {
             const result = await this.performRequest(request);
-            this.log.log('Write register', register.address, value, result);
+            this.log.filteredError('Write register', register.address, value, result);
             //TODO: Make sure we return the right boolean
             return true;
         } catch (error) {
-            this.log.error('Error writing register', error);
+            this.log.filteredError('Error writing register', error);
             return false;
         }
     };
@@ -119,7 +131,7 @@ export class Solarman implements IAPI {
             await this.performRequest(request);
             return true;
         } catch (error) {
-            this.log.error('Error writing buffer', error);
+            this.log.filteredError('Error writing buffer', error);
             return false;
         }
     };
@@ -128,12 +140,12 @@ export class Solarman implements IAPI {
         const readBuffer = await this.readAddressWithoutConversion(register);
 
         if (readBuffer === undefined) {
-            this.log.error('Failed to read current value');
+            this.log.filteredError('Failed to read current value');
             return false;
         }
 
         if (readBuffer.length * 8 < bitIndex + bits.length) {
-            this.log.error('Bit index out of range');
+            this.log.filteredError('Bit index out of range');
             return false;
         }
 
@@ -142,7 +154,7 @@ export class Solarman implements IAPI {
         try {
             return await this.writeBufferRegister(register, result);
         } catch (error) {
-            this.log.error('Error writing bits', error);
+            this.log.filteredError('Error writing bits', error);
         }
         return false;
     };
@@ -191,7 +203,7 @@ export class Solarman implements IAPI {
 
     readRegistersInBatch = async (): Promise<void> => {
         if (!this.onDataReceived) {
-            this.log.error('No valueResolved function set');
+            this.log.filteredError('No valueResolved function set');
         }
 
         // this.fakeBatches(this.deviceModel.definition.inputRegisters); //
@@ -223,11 +235,12 @@ export class Solarman implements IAPI {
      */
     readBatch = async (batch: ModbusRegister[]): Promise<void> => {
         if (batch.length === 0) {
+            this.log.log('readBatch: Empty batch');
             return;
         }
 
         if (!this.onDataReceived) {
-            this.log.log('No valueResolved function set');
+            this.log.filteredError('No valueResolved function set');
             return;
         }
 
@@ -240,36 +253,38 @@ export class Solarman implements IAPI {
             const request = this.createModbusReadRequest(firstRegister, length);
             const response = await this.performRequest(request);
 
-            if (response) {
-                const data = parseResponse(this.log, response, batch);
+            if (!response) {
+                this.log.filteredError('No response');
+                return;
+            }
 
-                if (data.length === batch.length) {
-                    for (let i = 0; i < data.length; i++) {
-                        const register = batch[i];
-                        const value = data[i];
+            const data = parseResponse(this.log, response, batch);
 
-                        try {
-                            const convertedValue = this.device.converter(this.log, value, register);
+            if (data.length !== batch.length) {
+                this.log.filteredError('Mismatch in response length', data.length, batch.length);
+                return;
+            }
 
-                            if (validateValue(convertedValue, register.dataType)) {
-                                for (const configuration of register.parseConfigurations) {
-                                    await this.onDataReceived(convertedValue, value, configuration);
-                                }
-                            } else {
-                                this.log.error('Invalid value', convertedValue, register.registerType);
-                            }
-                        } catch (error) {
-                            this.log.error('Invalid value', value, 'for address', register.address, register.dataType);
+            for (let i = 0; i < data.length; i++) {
+                const register = batch[i];
+                const value = data[i];
+
+                try {
+                    const convertedValue = this.device.converter(this.log, value, register);
+
+                    if (validateValue(convertedValue, register.dataType)) {
+                        for (const configuration of register.parseConfigurations) {
+                            await this.onDataReceived(convertedValue, value, configuration);
                         }
+                    } else {
+                        this.log.filteredError('Invalid value', convertedValue, register.registerType);
                     }
-                } else {
-                    this.log.error('Mismatch in response length', data.length, batch.length);
+                } catch (error) {
+                    this.log.filteredError('Invalid value', value, 'for address', register.address, register.dataType);
                 }
-            } else {
-                this.log.error('No response');
             }
         } catch (error) {
-            this.log.error('Error reading batch', error);
+            this.log.filteredError('Error reading batch', error);
         }
     };
 
@@ -279,9 +294,15 @@ export class Solarman implements IAPI {
         }
 
         this.runningRequest = true;
-        const result = await this.performRequestQueued(request);
-        this.runningRequest = false;
-        return result;
+        try {
+            const result = await this.performRequestQueued(request);
+            return result;
+        } catch (error) {
+            this.log.filteredError('Error performing request', error);
+            return undefined;
+        } finally {
+            this.runningRequest = false;
+        }
     };
 
     performRequestQueued = async (request: Buffer): Promise<Buffer | undefined> => {
@@ -290,58 +311,37 @@ export class Solarman implements IAPI {
 
         return new Promise<Buffer | undefined>((resolve, reject) => {
             client.on('data', (data) => {
+                this.log.filteredLog('Received data', data.length, 'bytes');
                 client.end();
                 try {
                     const wrapped = this.frameDefinition.unwrapResponseFrame(data);
                     resolve(wrapped.buffer);
                 } catch (error) {
-                    this.log.error('Error parsing response', error);
+                    this.log.filteredError('Error parsing response', error);
                     resolve(undefined);
                 }
             });
 
             client.on('timeout', () => {
-                this.log.error('Timeout');
+                this.log.filteredError('Timeout');
                 client.end();
                 reject(undefined);
             });
 
             client.on('error', (error) => {
-                this.log.error('Error', error);
+                this.log.filteredError('Error', error);
                 client.end();
                 resolve(undefined);
             });
 
             client.connect(this.port, this.ipAddress, () => {
                 const wrapped = this.frameDefinition.wrapModbusFrame(request);
+
+                this.log.filteredLog('Sending request', wrapped.buffer.length, 'bytes');
+
                 client.write(wrapped.buffer);
             });
         });
-
-        /*
-        const socket = new AsyncSocket(this.port, this.ipAddress);
-        try {
-            await socket.connect();
-
-            const wrapped = this.frameDefinition.wrapModbusFrame(request);
-
-            const data = await socket.write(wrapped.buffer);
-
-            const unwrapped = this.frameDefinition.unwrapResponseFrame(data);
-
-            this.log.log('Successfully performed request', unwrapped.buffer.length, 'bytes');
-
-            return unwrapped.buffer;
-        } catch (error) {
-            this.log.error('Error performing request', error);
-
-            return undefined;
-        } finally {
-            if (socket.connected) {
-                socket.disconnect();
-            }
-        }
-        */
     };
 
     createModbusWriteRequest(register: ModbusRegister, value: Buffer | Array<number>): Buffer {

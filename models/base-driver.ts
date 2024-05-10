@@ -46,7 +46,9 @@ export class BaseDriver extends Homey.Driver {
     public filteredLog(...args: any[]) {
         this.log(args);
     }
-
+    public filteredError(...args: any[]) {
+        this.log(args);
+    }
     /**
      * onInit is called when the driver is initialized.
      */

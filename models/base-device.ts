@@ -32,6 +32,12 @@ export class BaseDevice extends Homey.Device {
         }
     }
 
+    public filteredError(...args: any[]) {
+        if (this.device.brand === Brand.Afore) {
+            this.error(args);
+        }
+    }
+
     private onDisconnect = async () => {
         if (this.readRegisterTimeout) {
             clearTimeout(this.readRegisterTimeout);
@@ -88,7 +94,7 @@ export class BaseDevice extends Homey.Device {
             this.reachable = false;
             await capabilityChange(this, 'readable_boolean.device_status', false);
         } else {
-            this.error('Request failed', error);
+            this.filteredError('Request failed', error);
         }
     };
 
@@ -129,7 +135,7 @@ export class BaseDevice extends Homey.Device {
             clearTimeout(this.readRegisterTimeout);
         }
 
-        this.log('ModbusDevice', host, port, unitId, deviceType, modelId);
+        this.filteredLog('ModbusDevice', host, port, unitId, deviceType, modelId);
 
         await this.initializeCapabilities();
 
@@ -156,7 +162,7 @@ export class BaseDevice extends Homey.Device {
         const result = DeviceRepository.getInstance().getDeviceById(modelId);
 
         if (!result) {
-            this.error('Unknown device type', modelId);
+            this.filteredError('Unknown device type', modelId);
             throw new Error('Unknown device type');
         }
 
@@ -168,10 +174,10 @@ export class BaseDevice extends Homey.Device {
         await addCapabilityIfNotExists(this, 'date.record');
 
         const deprecated = this.device.deprecatedCapabilities;
-        this.log('Deprecated capabilities', deprecated);
+        this.filteredLog('Deprecated capabilities', deprecated);
         if (deprecated) {
             for (const capability of deprecated) {
-                this.log('Deprecating capability', capability);
+                this.filteredLog('Deprecating capability', capability);
                 await deprecateCapability(this, capability);
             }
         }
@@ -186,7 +192,7 @@ export class BaseDevice extends Homey.Device {
      */
     private readRegisters = async () => {
         if (!this.api) {
-            this.error('ModbusAPI is not initialized');
+            this.filteredError('ModbusAPI is not initialized');
             return;
         }
 
@@ -275,17 +281,17 @@ export class BaseDevice extends Homey.Device {
             delete cleanArgs.device;
         }
 
-        this.log('callAction', this.device.name, action, JSON.stringify(cleanArgs));
+        this.filteredLog('callAction', this.device.name, action, JSON.stringify(cleanArgs));
 
         // First we check if the DeviceModel supports this called action
 
         if (!this.api) {
-            this.error('API is not initialized');
+            this.filteredError('API is not initialized');
             return;
         }
 
         if (!this.device.supportedFlows?.actions) {
-            this.error('No supported actions found');
+            this.filteredError('No supported actions found');
             return;
         }
 
@@ -293,7 +299,7 @@ export class BaseDevice extends Homey.Device {
 
         const deviceAction = this.device.supportedFlows.actions[flowType];
         if (!deviceAction) {
-            this.error('Unsupported action', action);
+            this.filteredError('Unsupported action', action);
             return;
         }
 

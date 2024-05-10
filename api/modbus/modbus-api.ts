@@ -120,7 +120,7 @@ export class ModbusAPI implements IAPI {
                             this.log.filteredLog('Modbus connection re-established');
                         })
                         .catch((error) => {
-                            this.log.error('Failed to re-establish Modbus connection', error);
+                            this.log.filteredError('Failed to re-establish Modbus connection', error);
                         });
                 }
 
@@ -157,7 +157,7 @@ export class ModbusAPI implements IAPI {
                 ? await this.client.readInputRegisters(register.address, register.length)
                 : await this.client.readHoldingRegisters(register.address, register.length);
 
-        this.log.log('Reading address', register.address, ':', data);
+        this.log.filteredLog('Reading address', register.address, ':', data);
 
         if (data && data.buffer) {
             return data.buffer;
@@ -177,7 +177,7 @@ export class ModbusAPI implements IAPI {
 
         if (buffer) {
             const result = this.device.converter(this.log, buffer, register);
-            this.log.log('Conversion result', result);
+            this.log.filteredLog('Conversion result', result);
             return result;
         }
 
@@ -197,7 +197,7 @@ export class ModbusAPI implements IAPI {
      */
     readRegistersInBatch = async () => {
         if (!this.onDataReceived) {
-            this.log.error('No valueResolved function set');
+            this.log.filteredError('No valueResolved function set');
         }
 
         const inputBatches = createRegisterBatches(this.log, this.device.inputRegisters);
@@ -231,17 +231,17 @@ export class ModbusAPI implements IAPI {
         }
 
         if (!validateValue(value, register.dataType)) {
-            this.log.error('Invalid value', value, 'for address', register.address, register.dataType);
+            this.log.filteredError('Invalid value', value, 'for address', register.address, register.dataType);
             return false;
         }
 
-        this.log.log('Writing to address', register.address, ':', value);
+        this.log.filteredLog('Writing to address', register.address, ':', value);
 
         try {
             const result = await this.client.writeRegisters(register.address, [value]);
             this.log.filteredLog('Output', result.address);
         } catch (error) {
-            this.log.error('Error writing to register', error);
+            this.log.filteredError('Error writing to register', error);
             return false;
         }
 
@@ -265,13 +265,13 @@ export class ModbusAPI implements IAPI {
             return false;
         }
 
-        this.log.log('Writing to register', register.address, buffer, typeof buffer);
+        this.log.filteredLog('Writing to register', register.address, buffer, typeof buffer);
 
         try {
             const result = await this.client.writeRegisters(register.address, buffer);
             this.log.filteredLog('Output', result.address);
         } catch (error) {
-            this.log.error('Error writing to register', error);
+            this.log.filteredError('Error writing to register', error);
             return false;
         }
 
@@ -285,7 +285,7 @@ export class ModbusAPI implements IAPI {
      */
     readRegisters = async () => {
         if (!this.onDataReceived) {
-            this.log.error('No valueResolved function set');
+            this.log.filteredError('No valueResolved function set');
         }
 
         for (const register of this.device.inputRegisters.filter((x) => x.accessMode !== AccessMode.WriteOnly)) {
@@ -342,14 +342,14 @@ export class ModbusAPI implements IAPI {
                         await this.onDataReceived!(value, buffer, parseConfiguration);
                     }
                 } else {
-                    this.log.error('Invalid value', value, 'for address', register.address, register.dataType);
+                    this.log.filteredError('Invalid value', value, 'for address', register.address, register.dataType);
                 }
 
                 startOffset = end;
             }
         } catch (error: any) {
             if (!error.name || error.name !== 'TransactionTimedOutError') {
-                this.log.error('Error reading batch', error);
+                this.log.filteredError('Error reading batch', error);
             }
         }
     };
@@ -375,17 +375,17 @@ export class ModbusAPI implements IAPI {
         const { value, registerType, register, device } = args;
 
         if (device.device === undefined) {
-            this.log.error('Device is undefined');
+            this.log.filteredError('Device is undefined');
             return;
         }
 
         if (value === undefined || registerType === undefined || !register) {
-            this.log.log('Wait, something is missing', value, registerType, register);
+            this.log.filteredLog('Wait, something is missing', value, registerType, register);
             return;
         }
 
         if (!register || !register.address) {
-            this.log.error('Register is undefined');
+            this.log.filteredError('Register is undefined');
             return;
         }
 
@@ -394,16 +394,16 @@ export class ModbusAPI implements IAPI {
         const foundRegister = this.device.getRegisterByTypeAndAddress(rType, register.address);
 
         if (!foundRegister) {
-            this.log.error('Register not found');
+            this.log.filteredError('Register not found');
             return;
         }
 
-        this.log.log('Device', JSON.stringify(device.device, null, 2));
+        this.log.filteredLog('Device', JSON.stringify(device.device, null, 2));
 
-        this.log.log('write_value_to_register', value, registerType, register);
+        this.log.filteredLog('write_value_to_register', value, registerType, register);
 
         const result = await this.writeRegister(foundRegister, value);
-        this.log.log('Write result', result);
+        this.log.filteredLog('Write result', result);
     };
 
     /**
@@ -425,21 +425,21 @@ export class ModbusAPI implements IAPI {
         const readBuffer = await this.readAddressWithoutConversion(register);
 
         if (readBuffer === undefined) {
-            this.log.error('Failed to read current value');
+            this.log.filteredError('Failed to read current value');
             return false;
         }
 
         logBits(this.log, readBuffer);
 
         if (readBuffer.length * 8 < bitIndex + bits.length) {
-            this.log.error('Bit index out of range');
+            this.log.filteredError('Bit index out of range');
             return false;
         }
 
         const byteIndex = readBuffer.length - 1 - Math.floor(bitIndex / 8);
         const startBitIndex = bitIndex % 8;
 
-        this.log.log('writeBitsToRegister', register.registerType, bits, startBitIndex, byteIndex);
+        this.log.filteredLog('writeBitsToRegister', register.registerType, bits, startBitIndex, byteIndex);
 
         const result = writeBitsToBuffer(readBuffer, byteIndex, bits, startBitIndex);
         logBits(this.log, result);
