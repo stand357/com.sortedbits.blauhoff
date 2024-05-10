@@ -201,7 +201,7 @@ export class BaseDevice extends Homey.Device {
 
         const { refreshInterval } = this.getSettings();
 
-        const interval = this.reachable ? refreshInterval * 1000 : 60000;
+        const interval = this.reachable ? (refreshInterval < 5 ? 5 : refreshInterval) * 1000 : 60000;
 
         this.readRegisterTimeout = await this.homey.setTimeout(this.readRegisters.bind(this), interval);
     };

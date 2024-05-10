@@ -1564,7 +1564,7 @@
             "en": "Update interval",
             "nl": "Update interval"
           },
-          "min": 1,
+          "min": 5,
           "value": 10,
           "max": 600,
           "hint": {
