@@ -68,10 +68,6 @@ export class BaseDevice extends Homey.Device {
     private onDataReceived = async (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => {
         const result = parseConfiguration.calculateValue(value, buffer, this);
 
-        if (this.device.brand === Brand.Deye) {
-            this.filteredLog(parseConfiguration.capabilityId, result);
-        }
-
         await capabilityChange(this, parseConfiguration.capabilityId, result);
 
         if (!this.reachable) {

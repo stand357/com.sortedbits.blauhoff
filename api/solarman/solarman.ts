@@ -118,7 +118,7 @@ export class Solarman implements IAPI {
 
         try {
             const result = await this.performRequest(request);
-            this.log.filteredError('Write register', register.address, value, result);
+            this.log.log('Write register', register.address, value, result);
             //TODO: Make sure we return the right boolean
             return true;
         } catch (error) {
@@ -314,7 +314,7 @@ export class Solarman implements IAPI {
 
         return new Promise<Buffer | undefined>((resolve, reject) => {
             client.on('data', (data) => {
-                this.log.filteredLog('Received data', data.length, 'bytes');
+                this.log.filteredLog('Send/receive data: ', request.length, '/', data.length, 'bytes');
                 client.end();
                 try {
                     const wrapped = this.frameDefinition.unwrapResponseFrame(data);
@@ -339,9 +339,6 @@ export class Solarman implements IAPI {
 
             client.connect(this.port, this.ipAddress, () => {
                 const wrapped = this.frameDefinition.wrapModbusFrame(request);
-
-                this.log.filteredLog('Sending request', wrapped.buffer.length, 'bytes');
-
                 client.write(wrapped.buffer);
             });
         });
