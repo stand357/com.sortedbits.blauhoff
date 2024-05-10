@@ -109,5 +109,8 @@
   },
   "2.4.12": {
     "en": "Queue card actions "
+  },
+  "2.4.13": {
+    "en": "Enable extensive logging for Deye"
   }
 }
