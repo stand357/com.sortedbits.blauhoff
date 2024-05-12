@@ -121,5 +121,8 @@
   },
   "2.4.16": {
     "en": "Allow retrying of cards when one action fails"
+  },
+  "2.4.17": {
+    "en": "More error logging, and queueing"
   }
 }
