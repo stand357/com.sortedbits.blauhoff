@@ -267,7 +267,12 @@ export class BaseDevice extends Homey.Device {
         }
     }
 
-    callAction = async (action: string, args: any) => {
+    callAction = async (action: string, args: any, retryCount: number = 0) => {
+        if (retryCount > 3) {
+            this.filteredError('Retry count exceeded');
+            return;
+        }
+
         const cleanArgs = {
             ...args,
         };
@@ -288,6 +293,13 @@ export class BaseDevice extends Homey.Device {
                 await (args.device as BaseDevice).device.callAction(this, action, args, this.api);
             } catch (error) {
                 this.filteredError('Error calling action', error);
+
+                await this.homey.setTimeout(
+                    () => {
+                        this.callAction(action, args, retryCount + 1);
+                    },
+                    500 * retryCount + 1,
+                );
             }
         } else {
             this.filteredError('No args.device.device found');

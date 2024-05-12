@@ -46,7 +46,8 @@ const perform = async (): Promise<void> => {
     //    await solarmanApi.readRegistersInBatch();
 
     /* SELF USE */
-    await device.setEmsMode(log, { mode: 0 }, solarmanApi);
+    //    await device.setEmsMode(log, { mode: 0 }, solarmanApi);
+    await device.callAction(log, 'set_ems_mode', { mode: 0 }, solarmanApi);
 
     /* COMMAND MODE */
     // await device.setEmsMode(log, { mode: 4 }, solarmanApi);
