@@ -26,13 +26,13 @@ export class BaseDevice extends Homey.Device {
     private device!: Device;
 
     public filteredLog(...args: any[]) {
-        if (this.device.brand === Brand.Afore || this.device.brand === Brand.Deye) {
+        if (this.device.brand === Brand.Deye) {
             this.log(args);
         }
     }
 
     public filteredError(...args: any[]) {
-        if (this.device.brand === Brand.Afore || this.device.brand === Brand.Deye) {
+        if (this.device.brand === Brand.Deye) {
             this.error(args);
         }
     }

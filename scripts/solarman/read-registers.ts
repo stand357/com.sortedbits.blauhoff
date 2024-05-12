@@ -27,7 +27,7 @@ const unitId = process.env.UNIT_ID;
 
 const valueSolarmanResolved = async (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => {
     const result = parseConfiguration.calculateValue(value, buffer, log);
-    log.log(parseConfiguration.capabilityId, ':', result);
+    log.log(parseConfiguration.capabilityId, ':', result, ':', buffer.toString('hex'));
 };
 
 const device = DeviceRepository.getInstance().getDeviceById(deviceId);

@@ -366,19 +366,30 @@ export class DeyeSunXKSG01HP3 extends Device {
         });
 
         try {
-            const chargeResult = await client.writeBitsToRegister(chargeRegister, chargeBits, 0);
-            origin.filteredLog('Set timeslot charge result', chargeResult);
-
-            const powerResult = await client.writeRegister(powerRegister, powerPayload);
-            origin.filteredLog('Set timeslot power result', powerResult);
-
-            const batteryResult = await client.writeRegister(batteryRegister, batteryChargeNumber);
-            origin.filteredLog('Set timeslot battery result', batteryResult);
-
-            const timeResult = await client.writeRegister(timeRegister, parsedTime);
-            origin.filteredLog('Set timeslot time result', timeResult);
+            const response = await client.writeBitsToRegister(chargeRegister, chargeBits, 0);
+            if (response === false) {
+                throw new Error('Error setting timeslot charge');
+            }
         } catch (error) {
-            origin.filteredError('Error setting timeslot parameters', error);
+            origin.filteredError('Error setting timeslot charge', error);
+        }
+
+        try {
+            await client.writeRegister(powerRegister, powerPayload);
+        } catch (error) {
+            origin.filteredError('Error setting timeslot power', error);
+        }
+
+        try {
+            await client.writeRegister(batteryRegister, batteryChargeNumber);
+        } catch (error) {
+            origin.filteredError('Error setting timeslot battery', error);
+        }
+
+        try {
+            await client.writeRegister(timeRegister, parsedTime);
+        } catch (error) {
+            origin.filteredError('Error setting timeslot time', error);
         }
     };
 }

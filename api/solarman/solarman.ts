@@ -162,6 +162,29 @@ export class Solarman implements IAPI {
         return false;
     };
 
+    updateBitsInRegister = async (register: ModbusRegister, bits: number[], bitIndex: number): Promise<boolean> => {
+        const readBuffer = await this.readAddressWithoutConversion(register);
+
+        if (readBuffer === undefined) {
+            this.log.filteredError('Failed to read current value');
+            return false;
+        }
+
+        if (readBuffer.length * 8 < bitIndex + bits.length) {
+            this.log.filteredError('Bit index out of range');
+            return false;
+        }
+
+        const result = writeBitsToBufferBE(readBuffer, bits, bitIndex);
+
+        try {
+            return await this.writeBufferRegister(register, result);
+        } catch (error) {
+            this.log.filteredError('Error writing bits', error);
+        }
+        return false;
+    };
+
     /**
      * Reads a Modbus register without converting the data.
      *
@@ -280,10 +303,10 @@ export class Solarman implements IAPI {
                             await this.onDataReceived(convertedValue, value, configuration);
                         }
                     } else {
-                        this.log.filteredError('Invalid value', convertedValue, register.registerType);
+                        this.log.filteredError('Invalid value', convertedValue, register.registerType, value.length, register.length);
                     }
                 } catch (error) {
-                    this.log.filteredError('Invalid value', value, 'for address', register.address, register.dataType);
+                    this.log.filteredError('Exception reading for address', register.address, register.dataType, error, value.length, register.length);
                 }
             }
         } catch (error) {
@@ -314,14 +337,14 @@ export class Solarman implements IAPI {
 
         return new Promise<Buffer | undefined>((resolve, reject) => {
             client.on('data', (data) => {
-                this.log.filteredLog('Send/receive data: ', request.length, '/', data.length, 'bytes');
-                client.end();
                 try {
                     const wrapped = this.frameDefinition.unwrapResponseFrame(data);
                     resolve(wrapped.buffer);
                 } catch (error) {
                     this.log.filteredError('Error parsing response', error);
                     resolve(undefined);
+                } finally {
+                    client.end();
                 }
             });
 

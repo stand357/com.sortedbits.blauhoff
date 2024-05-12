@@ -18,6 +18,11 @@ import { ModbusRegister } from '../models/modbus-register';
  * @returns The converted value.
  */
 export const defaultValueConverter = (log: IBaseLogger, buffer: Buffer, register: ModbusRegister): any => {
+    if (buffer.length === 0) {
+        log.error('Buffer for ', register.address, 'is empty');
+        return undefined;
+    }
+
     switch (register.dataType) {
         case RegisterDataType.UINT8:
             return buffer.readUInt8();
