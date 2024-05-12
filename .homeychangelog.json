@@ -124,5 +124,8 @@
   },
   "2.4.17": {
     "en": "More error logging, and queueing"
+  },
+  "2.4.18": {
+    "en": "Throw some more errors aroudn"
   }
 }
