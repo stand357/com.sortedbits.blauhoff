@@ -25,7 +25,7 @@ export class BaseDevice extends Homey.Device {
     private readRegisterTimeout: NodeJS.Timeout | undefined;
     private device!: Device;
 
-    private isPerformingAction: boolean = false;
+    private runningRequest: boolean = false;
 
     public filteredLog(...args: any[]) {
         if (this.device.brand === Brand.Deye || this.device.brand === Brand.Afore) {
@@ -270,19 +270,19 @@ export class BaseDevice extends Homey.Device {
     }
 
     callAction = async (action: string, args: any, retryCount: number = 0) => {
-        if (retryCount === 0) {
-            while (this.isPerformingAction) {
-                await this.homey.setTimeout(() => {}, 250);
-            }
-        }
-
         if (retryCount > 3) {
             this.filteredError('Retry count exceeded');
-            this.isPerformingAction = false;
+            this.runningRequest = false;
             return;
         }
 
-        this.isPerformingAction = true;
+        if (retryCount === 0) {
+            while (this.runningRequest) {
+                await new Promise((resolve) => setTimeout(resolve, 200));
+            }
+        }
+
+        this.runningRequest = true;
 
         const cleanArgs = {
             ...args,
@@ -302,7 +302,7 @@ export class BaseDevice extends Homey.Device {
         if (args.device && args.device.device) {
             try {
                 await (args.device as BaseDevice).device.callAction(this, action, args, this.api);
-                this.isPerformingAction = false;
+                this.runningRequest = false;
             } catch (error) {
                 this.filteredError('Error calling action', error);
 

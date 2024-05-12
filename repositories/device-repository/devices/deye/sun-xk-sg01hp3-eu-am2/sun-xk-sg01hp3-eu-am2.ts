@@ -372,6 +372,7 @@ export class DeyeSunXKSG01HP3 extends Device {
             }
         } catch (error) {
             origin.filteredError('Error setting timeslot charge', error);
+            throw error;
         }
 
         try {
@@ -381,6 +382,7 @@ export class DeyeSunXKSG01HP3 extends Device {
             }
         } catch (error) {
             origin.filteredError('Error setting timeslot power', error);
+            throw error;
         }
 
         try {
@@ -390,6 +392,7 @@ export class DeyeSunXKSG01HP3 extends Device {
             }
         } catch (error) {
             origin.filteredError('Error setting timeslot battery', error);
+            throw error;
         }
 
         try {
@@ -399,6 +402,7 @@ export class DeyeSunXKSG01HP3 extends Device {
             }
         } catch (error) {
             origin.filteredError('Error setting timeslot time', error);
+            throw error;
         }
     };
 }
