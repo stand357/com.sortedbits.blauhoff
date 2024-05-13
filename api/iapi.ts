@@ -8,7 +8,7 @@ export interface IAPI {
     setOnError(onError: (error: unknown, register: ModbusRegister) => Promise<void>): void;
     setOnDisconnect(onDisconnect: () => Promise<void>): void;
 
-    // readAddress(register: ModbusRegister, registerType: RegisterType): Promise<any>;
+    readAddress(register: ModbusRegister): Promise<any>;
     readAddressWithoutConversion(register: ModbusRegister): Promise<Buffer | undefined>;
     readRegistersInBatch(): Promise<void>;
 

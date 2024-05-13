@@ -191,6 +191,18 @@ export class Solarman implements IAPI {
         return false;
     };
 
+    readAddress = async (register: ModbusRegister): Promise<any> => {
+        const buffer = await this.readAddressWithoutConversion(register);
+
+        if (buffer) {
+            const result = this.device.converter(this.log, buffer, register);
+            this.log.filteredLog('Conversion result', result);
+            return result;
+        }
+
+        return undefined;
+    };
+
     /**
      * Reads a Modbus register without converting the data.
      *

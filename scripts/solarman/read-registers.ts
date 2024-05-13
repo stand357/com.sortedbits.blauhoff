@@ -8,6 +8,7 @@
 import { Solarman } from '../../api/solarman/solarman';
 import { Logger } from '../../helpers/log';
 import { DeviceRepository } from '../../repositories/device-repository/device-repository';
+import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 
 require('dotenv').config();
@@ -42,7 +43,25 @@ solarmanApi.setOnDataReceived(valueSolarmanResolved);
 
 const perform = async (): Promise<void> => {
     await solarmanApi.connect();
-    await solarmanApi.readAllAtOnce();
+
+    const register = device.getRegisterByTypeAndAddress(RegisterType.Holding, 154);
+
+    if (!register) {
+        log.error('Register not found');
+        process.exit(1);
+    }
+
+    const powerLimit = 3390;
+    const result = await solarmanApi.readAddress(register);
+    log.log('Initial result:', result);
+
+    await solarmanApi.writeRegister(register, powerLimit);
+    for (let i = 0; i < 100; i++) {
+        //        await new Promise((resolve) => setTimeout(resolve, 10));
+
+        const result = await solarmanApi.readAddress(register);
+        log.log('Result for ', i, ':', result);
+    }
 };
 
 perform()

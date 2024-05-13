@@ -381,6 +381,7 @@ export class DeyeSunXKSG01HP3 extends Device {
         const chargeValues = Buffer.concat(Array.from({ length: timeslots }, (_, i) => chargeResult));
 
         origin.filteredLog('Charge values', chargeValues);
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
         try {
             const response = await client.writeRegisters(chargeRegister, [chargeValues]);
@@ -392,6 +393,7 @@ export class DeyeSunXKSG01HP3 extends Device {
             throw error;
         }
 
+        await new Promise((resolve) => setTimeout(resolve, 500));
         try {
             const response = await client.writeRegisters(powerRegister, powerValues);
             if (response === false) {
@@ -401,6 +403,7 @@ export class DeyeSunXKSG01HP3 extends Device {
             origin.filteredError('Error setting all power parameters', error);
             throw error;
         }
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
         try {
             const response = await client.writeRegisters(batteryRegister, batteryRegisterValues);
@@ -411,6 +414,7 @@ export class DeyeSunXKSG01HP3 extends Device {
             origin.filteredError('Error setting all battery parameters', error);
             throw error;
         }
+        await new Promise((resolve) => setTimeout(resolve, 500));
     };
 
     setTimeOfUseTimeslotParameters = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {

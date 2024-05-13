@@ -133,5 +133,8 @@
   },
   "2.4.20": {
     "en": "Add new flow card"
+  },
+  "2.4.21": {
+    "en": "Ability to disable the device."
   }
 }
