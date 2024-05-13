@@ -103,6 +103,91 @@
         ]
       },
       {
+        "id": "set_all_timeslot_parameters",
+        "title": {
+          "en": "Set time of use parameters for all timeslots"
+        },
+        "titleFormatted": {
+          "en": "For all timeslots, set grid charge to [[gridcharge]] and generator charge to [[generatorcharge]]. Power limit is [[powerlimit]] and minimum battery charge is [[batterycharge]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus&capabilities=status_text.energie_management_model"
+          },
+          {
+            "type": "dropdown",
+            "name": "gridcharge",
+            "title": {
+              "en": "Grid charging"
+            },
+            "values": [
+              {
+                "id": "true",
+                "title": {
+                  "en": "enabled"
+                }
+              },
+              {
+                "id": "false",
+                "title": {
+                  "en": "disabled"
+                }
+              }
+            ]
+          },
+          {
+            "type": "dropdown",
+            "name": "generatorcharge",
+            "title": {
+              "en": "Generator charging"
+            },
+            "values": [
+              {
+                "id": "true",
+                "title": {
+                  "en": "enabled"
+                }
+              },
+              {
+                "id": "false",
+                "title": {
+                  "en": "disabled"
+                }
+              }
+            ]
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 8000,
+            "name": "powerlimit",
+            "label": "W",
+            "step": 10,
+            "labelDecimals": 0,
+            "title": {
+              "en": "Power limit"
+            },
+            "placeholder": {
+              "en": "watts"
+            }
+          },
+          {
+            "type": "range",
+            "name": "batterycharge",
+            "title": {
+              "en": "Minimum battery charge"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "label": "%",
+            "labelDecimals": 0
+          }
+        ]
+      },
+      {
         "id": "set_charge_command",
         "title": {
           "en": "Set charge command with power"

@@ -213,6 +213,32 @@ export class ModbusAPI implements IAPI {
         }
     };
 
+    writeRegisters = async (register: ModbusRegister, values: any[]): Promise<boolean> => {
+        if (register.accessMode === AccessMode.ReadOnly) {
+            return false;
+        }
+
+        for (const value of values) {
+            const valid = validateValue(value, register.dataType);
+            this.log.filteredLog('Validating value', value, 'for register', register.address, 'with data type', register.dataType, 'result', valid);
+
+            if (!valid) {
+                return false;
+            }
+        }
+
+        this.log.filteredLog('Writing to address', register.address, ':', values);
+
+        try {
+            const result = await this.client.writeRegisters(register.address, values);
+            this.log.filteredLog('Output', result.address);
+            return true;
+        } catch (error) {
+            this.log.filteredError('Error writing to register', error);
+            return false;
+        }
+    };
+
     /**
      * Writes a value to a Modbus register.
      *
@@ -226,26 +252,7 @@ export class ModbusAPI implements IAPI {
      * @returns A promise that resolves to a boolean indicating whether the write operation was successful.
      */
     writeRegister = async (register: ModbusRegister, value: any): Promise<boolean> => {
-        if (register.accessMode === AccessMode.ReadOnly) {
-            return false;
-        }
-
-        if (!validateValue(value, register.dataType)) {
-            this.log.filteredError('Invalid value', value, 'for address', register.address, register.dataType);
-            return false;
-        }
-
-        this.log.filteredLog('Writing to address', register.address, ':', value);
-
-        try {
-            const result = await this.client.writeRegisters(register.address, [value]);
-            this.log.filteredLog('Output', result.address);
-        } catch (error) {
-            this.log.filteredError('Error writing to register', error);
-            return false;
-        }
-
-        return true;
+        return await this.writeRegisters(register, [value]);
     };
 
     /**

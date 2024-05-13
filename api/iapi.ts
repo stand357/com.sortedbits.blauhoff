@@ -18,6 +18,7 @@ export interface IAPI {
     disconnect(): void;
 
     writeRegister(register: ModbusRegister, value: any): Promise<boolean>;
+    writeRegisters(startRegister: ModbusRegister, values: any[]): Promise<boolean>;
     writeValueToRegister(args: any): Promise<void>;
     writeBufferRegister(register: ModbusRegister, buffer: Buffer): Promise<boolean>;
     writeBitsToRegister(register: ModbusRegister, bits: number[], bitIndex: number): Promise<boolean>;

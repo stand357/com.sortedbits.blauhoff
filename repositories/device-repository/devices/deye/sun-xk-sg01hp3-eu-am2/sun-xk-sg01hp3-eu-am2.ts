@@ -5,7 +5,7 @@
  * Non-commercial use only
  */
 import { IAPI } from '../../../../../api/iapi';
-import { logBits, writeBitsToBuffer } from '../../../../../helpers/bits';
+import { logBits, writeBitsToBuffer, writeBitsToBufferBE } from '../../../../../helpers/bits';
 import { IBaseLogger } from '../../../../../helpers/log';
 import { Device } from '../../../models/device';
 import { Brand } from '../../../models/enum/brand';
@@ -32,6 +32,7 @@ export class DeyeSunXKSG01HP3 extends Device {
                 set_time_of_use_enabled: this.setTimeOfUseEnabled,
                 set_time_of_use_day_enabled: this.setTimeOfUseDayEnabled,
                 set_time_of_use_timeslot_parameters: this.setTimeOfUseTimeslotParametersStart,
+                set_all_timeslot_parameters: this.setAllTimeslotParameters,
             },
         };
 
@@ -310,6 +311,106 @@ export class DeyeSunXKSG01HP3 extends Device {
         return new Promise((resolve) => {
             setTimeout(() => resolve(this.setTimeOfUseTimeslotParameters(origin, args, client)), randomTimeout);
         });
+    };
+
+    setAllTimeslotParameters = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
+        const { gridcharge, generatorcharge, powerlimit, batterycharge } = args;
+
+        const gridChargeBit = gridcharge === 'true' ? 1 : 0;
+        const generatorChargeBit = generatorcharge === 'true' ? 1 : 0;
+
+        const powerLimitNumber = Number(powerlimit);
+        if (powerLimitNumber < 0 || powerLimitNumber > 8000) {
+            origin.filteredError('Invalid power limit', powerlimit);
+            return;
+        }
+
+        const batteryChargeNumber = Number(batterycharge);
+        if (batteryChargeNumber < 0 || batteryChargeNumber > 100) {
+            origin.filteredError('Invalid battery charge', batterycharge);
+            return;
+        }
+
+        const powerStartAddress = 154;
+        const batteryStartAddress = 166;
+        const chargeStartAddress = 172;
+
+        const timeslots = 6;
+
+        const powerRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, powerStartAddress);
+        const batteryRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, batteryStartAddress);
+        const chargeRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, chargeStartAddress);
+
+        if (!chargeRegister || !powerRegister || !batteryRegister) {
+            origin.filteredError('Register not found', chargeStartAddress, powerStartAddress, batteryStartAddress);
+            return;
+        }
+
+        const fetchCharge = async (retryCount: number = 0): Promise<Buffer | undefined> => {
+            if (retryCount > 3) {
+                return undefined;
+            }
+
+            try {
+                const result = await client.readAddressWithoutConversion(chargeRegister);
+
+                if (result) {
+                    return result;
+                }
+
+                return fetchCharge(retryCount + 1);
+            } catch (error) {
+                return fetchCharge(retryCount + 1);
+            }
+        };
+
+        const chargeBuffer = await fetchCharge();
+
+        if (!chargeBuffer) {
+            origin.filteredError('Error fetching charge buffer');
+            return;
+        }
+
+        const chargeBits = [gridChargeBit, generatorChargeBit];
+
+        const chargeResult = writeBitsToBufferBE(chargeBuffer, chargeBits, 0);
+
+        const powerValues = Array.from({ length: timeslots }, (_, i) => powerRegister.calculatePayload(powerLimitNumber, origin));
+        const batteryRegisterValues = Array.from({ length: timeslots }, (_, i) => batteryChargeNumber);
+
+        const chargeValues = Buffer.concat(Array.from({ length: timeslots }, (_, i) => chargeResult));
+
+        origin.filteredLog('Charge values', chargeValues);
+
+        try {
+            const response = await client.writeRegisters(chargeRegister, [chargeValues]);
+            if (response === false) {
+                throw new Error('Error setting all timeslot charge');
+            }
+        } catch (error) {
+            origin.filteredError('Error setting all charge parameters', error);
+            throw error;
+        }
+
+        try {
+            const response = await client.writeRegisters(powerRegister, powerValues);
+            if (response === false) {
+                throw new Error('Error setting all timeslot power');
+            }
+        } catch (error) {
+            origin.filteredError('Error setting all power parameters', error);
+            throw error;
+        }
+
+        try {
+            const response = await client.writeRegisters(batteryRegister, batteryRegisterValues);
+            if (response === false) {
+                throw new Error('Error setting all timeslot power');
+            }
+        } catch (error) {
+            origin.filteredError('Error setting all battery parameters', error);
+            throw error;
+        }
     };
 
     setTimeOfUseTimeslotParameters = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {

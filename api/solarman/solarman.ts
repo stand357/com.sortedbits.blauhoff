@@ -101,30 +101,36 @@ export class Solarman implements IAPI {
         this.log.filteredError('Disconnecting');
     }
 
-    writeRegister = async (register: ModbusRegister, value: number): Promise<boolean> => {
+    writeRegisters = async (register: ModbusRegister, values: any[]): Promise<boolean> => {
         if (register.accessMode === AccessMode.ReadOnly) {
             return false;
         }
 
-        const valid = validateValue(value, register.dataType);
-        this.log.filteredLog('Validating value', value, 'for register', register.address, 'with data type', register.dataType, 'result', valid);
+        for (const value of values) {
+            if (!Buffer.isBuffer(value)) {
+                const valid = validateValue(value, register.dataType);
+                this.log.filteredLog('Validating value', value, 'for register', register.address, 'with data type', register.dataType, 'result', valid);
 
-        if (!validateValue(value, register.dataType)) {
-            this.log.filteredError('Unable to write register, invalid value', value, register.dataType);
-            return false;
+                if (!valid) {
+                    return false;
+                }
+            }
         }
 
-        const request = this.createModbusWriteRequest(register, [value]);
+        const request = this.createModbusWriteRequest(register, values);
 
         try {
             const result = await this.performRequest(request);
-            this.log.log('Write register', register.address, value, result);
-            //TODO: Make sure we return the right boolean
+            this.log.log('Write register', register.address, values, result);
             return true;
         } catch (error) {
             this.log.filteredError('Error writing register', error);
             return false;
         }
+    };
+
+    writeRegister = async (register: ModbusRegister, value: number): Promise<boolean> => {
+        return await this.writeRegisters(register, [value]);
     };
 
     writeBufferRegister = async (register: ModbusRegister, buffer: Buffer): Promise<boolean> => {
