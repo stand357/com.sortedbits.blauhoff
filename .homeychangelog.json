@@ -136,5 +136,8 @@
   },
   "2.4.21": {
     "en": "Ability to disable the device."
+  },
+  "2.4.22": {
+    "en": "Allow scripts to read revering values"
   }
 }
