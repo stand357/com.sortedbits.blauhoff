@@ -193,13 +193,24 @@ export class BaseDevice extends Homey.Device {
             return;
         }
 
+        while (this.runningRequest) {
+            await new Promise((resolve) => setTimeout(resolve, 200));
+        }
+
+        this.runningRequest = true;
+
         const localTimezone = this.homey.clock.getTimezone();
         const date = DateTime.now();
         const localDate = date.setZone(localTimezone);
 
-        await capabilityChange(this, 'date.record', localDate.toFormat('HH:mm:ss'));
-
-        await this.api.readRegistersInBatch();
+        try {
+            await capabilityChange(this, 'date.record', localDate.toFormat('HH:mm:ss'));
+            await this.api.readRegistersInBatch();
+        } catch (error) {
+            this.filteredError('Error reading registers', error);
+        } finally {
+            this.runningRequest = false;
+        }
 
         const { refreshInterval } = this.getSettings();
 

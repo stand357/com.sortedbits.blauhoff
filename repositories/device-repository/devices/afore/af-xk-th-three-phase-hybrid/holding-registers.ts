@@ -75,8 +75,8 @@ export const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.default('timeslot.time', 2510, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
     ModbusRegister.default('timeslot.time', 2511, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
     ModbusRegister.default('timeslot.time', 2512, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.time', 1513, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.time', 1514, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.time', 1515, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.time', 1516, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 2513, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 2514, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 2515, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('timeslot.time', 2516, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
 ];
