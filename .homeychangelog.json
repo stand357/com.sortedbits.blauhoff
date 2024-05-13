@@ -130,5 +130,8 @@
   },
   "2.4.19": {
     "en": "We queued more commands"
+  },
+  "2.4.20": {
+    "en": "Add new flow card"
   }
 }
