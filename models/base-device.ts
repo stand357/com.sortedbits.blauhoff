@@ -24,18 +24,19 @@ export class BaseDevice extends Homey.Device {
     private reachable: boolean = false;
     private readRegisterTimeout: NodeJS.Timeout | undefined;
     private device!: Device;
+    private enabled: boolean = true;
 
     private runningRequest: boolean = false;
 
     public filteredLog(...args: any[]) {
         if (this.device.brand === Brand.Deye || this.device.brand === Brand.Afore) {
-            this.log(args);
+            this.log(...args);
         }
     }
 
     public filteredError(...args: any[]) {
         if (this.device.brand === Brand.Afore || this.device.brand === Brand.Deye) {
-            this.error(args);
+            this.error(...args);
         }
     }
 
@@ -125,14 +126,14 @@ export class BaseDevice extends Homey.Device {
      * @returns {Promise<void>} A promise that resolves when the connection is established.
      */
     private connect = async () => {
-        const { host, port, unitId, solarman, serial } = this.getSettings();
+        const { host, port, unitId, solarman, serial, enabled } = this.getSettings();
         const { deviceType, modelId } = this.getData();
 
         if (this.readRegisterTimeout) {
             clearTimeout(this.readRegisterTimeout);
         }
 
-        this.filteredLog('ModbusDevice', host, port, unitId, deviceType, modelId);
+        this.filteredLog('ModbusDevice', host, port, unitId, deviceType, modelId, enabled);
 
         await this.initializeCapabilities();
 
@@ -179,7 +180,15 @@ export class BaseDevice extends Homey.Device {
             }
         }
 
-        await this.connect();
+        const { enabled } = this.getSettings();
+        this.enabled = enabled;
+
+        if (this.enabled) {
+            await this.connect();
+        } else {
+            await this.setUnavailable('Device is disabled');
+            this.filteredLog('ModbusDevice is disabled');
+        }
     }
 
     /**
@@ -190,6 +199,13 @@ export class BaseDevice extends Homey.Device {
     private readRegisters = async () => {
         if (!this.api) {
             this.filteredError('ModbusAPI is not initialized');
+            return;
+        }
+
+        const { refreshInterval } = this.getSettings();
+
+        if (!this.enabled) {
+            this.filteredLog('ModbusDevice is disabled, returning');
             return;
         }
 
@@ -212,10 +228,7 @@ export class BaseDevice extends Homey.Device {
             this.runningRequest = false;
         }
 
-        const { refreshInterval } = this.getSettings();
-
         const interval = this.reachable ? (refreshInterval < 5 ? 5 : refreshInterval) * 1000 : 60000;
-
         this.readRegisterTimeout = await this.homey.setTimeout(this.readRegisters.bind(this), interval);
     };
 
@@ -253,7 +266,18 @@ export class BaseDevice extends Homey.Device {
             await this.api?.disconnect();
         }
 
-        await this.connect();
+        if (this.enabled !== undefined) {
+            this.enabled = newSettings['enabled'] as boolean;
+        }
+
+        if (this.enabled) {
+            this.filteredLog('ModbusDevice is enabled');
+            await this.setAvailable();
+            await this.connect();
+        } else {
+            this.filteredLog('ModbusDevice is disabled');
+            await this.setUnavailable('Device is disabled');
+        }
     }
 
     /**

@@ -79,6 +79,7 @@ export class BaseDriver extends Homey.Driver {
                 refreshInterval: 10,
                 solarman: deviceInformation.solarman,
                 serial: deviceInformation.serial,
+                enabled: true,
             },
         };
 

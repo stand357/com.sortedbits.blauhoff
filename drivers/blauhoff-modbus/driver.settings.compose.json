@@ -67,5 +67,16 @@
         "hint": {
             "en": "The serial number of your Solarman network device."
         }
+    },
+    {
+        "id": "enabled",
+        "type": "checkbox",
+        "label": {
+            "en": "This device is enabled"
+        },
+        "value": true,
+        "hint": {
+            "en": "When disabled, the device will not be queried."
+        }
     }
 ]
