@@ -142,5 +142,8 @@
   },
   "2.4.23": {
     "en": "Fix Modbus value validation"
+  },
+  "2.4.24": {
+    "en": "Read capabilities and cleanup"
   }
 }
