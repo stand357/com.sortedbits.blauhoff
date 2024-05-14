@@ -219,11 +219,13 @@ export class ModbusAPI implements IAPI {
         }
 
         for (const value of values) {
-            const valid = validateValue(value, register.dataType);
-            this.log.filteredLog('Validating value', value, 'for register', register.address, 'with data type', register.dataType, 'result', valid);
+            if (!Buffer.isBuffer(value)) {
+                const valid = validateValue(value, register.dataType);
+                this.log.filteredLog('Validating value', value, 'for register', register.address, 'with data type', register.dataType, 'result', valid);
 
-            if (!valid) {
-                return false;
+                if (!valid) {
+                    return false;
+                }
             }
         }
 
