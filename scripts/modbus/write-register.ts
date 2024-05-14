@@ -56,6 +56,19 @@ const perform = async (): Promise<void> => {
         return;
     }
 
+    //  const { gridcharge, generatorcharge, powerlimit, batterycharge } = args;
+
+    const parameters = {
+        gridcharge: 'true',
+        generatorcharge: 'false',
+        powerlimit: 3400,
+        batterycharge: 15,
+    };
+
+    await device.callAction(log, 'set_all_timeslot_parameters', parameters, api);
+
+    /*
+
     log.filteredLog('Reading current value', addressInfo.address);
     //    const currentValue = await api.readAddress(address);
 
@@ -63,6 +76,7 @@ const perform = async (): Promise<void> => {
     //    log.filteredLog('Current value', currentValue);
 
     await api.writeRegister(addressInfo, 0);
+    */
 };
 
 perform()

@@ -3,7 +3,6 @@ import { IBaseLogger } from '../../helpers/log';
 import { validateValue } from '../../helpers/validate-value';
 import { createRegisterBatches } from '../../repositories/device-repository/helpers/register-batches';
 import { Device } from '../../repositories/device-repository/models/device';
-import { AccessMode } from '../../repositories/device-repository/models/enum/access-mode';
 import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 import { IAPI } from '../iapi';
@@ -102,10 +101,6 @@ export class Solarman implements IAPI {
     }
 
     writeRegisters = async (register: ModbusRegister, values: any[]): Promise<boolean> => {
-        if (register.accessMode === AccessMode.ReadOnly) {
-            return false;
-        }
-
         for (const value of values) {
             if (!Buffer.isBuffer(value)) {
                 const valid = validateValue(value, register.dataType);

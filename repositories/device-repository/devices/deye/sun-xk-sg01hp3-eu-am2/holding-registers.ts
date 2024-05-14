@@ -1,3 +1,4 @@
+import { logBits, readBitBE } from '../../../../../helpers/bits';
 import { AccessMode } from '../../../models/enum/access-mode';
 import { RegisterDataType } from '../../../models/enum/register-datatype';
 import { ModbusRegister } from '../../../models/modbus-register';
@@ -9,26 +10,6 @@ export const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.default('serial', 3, 5, RegisterDataType.STRING),
     ModbusRegister.scale('status_code.zero_export_power', 104, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
     ModbusRegister.scale('status_code.max_sell_power', 143, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
-    //time of use, we have to discuss a way how to handle these
-    ModbusRegister.default('status_code.grid_tou_time1', 148, 1, RegisterDataType.UINT16, AccessMode.ReadWrite), // 6 o'clock is shown as 600
-    ModbusRegister.default('status_code.grid_tou_time2', 149, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_time3', 150, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_time4', 151, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_time5', 152, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_time6', 153, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.scale('status_code.grid_tou_power1', 154, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
-    ModbusRegister.scale('status_code.grid_tou_power2', 155, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
-    ModbusRegister.scale('status_code.grid_tou_power3', 156, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
-    ModbusRegister.scale('status_code.grid_tou_power4', 157, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
-    ModbusRegister.scale('status_code.grid_tou_power5', 158, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
-    ModbusRegister.scale('status_code.grid_tou_power6', 159, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_capacity1', 166, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_capacity2', 167, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_capacity3', 168, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_capacity4', 169, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_capacity5', 170, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    ModbusRegister.default('status_code.grid_tou_capacity6', 171, 1, RegisterDataType.UINT16, AccessMode.ReadWrite),
-    //
 
     ModbusRegister.scale('status_code.grid_peak_shaving_power', 191, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
     ModbusRegister.scale('status_code.max_solar_power', 340, 1, RegisterDataType.UINT16, 10, AccessMode.ReadWrite),
@@ -154,102 +135,125 @@ export const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.scale('measure_power.pv1', 672, 1, RegisterDataType.UINT16, 10),
     ModbusRegister.scale('measure_power.pv2', 673, 1, RegisterDataType.UINT16, 10),
 
-    //ModbusRegister.scale('measure_current.pv1', 677, 1, RegisterDataType.UINT16, 0.1),
-    //ModbusRegister.scale('measure_current.pv2', 679, 1, RegisterDataType.UINT16, 0.1),
-    //ModbusRegister.scale('measure_voltage.pv1', 676, 1, RegisterDataType.UINT16, 0.1),
-    //ModbusRegister.scale('measure_voltage.pv2', 678, 1, RegisterDataType.UINT16, 0.1),
-
     // grid
     ModbusRegister.default('measure_power.grid', 625, 1, RegisterDataType.UINT16),
-    //ModbusRegister.default('measure_power.total_active_in_power', 607, 1, RegisterDataType.INT16), //irrelevant?
-    //ModbusRegister.default('measure_power.grid_int_ctl1', 604, 1, RegisterDataType.INT16),
-    //ModbusRegister.default('measure_power.grid_int_ctl2', 605, 1, RegisterDataType.INT16),
-    //ModbusRegister.default('measure_power.grid_int_ctl3', 606, 1, RegisterDataType.INT16),
-    //ModbusRegister.default('measure_power.grid_ext_ctl1', 616, 1, RegisterDataType.INT16),
-    //ModbusRegister.default('measure_power.grid_ext_ctl2', 617, 1, RegisterDataType.INT16),
-    //ModbusRegister.default('measure_power.grid_ext_ctl3', 618, 1, RegisterDataType.INT16),
 
     ModbusRegister.scale('measure_voltage.grid_l1', 598, 1, RegisterDataType.UINT16, 0.1),
     ModbusRegister.scale('measure_voltage.grid_l2', 599, 1, RegisterDataType.UINT16, 0.1),
     ModbusRegister.scale('measure_voltage.grid_l3', 600, 1, RegisterDataType.UINT16, 0.1),
 
-    // generator
-    // ModbusRegister.scale('measure_power.gen_port', 667, 1, RegisterDataType.UINT16, 0),
-
     // inverter
     ModbusRegister.default('measure_power.inverter', 636, 1, RegisterDataType.INT16),
-    //ModbusRegister.default('measure_power.inverter_l1', 633, 1, RegisterDataType.INT16),
-    //ModbusRegister.default('measure_power.inverter_l2', 634, 1, RegisterDataType.INT16),
-    //ModbusRegister.default('measure_power.inverter_l3', 635, 1, RegisterDataType.INT16),
-
-    //ModbusRegister.scale('measure_current.inverter_l1', 630, 1, RegisterDataType.INT16, 0.01),
-    //ModbusRegister.scale('measure_current.inverter_l2', 631, 1, RegisterDataType.INT16, 0.01),
-    //ModbusRegister.scale('measure_current.inverter_l3', 632, 1, RegisterDataType.INT16, 0.01),
-    //ModbusRegister.scale('measure_voltage.inverter_l1', 627, 1, RegisterDataType.UINT16, 0.1),
-    //ModbusRegister.scale('measure_voltage.inverter_l2', 628, 1, RegisterDataType.UINT16, 0.1),
-    //ModbusRegister.scale('measure_voltage.inverter_l3', 629, 1, RegisterDataType.UINT16, 0.1),
     ModbusRegister.scale('measure_temperature.ac', 541, 1, RegisterDataType.UINT16, 0.01),
 
     // battery
     ModbusRegister.scale('measure_power.battery1', 590, 1, RegisterDataType.INT16, 10),
-    //ModbusRegister.scale('measure_power.battery2', 595, 1, RegisterDataType.INT16, 10),
 
     ModbusRegister.scale('measure_current.battery1', 591, 1, RegisterDataType.INT16, 0.01),
-    //ModbusRegister.scale('measure_current.battery2', 594, 1, RegisterDataType.INT16, 0.01),
     ModbusRegister.scale('measure_voltage.battery1', 587, 1, RegisterDataType.INT16, 0.1),
-    //ModbusRegister.scale('measure_voltage.battery2', 593, 1, RegisterDataType.INT16, 0.1),
 
     ModbusRegister.default('measure_percentage.battery1', 588, 1, RegisterDataType.UINT16), // SOC
-    //ModbusRegister.default('measure_percentage.battery2', 589, 1, RegisterDataType.UINT16), // SOC
 
     ModbusRegister.scale('measure_temperature.battery1', 586, 1, RegisterDataType.UINT16, 0.01),
-    //ModbusRegister.scale('measure_temperature.battery2', 596, 1, RegisterDataType.UINT16, 0.01),
     ModbusRegister.scale('measure_temperature.dc', 540, 1, RegisterDataType.UINT16, 0.01),
 
     // load
     ModbusRegister.default('measure_power.load', 653, 1, RegisterDataType.INT16),
-    //ModbusRegister.default('measure_power.load_l1', 650, 1, RegisterDataType.INT16),
-    //ModbusRegister.default('measure_power.load_l2', 651, 1, RegisterDataType.INT16),
-    //ModbusRegister.default('measure_power.load_l3', 652, 1, RegisterDataType.INT16),
-
-    //ModbusRegister.scale('measure_voltage.load_l1', 644, 1, RegisterDataType.UINT16, 0.1),
-    //ModbusRegister.scale('measure_voltage.load_l2', 645, 1, RegisterDataType.UINT16, 0.1),
-    //ModbusRegister.scale('measure_voltage.load_l3', 646, 1, RegisterDataType.UINT16, 0.1),
 
     // ups
     ModbusRegister.default('measure_power.ups', 643, 1, RegisterDataType.UINT16), //gives a low random value when nothing is connected
-    //ModbusRegister.default('measure_power.ups_l1', 640, 1, RegisterDataType.UINT16),
-    //ModbusRegister.default('measure_power.ups_l2', 641, 1, RegisterDataType.UINT16),
-    //ModbusRegister.default('measure_power.ups_l3', 642, 1, RegisterDataType.UINT16),
 
     /*
      * Time of use  parameters, we don't want to show ALL of these
      * Should grid/generator charging be enabled for this timeslot
      */
-    ModbusRegister.default('timeslot.charging', 172, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.charging', 173, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.charging', 174, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.charging', 175, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.charging', 176, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.charging', 177, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.transform('status_text.grid_charging1', 172, 1, RegisterDataType.UINT16, (_, buffer, log) => {
+        logBits(log, buffer);
+        if (readBitBE(buffer, 0) === 1) {
+            return 'Enabled';
+        }
+        return 'Disabled';
+    }).addTransform('status_text.generator_charging1', (_, buffer) => {
+        if (readBitBE(buffer, 1) === 1) {
+            return 'Enabled';
+        }
+        return 'Disabled';
+    }),
+
+    ModbusRegister.transform('status_text.grid_charging2', 173, 1, RegisterDataType.UINT16, (_, buffer, log) => {
+        if (readBitBE(buffer, 0) === 1) {
+            return 'Enabled';
+        }
+        return 'Disabled';
+    }).addTransform('status_text.generator_charging2', (_, buffer) => {
+        if (readBitBE(buffer, 1) === 1) {
+            return 'Enabled';
+        }
+        return 'Disabled';
+    }),
+    ModbusRegister.transform('status_text.grid_charging3', 174, 1, RegisterDataType.UINT16, (_, buffer, log) => {
+        if (readBitBE(buffer, 0) === 1) {
+            return 'Enabled';
+        }
+        return 'Disabled';
+    }).addTransform('status_text.generator_charging3', (_, buffer) => {
+        if (readBitBE(buffer, 1) === 1) {
+            return 'Enabled';
+        }
+        return 'Disabled';
+    }),
+    ModbusRegister.transform('status_text.grid_charging4', 175, 1, RegisterDataType.UINT16, (_, buffer, log) => {
+        if (readBitBE(buffer, 0) === 1) {
+            return 'Enabled';
+        }
+        return 'Disabled';
+    }).addTransform('status_text.generator_charging4', (_, buffer) => {
+        if (readBitBE(buffer, 1) === 1) {
+            return 'Enabled';
+        }
+        return 'Disabled';
+    }),
+    ModbusRegister.transform('status_text.grid_charging5', 176, 1, RegisterDataType.UINT16, (_, buffer, log) => {
+        if (readBitBE(buffer, 0) === 1) {
+            return 'Enabled';
+        }
+        return 'Disabled';
+    }).addTransform('status_text.generator_charging5', (_, buffer) => {
+        if (readBitBE(buffer, 1) === 1) {
+            return 'Enabled';
+        }
+        return 'Disabled';
+    }),
+    ModbusRegister.transform('status_text.grid_charging6', 177, 1, RegisterDataType.UINT16, (_, buffer, log) => {
+        if (readBitBE(buffer, 0) === 1) {
+            return 'Enabled';
+        }
+        return 'Disabled';
+    }).addTransform('status_text.generator_charging6', (_, buffer) => {
+        if (readBitBE(buffer, 1) === 1) {
+            return 'Enabled';
+        }
+        return 'Disabled';
+    }),
+
     /*
      * Powerlimit for this timeslot
      */
-    ModbusRegister.scale('timeslot.powerlimit', 154, 1, RegisterDataType.UINT16, 10, AccessMode.WriteOnly),
-    ModbusRegister.scale('timeslot.powerlimit', 155, 1, RegisterDataType.UINT16, 10, AccessMode.WriteOnly),
-    ModbusRegister.scale('timeslot.powerlimit', 156, 1, RegisterDataType.UINT16, 10, AccessMode.WriteOnly),
-    ModbusRegister.scale('timeslot.powerlimit', 157, 1, RegisterDataType.UINT16, 10, AccessMode.WriteOnly),
-    ModbusRegister.scale('timeslot.powerlimit', 158, 1, RegisterDataType.UINT16, 10, AccessMode.WriteOnly),
-    ModbusRegister.scale('timeslot.powerlimit', 159, 1, RegisterDataType.UINT16, 10, AccessMode.WriteOnly),
+    ModbusRegister.scale('measure_power.powerlimit1', 154, 1, RegisterDataType.UINT16, 10), //, AccessMode.WriteOnly),
+    ModbusRegister.scale('measure_power.powerlimit2', 155, 1, RegisterDataType.UINT16, 10), //, AccessMode.WriteOnly),
+    ModbusRegister.scale('measure_power.powerlimit3', 156, 1, RegisterDataType.UINT16, 10), //, AccessMode.WriteOnly),
+    ModbusRegister.scale('measure_power.powerlimit4', 157, 1, RegisterDataType.UINT16, 10), //, AccessMode.WriteOnly),
+    ModbusRegister.scale('measure_power.powerlimit5', 158, 1, RegisterDataType.UINT16, 10), //, AccessMode.WriteOnly),
+    ModbusRegister.scale('measure_power.powerlimit6', 159, 1, RegisterDataType.UINT16, 10), //, AccessMode.WriteOnly),
     /*
      * Minimum battery percentage for this timeslot
      */
-    ModbusRegister.default('timeslot.battery', 166, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.battery', 167, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.battery', 168, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.battery', 169, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.battery', 170, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.battery', 171, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.default('measure_percentage.battery1', 166, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
+    ModbusRegister.default('measure_percentage.battery2', 167, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
+    ModbusRegister.default('measure_percentage.battery3', 168, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
+    ModbusRegister.default('measure_percentage.battery4', 169, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
+    ModbusRegister.default('measure_percentage.battery5', 170, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
+    ModbusRegister.default('measure_percentage.battery6', 171, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
     /*
      * Time for this timeslot
      */
@@ -260,3 +264,46 @@ export const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.default('timeslot.time', 152, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
     ModbusRegister.default('timeslot.time', 153, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
 ];
+
+/*
+    //ModbusRegister.default('measure_power.load_l1', 650, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.load_l2', 651, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.load_l3', 652, 1, RegisterDataType.INT16),
+
+    //ModbusRegister.scale('measure_voltage.load_l1', 644, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.load_l2', 645, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.load_l3', 646, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.default('measure_power.ups_l1', 640, 1, RegisterDataType.UINT16),
+    //ModbusRegister.default('measure_power.ups_l2', 641, 1, RegisterDataType.UINT16),
+    //ModbusRegister.default('measure_power.ups_l3', 642, 1, RegisterDataType.UINT16),
+    //ModbusRegister.default('measure_power.inverter_l1', 633, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.inverter_l2', 634, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.inverter_l3', 635, 1, RegisterDataType.INT16),
+
+    //ModbusRegister.scale('measure_current.inverter_l1', 630, 1, RegisterDataType.INT16, 0.01),
+    //ModbusRegister.scale('measure_current.inverter_l2', 631, 1, RegisterDataType.INT16, 0.01),
+    //ModbusRegister.scale('measure_current.inverter_l3', 632, 1, RegisterDataType.INT16, 0.01),
+    //ModbusRegister.scale('measure_voltage.inverter_l1', 627, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.inverter_l2', 628, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.inverter_l3', 629, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_current.pv1', 677, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_current.pv2', 679, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.pv1', 676, 1, RegisterDataType.UINT16, 0.1),
+    //ModbusRegister.scale('measure_voltage.pv2', 678, 1, RegisterDataType.UINT16, 0.1),
+
+
+    //ModbusRegister.default('measure_power.total_active_in_power', 607, 1, RegisterDataType.INT16), //irrelevant?
+    //ModbusRegister.default('measure_power.grid_int_ctl1', 604, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.grid_int_ctl2', 605, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.grid_int_ctl3', 606, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.grid_ext_ctl1', 616, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.grid_ext_ctl2', 617, 1, RegisterDataType.INT16),
+    //ModbusRegister.default('measure_power.grid_ext_ctl3', 618, 1, RegisterDataType.INT16),
+    // generator
+    // ModbusRegister.scale('measure_power.gen_port', 667, 1, RegisterDataType.UINT16, 0),
+    //ModbusRegister.scale('measure_power.battery2', 595, 1, RegisterDataType.INT16, 10),
+    //ModbusRegister.scale('measure_current.battery2', 594, 1, RegisterDataType.INT16, 0.01),
+    //ModbusRegister.scale('measure_voltage.battery2', 593, 1, RegisterDataType.INT16, 0.1),
+    //ModbusRegister.default('measure_percentage.battery2', 589, 1, RegisterDataType.UINT16), // SOC
+    //ModbusRegister.scale('measure_temperature.battery2', 596, 1, RegisterDataType.UINT16, 0.01),
+    */

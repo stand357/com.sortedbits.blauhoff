@@ -626,6 +626,127 @@
             "title": {
                 "en": "AC SOC max charge"
             }
+        },
+        "status_text.grid_charging1": {
+            "title": {
+                "en": "Grid charging 1"
+            }
+        },
+        "status_text.generator_charging1": {
+            "title": {
+                "en": "Generator charging 1"
+            }
+        },
+        "status_text.grid_charging2": {
+            "title": {
+                "en": "Grid charging 2"
+            }
+        },
+        "status_text.generator_charging2": {
+            "title": {
+                "en": "Generator charging 2"
+            }
+        },
+        "status_text.grid_charging3": {
+            "title": {
+                "en": "Grid charging 3"
+            }
+        },
+        "status_text.generator_charging3": {
+            "title": {
+                "en": "Generator charging 3"
+            }
+        },
+        "status_text.grid_charging4": {
+            "title": {
+                "en": "Grid charging 4"
+            }
+        },
+        "status_text.generator_charging4": {
+            "title": {
+                "en": "Generator charging 4"
+            }
+        },
+        "status_text.grid_charging5": {
+            "title": {
+                "en": "Grid charging 5"
+            }
+        },
+        "status_text.generator_charging5": {
+            "title": {
+                "en": "Generator charging 5"
+            }
+        },
+        "status_text.grid_charging6": {
+            "title": {
+                "en": "Grid charging 6"
+            }
+        },
+        "status_text.generator_charging6": {
+            "title": {
+                "en": "Generator charging 6"
+            }
+        },
+
+        "measure_power.powerlimit1": {
+            "title": {
+                "en": "Power limit 1"
+            }
+        },
+        "measure_power.powerlimit2": {
+            "title": {
+                "en": "Power limit 2"
+            }
+        },
+        "measure_power.powerlimit3": {
+            "title": {
+                "en": "Power limit 3"
+            }
+        },
+        "measure_power.powerlimit4": {
+            "title": {
+                "en": "Power limit 4"
+            }
+        },
+        "measure_power.powerlimit5": {
+            "title": {
+                "en": "Power limit 5"
+            }
+        },
+        "measure_power.powerlimit6": {
+            "title": {
+                "en": "Power limit 6"
+            }
+        },
+        "measure_percentage.battery1": {
+            "title": {
+                "en": "ToU Battery 1"
+            }
+        },
+        "measure_percentage.battery2": {
+            "title": {
+                "en": "ToU Battery 2"
+            }
+        },
+        "measure_percentage.battery3": {
+            "title": {
+                "en": "ToU Battery 3"
+            }
+        },
+        "measure_percentage.battery4": {
+            "title": {
+                "en": "ToU Battery 4"
+            }
+        },
+        "measure_percentage.battery5": {
+            "title": {
+                "en": "ToU Battery 5"
+            }
+        },
+        "measure_percentage.battery6": {
+            "title": {
+                "en": "ToU Battery 6"
+            }
         }
     },
     "energy": {
