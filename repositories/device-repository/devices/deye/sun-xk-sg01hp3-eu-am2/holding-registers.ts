@@ -1,4 +1,5 @@
 import { readBitBE } from '../../../../../helpers/bits';
+import { valueToTime } from '../../../../../helpers/time';
 import { AccessMode } from '../../../models/enum/access-mode';
 import { RegisterDataType } from '../../../models/enum/register-datatype';
 import { ModbusRegister } from '../../../models/modbus-register';
@@ -256,12 +257,24 @@ export const holdingRegisters: ModbusRegister[] = [
     /*
      * Time for this timeslot
      */
-    ModbusRegister.default('timeslot.time', 148, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.time', 149, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.time', 150, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.time', 151, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.time', 152, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
-    ModbusRegister.default('timeslot.time', 153, 1, RegisterDataType.UINT16, AccessMode.WriteOnly),
+    ModbusRegister.transform('status_text.tou_time1', 148, 1, RegisterDataType.UINT16, (value, buffer, log) => {
+        return valueToTime(value);
+    }),
+    ModbusRegister.transform('status_text.tou_time2', 149, 1, RegisterDataType.UINT16, (value, buffer, log) => {
+        return valueToTime(value);
+    }),
+    ModbusRegister.transform('status_text.tou_time3', 150, 1, RegisterDataType.UINT16, (value, buffer, log) => {
+        return valueToTime(value);
+    }),
+    ModbusRegister.transform('status_text.tou_time4', 151, 1, RegisterDataType.UINT16, (value, buffer, log) => {
+        return valueToTime(value);
+    }),
+    ModbusRegister.transform('status_text.tou_time5', 152, 1, RegisterDataType.UINT16, (value, buffer, log) => {
+        return valueToTime(value);
+    }),
+    ModbusRegister.transform('status_text.tou_time6', 153, 1, RegisterDataType.UINT16, (value, buffer, log) => {
+        return valueToTime(value);
+    }),
 ];
 
 /*

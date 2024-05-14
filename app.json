@@ -1713,6 +1713,36 @@
           "title": {
             "en": "ToU Battery 6"
           }
+        },
+        "status_text.tou_time1": {
+          "title": {
+            "en": "ToU Time 1"
+          }
+        },
+        "status_text.tou_time2": {
+          "title": {
+            "en": "ToU Time 2"
+          }
+        },
+        "status_text.tou_time3": {
+          "title": {
+            "en": "ToU Time 3"
+          }
+        },
+        "status_text.tou_time4": {
+          "title": {
+            "en": "ToU Time 4"
+          }
+        },
+        "status_text.tou_time5": {
+          "title": {
+            "en": "ToU Time 5"
+          }
+        },
+        "status_text.tou_time6": {
+          "title": {
+            "en": "ToU Time 6"
+          }
         }
       },
       "energy": {
