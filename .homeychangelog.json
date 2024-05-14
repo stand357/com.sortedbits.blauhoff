@@ -148,5 +148,8 @@
   },
   "2.4.25": {
     "en": "Better writing of values"
+  },
+  "2.4.26": {
+    "en": "Add Time of Use times"
   }
 }
