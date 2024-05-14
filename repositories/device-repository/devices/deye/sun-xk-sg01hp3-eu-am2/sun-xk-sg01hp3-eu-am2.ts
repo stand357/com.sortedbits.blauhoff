@@ -5,7 +5,7 @@
  * Non-commercial use only
  */
 import { IAPI } from '../../../../../api/iapi';
-import { logBits, writeBitsToBuffer, writeBitsToBufferBE } from '../../../../../helpers/bits';
+import { logBits, writeBitsToBuffer } from '../../../../../helpers/bits';
 import { IBaseLogger } from '../../../../../helpers/log';
 import { Device } from '../../../models/device';
 import { Brand } from '../../../models/enum/brand';
@@ -316,9 +316,6 @@ export class DeyeSunXKSG01HP3 extends Device {
     setAllTimeslotParameters = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
         const { gridcharge, generatorcharge, powerlimit, batterycharge } = args;
 
-        const gridChargeBit = gridcharge === 'true' ? 1 : 0;
-        const generatorChargeBit = generatorcharge === 'true' ? 1 : 0;
-
         const powerLimitNumber = Number(powerlimit);
         if (powerLimitNumber < 0 || powerLimitNumber > 8000) {
             origin.filteredError('Invalid power limit', powerlimit);
@@ -331,90 +328,36 @@ export class DeyeSunXKSG01HP3 extends Device {
             return;
         }
 
-        const powerStartAddress = 154;
-        const batteryStartAddress = 166;
-        const chargeStartAddress = 172;
-
         const timeslots = 6;
 
-        const powerRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, powerStartAddress);
-        const batteryRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, batteryStartAddress);
-        const chargeRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, chargeStartAddress);
+        const powerRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, 154);
+        const batteryRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, 166);
+        const chargeRegister = this.getRegisterByTypeAndAddress(RegisterType.Holding, 172);
 
         if (!chargeRegister || !powerRegister || !batteryRegister) {
-            origin.filteredError('Register not found', chargeStartAddress, powerStartAddress, batteryStartAddress);
+            origin.filteredError('Register not found', powerRegister, batteryRegister, chargeRegister);
             return;
         }
-
-        const fetchCharge = async (retryCount: number = 0): Promise<Buffer | undefined> => {
-            if (retryCount > 3) {
-                return undefined;
-            }
-
-            try {
-                const result = await client.readAddressWithoutConversion(chargeRegister);
-
-                if (result) {
-                    return result;
-                }
-
-                return fetchCharge(retryCount + 1);
-            } catch (error) {
-                return fetchCharge(retryCount + 1);
-            }
-        };
-
-        const chargeBuffer = await fetchCharge();
-
-        if (!chargeBuffer) {
-            origin.filteredError('Error fetching charge buffer');
-            return;
-        }
-
-        const chargeBits = [gridChargeBit, generatorChargeBit];
-
-        const chargeResult = writeBitsToBufferBE(chargeBuffer, chargeBits, 0);
 
         const powerValues = Array.from({ length: timeslots }, (_, i) => powerRegister.calculatePayload(powerLimitNumber, origin));
         const batteryRegisterValues = Array.from({ length: timeslots }, (_, i) => batteryChargeNumber);
+        const chargeValues = Array.from({ length: timeslots }, (_, i) => this.chargesToValue(gridcharge, generatorcharge));
 
-        const chargeValues = Buffer.concat(Array.from({ length: timeslots }, (_, i) => chargeResult));
-
-        origin.filteredLog('Charge values', chargeValues);
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        try {
-            const response = await client.writeRegisters(chargeRegister, [chargeValues]);
-            if (response === false) {
-                throw new Error('Error setting all timeslot charge');
-            }
-        } catch (error) {
-            origin.filteredError('Error setting all charge parameters', error);
-            throw error;
+        if ((await client.writeRegisters(chargeRegister, chargeValues)) === false) {
+            throw new Error('Error setting all timeslot charge');
         }
 
         await new Promise((resolve) => setTimeout(resolve, 500));
-        try {
-            const response = await client.writeRegisters(powerRegister, powerValues);
-            if (response === false) {
-                throw new Error('Error setting all timeslot power');
-            }
-        } catch (error) {
-            origin.filteredError('Error setting all power parameters', error);
-            throw error;
+
+        if ((await client.writeRegisters(powerRegister, powerValues)) === false) {
+            throw new Error('Error setting all timeslot power');
         }
+
         await new Promise((resolve) => setTimeout(resolve, 500));
 
-        try {
-            const response = await client.writeRegisters(batteryRegister, batteryRegisterValues);
-            if (response === false) {
-                throw new Error('Error setting all timeslot power');
-            }
-        } catch (error) {
-            origin.filteredError('Error setting all battery parameters', error);
-            throw error;
+        if ((await client.writeRegisters(batteryRegister, batteryRegisterValues)) === false) {
+            throw new Error('Error setting all timeslot power');
         }
-        await new Promise((resolve) => setTimeout(resolve, 500));
     };
 
     setTimeOfUseTimeslotParameters = async (origin: IBaseLogger, args: any, client: IAPI): Promise<void> => {
@@ -425,9 +368,6 @@ export class DeyeSunXKSG01HP3 extends Device {
             origin.filteredError('Invalid timeslot', timeslot);
             return;
         }
-
-        const gridChargeBit = gridcharge === 'true' ? 1 : 0;
-        const generatorChargeBit = generatorcharge === 'true' ? 1 : 0;
 
         const powerLimitNumber = Number(powerlimit);
         if (powerLimitNumber < 0 || powerLimitNumber > 8000) {
@@ -456,7 +396,7 @@ export class DeyeSunXKSG01HP3 extends Device {
             return;
         }
 
-        const chargeBits = [gridChargeBit, generatorChargeBit];
+        let chargeValue = this.chargesToValue(gridcharge, generatorcharge);
         const parsedTime = Number(time.replace(':', ''));
         const powerPayload = powerRegister.calculatePayload(powerLimitNumber, origin);
 
@@ -465,49 +405,42 @@ export class DeyeSunXKSG01HP3 extends Device {
             parsedTime,
             gridcharge,
             generatorcharge,
-            chargingBits: chargeBits,
+            chargeValue,
             powerPayload,
             batteryChargeNumber,
         });
 
-        try {
-            const response = await client.writeBitsToRegister(chargeRegister, chargeBits, 0);
-            if (response === false) {
-                throw new Error('Error setting timeslot charge');
-            }
-        } catch (error) {
-            origin.filteredError('Error setting timeslot charge', error);
-            throw error;
+        if ((await client.writeRegister(chargeRegister, chargeValue)) === false) {
+            throw new Error('Error setting timeslot charge');
         }
 
-        try {
-            const response = await client.writeRegister(powerRegister, powerPayload);
-            if (response === false) {
-                throw new Error('Error setting timeslot power');
-            }
-        } catch (error) {
-            origin.filteredError('Error setting timeslot power', error);
-            throw error;
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        if ((await client.writeRegister(powerRegister, powerPayload)) === false) {
+            throw new Error('Error setting timeslot power');
         }
 
-        try {
-            const response = await client.writeRegister(batteryRegister, batteryChargeNumber);
-            if (response === false) {
-                throw new Error('Error setting timeslot battery');
-            }
-        } catch (error) {
-            origin.filteredError('Error setting timeslot battery', error);
-            throw error;
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        if ((await client.writeRegister(batteryRegister, batteryChargeNumber)) === false) {
+            throw new Error('Error setting timeslot battery');
         }
 
-        try {
-            const response = await client.writeRegister(timeRegister, parsedTime);
-            if (response === false) {
-                throw new Error('Error setting timeslot time');
-            }
-        } catch (error) {
-            origin.filteredError('Error setting timeslot time', error);
-            throw error;
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        if ((await client.writeRegister(timeRegister, parsedTime)) === false) {
+            throw new Error('Error setting timeslot time');
         }
+    };
+
+    private chargesToValue = (gridCharge: string, generatorCharge: string): number => {
+        let chargeValue = 0;
+        if (gridCharge === 'true') {
+            chargeValue += 1;
+        }
+        if (generatorCharge === 'true') {
+            chargeValue += 2;
+        }
+        return chargeValue;
     };
 }

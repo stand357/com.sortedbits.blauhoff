@@ -8,7 +8,6 @@
 import { Solarman } from '../../api/solarman/solarman';
 import { Logger } from '../../helpers/log';
 import { DeviceRepository } from '../../repositories/device-repository/device-repository';
-import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 
 require('dotenv').config();
@@ -43,7 +42,8 @@ solarmanApi.setOnDataReceived(valueSolarmanResolved);
 
 const perform = async (): Promise<void> => {
     await solarmanApi.connect();
-
+    await solarmanApi.readAllAtOnce();
+    /*
     const register = device.getRegisterByTypeAndAddress(RegisterType.Holding, 154);
 
     if (!register) {
@@ -62,6 +62,7 @@ const perform = async (): Promise<void> => {
         const result = await solarmanApi.readAddress(register);
         log.log('Result for ', i, ':', result);
     }
+    */
 };
 
 perform()

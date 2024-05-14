@@ -1684,32 +1684,32 @@
             "en": "Power limit 6"
           }
         },
-        "measure_percentage.battery1": {
+        "measure_percentage.tou_battery1": {
           "title": {
             "en": "ToU Battery 1"
           }
         },
-        "measure_percentage.battery2": {
+        "measure_percentage.tou_battery2": {
           "title": {
             "en": "ToU Battery 2"
           }
         },
-        "measure_percentage.battery3": {
+        "measure_percentage.tou_battery3": {
           "title": {
             "en": "ToU Battery 3"
           }
         },
-        "measure_percentage.battery4": {
+        "measure_percentage.tou_battery4": {
           "title": {
             "en": "ToU Battery 4"
           }
         },
-        "measure_percentage.battery5": {
+        "measure_percentage.tou_battery5": {
           "title": {
             "en": "ToU Battery 5"
           }
         },
-        "measure_percentage.battery6": {
+        "measure_percentage.tou_battery6": {
           "title": {
             "en": "ToU Battery 6"
           }

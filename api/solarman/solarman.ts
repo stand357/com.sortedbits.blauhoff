@@ -104,7 +104,6 @@ export class Solarman implements IAPI {
         for (const value of values) {
             if (!Buffer.isBuffer(value)) {
                 const valid = validateValue(value, register.dataType);
-                this.log.filteredLog('Validating value', value, 'for register', register.address, 'with data type', register.dataType, 'result', valid);
 
                 if (!valid) {
                     return false;
@@ -115,8 +114,7 @@ export class Solarman implements IAPI {
         const request = this.createModbusWriteRequest(register, values);
 
         try {
-            const result = await this.performRequest(request);
-            this.log.log('Write register', register.address, values, result);
+            await this.performRequest(request);
             return true;
         } catch (error) {
             this.log.filteredError('Error writing register', error);

@@ -1,4 +1,4 @@
-import { logBits, readBitBE } from '../../../../../helpers/bits';
+import { readBitBE } from '../../../../../helpers/bits';
 import { AccessMode } from '../../../models/enum/access-mode';
 import { RegisterDataType } from '../../../models/enum/register-datatype';
 import { ModbusRegister } from '../../../models/modbus-register';
@@ -168,7 +168,6 @@ export const holdingRegisters: ModbusRegister[] = [
      * Should grid/generator charging be enabled for this timeslot
      */
     ModbusRegister.transform('status_text.grid_charging1', 172, 1, RegisterDataType.UINT16, (_, buffer, log) => {
-        logBits(log, buffer);
         if (readBitBE(buffer, 0) === 1) {
             return 'Enabled';
         }
@@ -248,12 +247,12 @@ export const holdingRegisters: ModbusRegister[] = [
     /*
      * Minimum battery percentage for this timeslot
      */
-    ModbusRegister.default('measure_percentage.battery1', 166, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
-    ModbusRegister.default('measure_percentage.battery2', 167, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
-    ModbusRegister.default('measure_percentage.battery3', 168, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
-    ModbusRegister.default('measure_percentage.battery4', 169, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
-    ModbusRegister.default('measure_percentage.battery5', 170, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
-    ModbusRegister.default('measure_percentage.battery6', 171, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
+    ModbusRegister.default('measure_percentage.tou_battery1', 166, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
+    ModbusRegister.default('measure_percentage.tou_battery2', 167, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
+    ModbusRegister.default('measure_percentage.tou_battery3', 168, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
+    ModbusRegister.default('measure_percentage.tou_battery4', 169, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
+    ModbusRegister.default('measure_percentage.tou_battery5', 170, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
+    ModbusRegister.default('measure_percentage.tou_battery6', 171, 1, RegisterDataType.UINT16), //, AccessMode.WriteOnly),
     /*
      * Time for this timeslot
      */
