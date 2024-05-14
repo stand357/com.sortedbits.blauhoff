@@ -139,5 +139,8 @@
   },
   "2.4.22": {
     "en": "Allow scripts to read revering values"
+  },
+  "2.4.23": {
+    "en": "Fix Modbus value validation"
   }
 }
