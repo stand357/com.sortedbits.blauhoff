@@ -347,9 +347,13 @@ export class DeyeSunXKSG01HP3 extends Device {
             throw new Error('Error setting all timeslot charge');
         }
 
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         if ((await client.writeRegisters(powerRegister, powerValues)) === false) {
             throw new Error('Error setting all timeslot power');
         }
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
         if ((await client.writeRegisters(batteryRegister, batteryRegisterValues)) === false) {
             throw new Error('Error setting all timeslot power');
@@ -410,13 +414,19 @@ export class DeyeSunXKSG01HP3 extends Device {
             throw new Error('Error setting timeslot charge');
         }
 
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         if ((await client.writeRegister(powerRegister, powerPayload)) === false) {
             throw new Error('Error setting timeslot power');
         }
 
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         if ((await client.writeRegister(batteryRegister, batteryChargeNumber)) === false) {
             throw new Error('Error setting timeslot battery');
         }
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
         if ((await client.writeRegister(timeRegister, parsedTime)) === false) {
             throw new Error('Error setting timeslot time');
