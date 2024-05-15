@@ -154,5 +154,8 @@
   },
   "2.4.27": {
     "en": "Add PV values for Afore"
+  },
+  "2.4.28": {
+    "en": "Add a bunch more unit tests"
   }
 }
