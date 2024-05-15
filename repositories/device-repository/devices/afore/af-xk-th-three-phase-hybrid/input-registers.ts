@@ -9,6 +9,13 @@ export const inputRegisters: ModbusRegister[] = [
     ModbusRegister.default('measure_power.grid_active_power', 535, 2, RegisterDataType.INT32),
     ModbusRegister.default('measure_power.grid_total_load', 547, 2, RegisterDataType.INT32),
 
+    ModbusRegister.default('measure_power.pv', 553, 2, RegisterDataType.UINT32),
+
+    ModbusRegister.scale('measure_voltage.pv1', 555, 1, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.default('measure_power.pv1', 557, 1, RegisterDataType.UINT16),
+    ModbusRegister.scale('measure_voltage.pv2', 558, 1, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.default('measure_power.pv2', 560, 1, RegisterDataType.UINT16),
+
     ModbusRegister.transform('status_text.battery_state', 2000, 1, RegisterDataType.UINT16, (value) => {
         switch (value) {
             case 0:
