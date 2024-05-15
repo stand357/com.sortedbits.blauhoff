@@ -214,10 +214,6 @@ export class ModbusAPI implements IAPI {
     };
 
     writeRegisters = async (register: ModbusRegister, values: any[]): Promise<boolean> => {
-        if (register.accessMode === AccessMode.ReadOnly) {
-            return false;
-        }
-
         for (const value of values) {
             if (!Buffer.isBuffer(value)) {
                 const valid = validateValue(value, register.dataType);
