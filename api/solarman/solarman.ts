@@ -12,11 +12,8 @@ import { FrameDefinition } from './models/frame-definition';
 
 import { Socket } from 'net';
 /*
- * Attempting to port the amazing pysolarmanv5 library to TypeScript
- *
  * Please give the original author some love:
  * https://github.com/jmccrohan/pysolarmanv5
- *
  */
 export class Solarman implements IAPI {
     private runningRequest = false;
@@ -226,7 +223,6 @@ export class Solarman implements IAPI {
     };
 
     readAllAtOnce = async (): Promise<void> => {
-        // this.fakeBatches(this.deviceModel.definition.inputRegisters); //
         const inputBatches = createRegisterBatches(this.log, this.device.inputRegisters);
         for (const batch of inputBatches) {
             this.readBatch(batch);

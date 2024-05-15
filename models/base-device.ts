@@ -304,6 +304,14 @@ export class BaseDevice extends Homey.Device {
         }
     }
 
+    /**
+     * This method is called when a flow cart is being executed.
+     *
+     * @param {string} action The action name of the flow card
+     * @param {*} args The arguments of the flow card
+     * @param {number} [retryCount=0] The number of times the action has been retried
+     * @memberof BaseDevice
+     */
     callAction = async (action: string, args: any, retryCount: number = 0) => {
         if (retryCount > 3) {
             this.filteredError('Retry count exceeded');

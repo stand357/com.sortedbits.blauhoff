@@ -24,8 +24,5 @@ export const valueToTime = (value: any): string => {
         return `${valueString[0]}${valueString[1]}:${valueString[2]}${valueString[3]}`;
     }
 
-    return value; /*
-    const hour = value >> 8;
-    const minute = value & 255;
-    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;*/
+    return value;
 };

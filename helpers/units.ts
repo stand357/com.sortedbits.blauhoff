@@ -1,10 +1,3 @@
-/*
- * Created on Wed Mar 20 2024
- * Copyright © 2024 Wim Haanstra
- *
- * Non-commercial use only
- */
-
 /**
  * Returns the unit symbol for a given capability.
  * @param capabilityId - The capability ID.
@@ -12,7 +5,7 @@
  */
 export const unitForCapability = (capabilityId: string): string => {
     const parts = capabilityId.split('.');
-    if (parts.length < 2) {
+    if (parts.length < 1) {
         return '';
     }
 
@@ -32,6 +25,7 @@ export const unitForCapability = (capabilityId: string): string => {
         case 'meter_power':
             return 'kWh';
 
-        default: return '';
+        default:
+            return '';
     }
 };
