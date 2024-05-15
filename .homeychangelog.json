@@ -151,5 +151,8 @@
   },
   "2.4.26": {
     "en": "Add Time of Use times"
+  },
+  "2.4.27": {
+    "en": "Add PV values for Afore"
   }
 }
