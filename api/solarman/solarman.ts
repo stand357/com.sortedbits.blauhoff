@@ -110,13 +110,8 @@ export class Solarman implements IAPI {
 
         const request = this.createModbusWriteRequest(register, values);
 
-        try {
-            await this.performRequest(request);
-            return true;
-        } catch (error) {
-            this.log.filteredError('Error writing register', error);
-            return false;
-        }
+        await this.performRequest(request);
+        return true;
     };
 
     writeRegister = async (register: ModbusRegister, value: number): Promise<boolean> => {
@@ -126,13 +121,8 @@ export class Solarman implements IAPI {
     writeBufferRegister = async (register: ModbusRegister, buffer: Buffer): Promise<boolean> => {
         const request = this.createModbusWriteRequest(register, buffer);
 
-        try {
-            await this.performRequest(request);
-            return true;
-        } catch (error) {
-            this.log.filteredError('Error writing buffer', error);
-            return false;
-        }
+        await this.performRequest(request);
+        return true;
     };
 
     writeBitsToRegister = async (register: ModbusRegister, bits: number[], bitIndex: number): Promise<boolean> => {
@@ -150,12 +140,7 @@ export class Solarman implements IAPI {
 
         const result = writeBitsToBufferBE(readBuffer, bits, bitIndex);
 
-        try {
-            return await this.writeBufferRegister(register, result);
-        } catch (error) {
-            this.log.filteredError('Error writing bits', error);
-        }
-        return false;
+        return await this.writeBufferRegister(register, result);
     };
 
     updateBitsInRegister = async (register: ModbusRegister, bits: number[], bitIndex: number): Promise<boolean> => {
@@ -173,12 +158,7 @@ export class Solarman implements IAPI {
 
         const result = writeBitsToBufferBE(readBuffer, bits, bitIndex);
 
-        try {
-            return await this.writeBufferRegister(register, result);
-        } catch (error) {
-            this.log.filteredError('Error writing bits', error);
-        }
-        return false;
+        return await this.writeBufferRegister(register, result);
     };
 
     readAddress = async (register: ModbusRegister): Promise<any> => {
@@ -323,16 +303,14 @@ export class Solarman implements IAPI {
 
     performRequest = async (request: Buffer): Promise<Buffer | undefined> => {
         while (this.runningRequest) {
-            await new Promise((resolve) => setTimeout(resolve, 100));
+            await new Promise((resolve) => setTimeout(resolve, 20));
         }
 
         this.runningRequest = true;
         try {
-            const result = await this.performRequestQueued(request);
-            return result;
+            return await this.performRequestQueued(request);
         } catch (error) {
-            this.log.filteredError('Error performing request', error);
-            return undefined;
+            throw error;
         } finally {
             this.runningRequest = false;
         }
@@ -349,7 +327,7 @@ export class Solarman implements IAPI {
                     resolve(wrapped.buffer);
                 } catch (error) {
                     this.log.filteredError('Error parsing response', error);
-                    resolve(undefined);
+                    reject(error);
                 } finally {
                     client.end();
                 }
@@ -358,13 +336,13 @@ export class Solarman implements IAPI {
             client.on('timeout', () => {
                 this.log.filteredError('Timeout');
                 client.end();
-                reject(undefined);
+                reject('Timeout');
             });
 
             client.on('error', (error) => {
                 this.log.filteredError('Error', error);
                 client.end();
-                resolve(undefined);
+                reject(error);
             });
 
             client.connect(this.port, this.ipAddress, () => {

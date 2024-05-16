@@ -12,6 +12,8 @@ import { Brand } from '../../../models/enum/brand';
 import { RegisterType } from '../../../models/enum/register-type';
 import { holdingRegisters } from './holding-registers';
 
+const BETWEEN_OPERATIONS_DELAY = 20;
+
 export class DeyeSunXKSG01HP3 extends Device {
     constructor() {
         super('sun-xk-sg01hp3-eu-am2', Brand.Deye, 'Deye Sun *K SG01HP3 EU AM2 Series', 'Deye Sun *K SG01HP3 EU AM2 Series with modbus interface');
@@ -347,13 +349,13 @@ export class DeyeSunXKSG01HP3 extends Device {
             throw new Error('Error setting all timeslot charge');
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, BETWEEN_OPERATIONS_DELAY));
 
         if ((await client.writeRegisters(powerRegister, powerValues)) === false) {
             throw new Error('Error setting all timeslot power');
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, BETWEEN_OPERATIONS_DELAY));
 
         if ((await client.writeRegisters(batteryRegister, batteryRegisterValues)) === false) {
             throw new Error('Error setting all timeslot power');
@@ -400,33 +402,23 @@ export class DeyeSunXKSG01HP3 extends Device {
         const parsedTime = Number(time.replace(':', ''));
         const powerPayload = powerRegister.calculatePayload(powerLimitNumber, origin);
 
-        origin.filteredLog('Setting timeslot parameters', {
-            timeslot,
-            parsedTime,
-            gridcharge,
-            generatorcharge,
-            chargeValue,
-            powerPayload,
-            batteryChargeNumber,
-        });
-
         if ((await client.writeRegister(chargeRegister, chargeValue)) === false) {
             throw new Error('Error setting timeslot charge');
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, BETWEEN_OPERATIONS_DELAY));
 
         if ((await client.writeRegister(powerRegister, powerPayload)) === false) {
             throw new Error('Error setting timeslot power');
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, BETWEEN_OPERATIONS_DELAY));
 
         if ((await client.writeRegister(batteryRegister, batteryChargeNumber)) === false) {
             throw new Error('Error setting timeslot battery');
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, BETWEEN_OPERATIONS_DELAY));
 
         if ((await client.writeRegister(timeRegister, parsedTime)) === false) {
             throw new Error('Error setting timeslot time');
