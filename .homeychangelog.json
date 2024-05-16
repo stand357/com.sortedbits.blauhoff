@@ -163,5 +163,8 @@
   },
   "2.4.30": {
     "en": "Added wait time"
+  },
+  "2.4.31": {
+    "en": "Remove error catching and revert to old version"
   }
 }
