@@ -270,10 +270,6 @@ export class ModbusAPI implements IAPI {
      * @returns A promise that resolves to a boolean indicating whether the write operation was successful.
      */
     writeBufferRegister = async (register: ModbusRegister, buffer: Buffer): Promise<boolean> => {
-        if (register.accessMode === AccessMode.ReadOnly) {
-            return false;
-        }
-
         this.log.filteredLog('Writing to register', register.address, buffer, typeof buffer);
 
         try {
