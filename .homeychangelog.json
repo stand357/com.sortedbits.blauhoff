@@ -157,5 +157,8 @@
   },
   "2.4.28": {
     "en": "Add a bunch more unit tests"
+  },
+  "2.5.0": {
+    "en": "Reverted to working branch"
   }
 }
