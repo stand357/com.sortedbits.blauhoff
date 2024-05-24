@@ -1,3 +1,4 @@
+import { AccessMode } from '../../../models/enum/access-mode';
 import { RegisterDataType } from '../../../models/enum/register-datatype';
 import { ModbusRegister } from '../../../models/modbus-register';
 
@@ -14,5 +15,5 @@ export const inputRegisters = [
 
     ModbusRegister.scale('measure_voltage.grid_l1', 38, 2, RegisterDataType.UINT16, 0.1),
     ModbusRegister.scale('meter_power.today', 53, 2, RegisterDataType.UINT32, 0.1),
-    ModbusRegister.scale('meter_power', 55, 2, RegisterDataType.UINT32, 0.1),
+    ModbusRegister.scale('meter_power', 55, 2, RegisterDataType.UINT32, 0.1, AccessMode.ReadOnly, { validValueMin: 0 }),
 ];

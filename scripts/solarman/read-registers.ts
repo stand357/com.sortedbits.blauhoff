@@ -27,7 +27,7 @@ const unitId = process.env.UNIT_ID;
 
 const valueSolarmanResolved = async (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => {
     const result = parseConfiguration.calculateValue(value, buffer, log);
-    log.log(parseConfiguration.capabilityId, ':', result, ':', buffer.toString('hex'));
+    log.log(parseConfiguration.capabilityId, ':', result);
 };
 
 const device = DeviceRepository.getInstance().getDeviceById(deviceId);
@@ -42,7 +42,9 @@ solarmanApi.setOnDataReceived(valueSolarmanResolved);
 
 const perform = async (): Promise<void> => {
     await solarmanApi.connect();
-    await solarmanApi.readAllAtOnce();
+    //    await solarmanApi.readAllAtOnce();
+    await solarmanApi.readRegistersInBatch();
+
     /*
     const register = device.getRegisterByTypeAndAddress(RegisterType.Holding, 154);
 

@@ -13,16 +13,23 @@ import { RegisterType } from './enum/register-type';
 
 export type Transformation = (value: any, buffer: Buffer, log: IBaseLogger) => any;
 
+export interface ModbusRegisterOptions {
+    validValueMin?: number;
+    validValueMax?: number;
+}
+
 export class ModbusRegisterParseConfiguration {
     capabilityId: string;
     transformation?: Transformation;
     scale?: number;
     guid: string;
+    options: ModbusRegisterOptions;
 
-    constructor(capabilityId: string, transformation?: Transformation, scale?: number) {
+    constructor(capabilityId: string, transformation?: Transformation, scale?: number, options: ModbusRegisterOptions = {}) {
         this.capabilityId = capabilityId;
         this.transformation = transformation;
         this.scale = scale;
+        this.options = options;
 
         this.guid = randomUUID();
     }
@@ -40,6 +47,21 @@ export class ModbusRegisterParseConfiguration {
         const result = Number(value) && this.scale ? value / this.scale : value;
 
         return result;
+    }
+
+    validateValue(value: any): boolean {
+        if (!Number(value) || (this.options.validValueMax === undefined && this.options.validValueMin === undefined)) {
+            return true;
+        }
+
+        if (this.options.validValueMax !== undefined && value > this.options.validValueMax) {
+            return false;
+        }
+        if (this.options.validValueMin !== undefined && value < this.options.validValueMin) {
+            return false;
+        }
+
+        return true;
     }
 }
 
@@ -60,19 +82,19 @@ export class ModbusRegister {
         this.accessMode = accessMode;
     }
 
-    addDefault = (capabilityId: string): ModbusRegister => {
+    addDefault = (capabilityId: string, options?: ModbusRegisterOptions): ModbusRegister => {
         const configuration = new ModbusRegisterParseConfiguration(capabilityId);
         this.parseConfigurations.push(configuration);
         return this;
     };
 
-    addScale = (capabilityId: string, scale: number): ModbusRegister => {
+    addScale = (capabilityId: string, scale: number, options?: ModbusRegisterOptions): ModbusRegister => {
         const configuration = new ModbusRegisterParseConfiguration(capabilityId, undefined, scale);
         this.parseConfigurations.push(configuration);
         return this;
     };
 
-    addTransform = (capabilityId: string, transformation: Transformation): ModbusRegister => {
+    addTransform = (capabilityId: string, transformation: Transformation, options?: ModbusRegisterOptions): ModbusRegister => {
         const configuration = new ModbusRegisterParseConfiguration(capabilityId, transformation);
         this.parseConfigurations.push(configuration);
         return this;
@@ -103,8 +125,9 @@ export class ModbusRegister {
         dataType: RegisterDataType,
         transformation: Transformation,
         accessMode: AccessMode = AccessMode.ReadOnly,
+        options: ModbusRegisterOptions = {},
     ) {
-        return new ModbusRegister(address, length, dataType, accessMode).addTransform(capabilityId, transformation);
+        return new ModbusRegister(address, length, dataType, accessMode).addTransform(capabilityId, transformation, options);
     }
 
     static default(capabilityId: string, address: number, length: number, dataType: RegisterDataType, accessMode: AccessMode = AccessMode.ReadOnly) {
@@ -118,7 +141,8 @@ export class ModbusRegister {
         dataType: RegisterDataType,
         scale: number,
         accessMode: AccessMode = AccessMode.ReadOnly,
+        options: ModbusRegisterOptions = {},
     ) {
-        return new ModbusRegister(address, length, dataType, accessMode).addScale(capabilityId, scale);
+        return new ModbusRegister(address, length, dataType, accessMode).addScale(capabilityId, scale, options);
     }
 }

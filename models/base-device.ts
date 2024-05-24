@@ -71,6 +71,11 @@ export class BaseDevice extends Homey.Device {
     private onDataReceived = async (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => {
         const result = parseConfiguration.calculateValue(value, buffer, this);
 
+        if (!parseConfiguration.validateValue(result)) {
+            this.filteredError('Received invalid value', result);
+            return;
+        }
+
         await capabilityChange(this, parseConfiguration.capabilityId, result);
 
         if (!this.reachable) {
