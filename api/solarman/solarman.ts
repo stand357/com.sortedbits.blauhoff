@@ -90,6 +90,7 @@ export class Solarman implements IAPI {
             this.timeout,
             'seconds',
         );
+
         return Promise.resolve(true);
     }
 

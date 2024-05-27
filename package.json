@@ -9,7 +9,7 @@
         "build": "tsc",
         "test": "jest --verbose",
         "write-register": "ts-node scripts/modbus/write-register.ts",
-        "read-registers": "ts-node scripts/modbus/read-registers.ts",
+        "read-modbus": "ts-node scripts/modbus/read-registers.ts",
         "read-solarman": "ts-node scripts/solarman/read-registers.ts --env-file .env",
         "write-afore": "ts-node scripts/solarman/write-afore.ts --env-file .env",
         "docs": "ts-node scripts/docs.ts",

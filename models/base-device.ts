@@ -28,6 +28,9 @@ export class BaseDevice extends Homey.Device {
 
     private runningRequest: boolean = false;
 
+    private lastRequest?: DateTime;
+    private lastValidRequest?: DateTime;
+
     public filteredLog(...args: any[]) {
         if (this.device.brand === Brand.Deye || this.device.brand === Brand.Afore) {
             this.log(...args);
@@ -75,6 +78,8 @@ export class BaseDevice extends Homey.Device {
             this.filteredError('Received invalid value', result);
             return;
         }
+
+        this.lastValidRequest = DateTime.utc();
 
         await capabilityChange(this, parseConfiguration.capabilityId, result);
 
@@ -207,7 +212,14 @@ export class BaseDevice extends Homey.Device {
             return;
         }
 
+        this.lastRequest = DateTime.utc();
+
+        const diff = this.lastValidRequest ? this.lastRequest.diff(this.lastValidRequest, 'minutes').minutes : 0;
         const { refreshInterval } = this.getSettings();
+
+        if (diff > Math.max(2, refreshInterval / 60)) {
+            await capabilityChange(this, 'readable_boolean.device_status', false);
+        }
 
         if (!this.enabled) {
             this.filteredLog('ModbusDevice is disabled, returning');

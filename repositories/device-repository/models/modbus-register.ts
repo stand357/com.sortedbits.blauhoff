@@ -19,13 +19,15 @@ export interface ModbusRegisterOptions {
 }
 
 export class ModbusRegisterParseConfiguration {
+    register: ModbusRegister;
     capabilityId: string;
     transformation?: Transformation;
     scale?: number;
     guid: string;
     options: ModbusRegisterOptions;
 
-    constructor(capabilityId: string, transformation?: Transformation, scale?: number, options: ModbusRegisterOptions = {}) {
+    constructor(register: ModbusRegister, capabilityId: string, transformation?: Transformation, scale?: number, options: ModbusRegisterOptions = {}) {
+        this.register = register;
         this.capabilityId = capabilityId;
         this.transformation = transformation;
         this.scale = scale;
@@ -35,13 +37,21 @@ export class ModbusRegisterParseConfiguration {
     }
 
     calculateValue(value: any, buffer: Buffer, log: IBaseLogger): any {
-        let result = Number(value) && this.scale ? value * this.scale : value;
+        if (this.scale) {
+            const numberValue = parseFloat(value);
 
-        if (this.transformation) {
-            result = this.transformation(result, buffer, log);
+            if (isNaN(numberValue)) {
+                return value;
+            }
+
+            return numberValue * this.scale;
         }
 
-        return result;
+        if (this.transformation) {
+            return this.transformation(value, buffer, log);
+        }
+
+        return value;
     }
     calculatePayload(value: any, log: IBaseLogger): any {
         const result = Number(value) && this.scale ? value / this.scale : value;
@@ -50,13 +60,22 @@ export class ModbusRegisterParseConfiguration {
     }
 
     validateValue(value: any): boolean {
-        if (!Number(value) || (this.options.validValueMax === undefined && this.options.validValueMin === undefined)) {
+        if (this.register.dataType === RegisterDataType.STRING) {
             return true;
+        }
+
+        if (this.options.validValueMax === undefined && this.options.validValueMin === undefined) {
+            return true;
+        }
+
+        if (isNaN(parseFloat(value))) {
+            return false;
         }
 
         if (this.options.validValueMax !== undefined && value > this.options.validValueMax) {
             return false;
         }
+
         if (this.options.validValueMin !== undefined && value < this.options.validValueMin) {
             return false;
         }
@@ -83,19 +102,19 @@ export class ModbusRegister {
     }
 
     addDefault = (capabilityId: string, options?: ModbusRegisterOptions): ModbusRegister => {
-        const configuration = new ModbusRegisterParseConfiguration(capabilityId);
+        const configuration = new ModbusRegisterParseConfiguration(this, capabilityId);
         this.parseConfigurations.push(configuration);
         return this;
     };
 
     addScale = (capabilityId: string, scale: number, options?: ModbusRegisterOptions): ModbusRegister => {
-        const configuration = new ModbusRegisterParseConfiguration(capabilityId, undefined, scale);
+        const configuration = new ModbusRegisterParseConfiguration(this, capabilityId, undefined, scale);
         this.parseConfigurations.push(configuration);
         return this;
     };
 
     addTransform = (capabilityId: string, transformation: Transformation, options?: ModbusRegisterOptions): ModbusRegister => {
-        const configuration = new ModbusRegisterParseConfiguration(capabilityId, transformation);
+        const configuration = new ModbusRegisterParseConfiguration(this, capabilityId, transformation);
         this.parseConfigurations.push(configuration);
         return this;
     };

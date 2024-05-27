@@ -33,7 +33,12 @@ if (!device) {
 
 const valueResolved = async (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => {
     const result = parseConfiguration.calculateValue(value, buffer, log);
-    log.log(parseConfiguration.capabilityId, result);
+
+    if (!parseConfiguration.validateValue(result)) {
+        log.filteredError(parseConfiguration.capabilityId, 'INVALID', result);
+    } else {
+        log.log(parseConfiguration.capabilityId, result);
+    }
 };
 
 const api = new ModbusAPI(log, host, Number(port), Number(unitId), device);
