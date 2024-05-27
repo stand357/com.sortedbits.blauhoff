@@ -160,5 +160,8 @@
   },
   "2.5.0": {
     "en": "Reverted to working branch"
+  },
+  "2.5.1": {
+    "en": "Check if device is online"
   }
 }
