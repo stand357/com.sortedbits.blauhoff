@@ -166,5 +166,8 @@
   },
   "2.5.2": {
     "en": "Fix some datatypes for Solarman"
+  },
+  "2.5.3": {
+    "en": "Include trigger card"
   }
 }
