@@ -30,3 +30,32 @@ export const lengthForDataType = (dataType: RegisterDataType): number => {
             return 8;
     }
 };
+
+export const bufferForDataType = (dataType: RegisterDataType, value: any): Buffer => {
+    const buffer = Buffer.allocUnsafe(lengthForDataType(dataType));
+
+    switch (dataType) {
+        case RegisterDataType.UINT8:
+            buffer.writeUInt8(value);
+            break;
+        case RegisterDataType.UINT16:
+            buffer.writeUInt16BE(value);
+            break;
+        case RegisterDataType.INT16:
+            buffer.writeInt16BE(value);
+            break;
+        case RegisterDataType.UINT32:
+            buffer.writeUint32BE(value);
+            break;
+        case RegisterDataType.INT32:
+            buffer.writeInt32BE(value);
+            break;
+        case RegisterDataType.FLOAT32:
+            buffer.writeFloatBE(value, 0);
+            break;
+        case RegisterDataType.STRING:
+            return Buffer.from(value);
+    }
+
+    return buffer;
+};

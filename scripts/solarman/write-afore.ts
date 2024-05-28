@@ -48,13 +48,20 @@ const perform = async (): Promise<void> => {
     /* SELF USE */
     //    await device.setEmsMode(log, { mode: 0 }, solarmanApi);
     //    await device.callAction(log, 'set_ems_mode', { mode: 0 }, solarmanApi);
-
+    /*
     const timeslotParameters = {
         timeslot: 1, // 1-4
         starttime: '00:30',
         endtime: '06:30',
     };
     await device.callAction(log, 'set_ac_charging_timeslot', timeslotParameters, solarmanApi);
+*/
+    const parameters = {
+        value: 100,
+        charge_command: 'charge',
+    };
+
+    await device.callAction(log, 'set_charge_command', parameters, solarmanApi);
 
     /* COMMAND MODE */
     // await device.setEmsMode(log, { mode: 4 }, solarmanApi);

@@ -57,7 +57,7 @@ const perform = async (): Promise<void> => {
     }
 
     //  const { gridcharge, generatorcharge, powerlimit, batterycharge } = args;
-
+    /*
     const parameters = {
         gridcharge: 'true',
         generatorcharge: 'false',
@@ -66,7 +66,14 @@ const perform = async (): Promise<void> => {
     };
 
     await device.callAction(log, 'set_all_timeslot_parameters', parameters, api);
+*/
 
+    const parameters = {
+        value: 100,
+        charge_command: 'charge',
+    };
+
+    await device.callAction(log, 'set_charge_command', parameters, api);
     /*
 
     log.filteredLog('Reading current value', addressInfo.address);

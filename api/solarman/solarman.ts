@@ -3,6 +3,7 @@ import { IBaseLogger } from '../../helpers/log';
 import { validateValue } from '../../helpers/validate-value';
 import { createRegisterBatches } from '../../repositories/device-repository/helpers/register-batches';
 import { Device } from '../../repositories/device-repository/models/device';
+import { bufferForDataType, lengthForDataType } from '../../repositories/device-repository/models/enum/register-datatype';
 import { RegisterType } from '../../repositories/device-repository/models/enum/register-type';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../../repositories/device-repository/models/modbus-register';
 import { IAPI } from '../iapi';
@@ -350,7 +351,7 @@ export class Solarman implements IAPI {
                     resolve(wrapped.buffer);
                 } catch (error) {
                     this.log.filteredError('Error parsing response', error);
-                    resolve(undefined);
+                    reject(undefined);
                 } finally {
                     client.end();
                 }
@@ -378,12 +379,14 @@ export class Solarman implements IAPI {
     createModbusWriteRequest(register: ModbusRegister, value: Buffer | Array<number>): Buffer {
         // https://github.com/yaacov/node-modbus-serial/blob/49ecaf3caf93dfedf1dab19b2dec01de07aabe27/index.js#L1028
 
+        const dataTypeLength = lengthForDataType(register.dataType);
+
         let dataLength = value.length;
         if (Buffer.isBuffer(value)) {
             dataLength = value.length / 2;
         }
 
-        const codeLength = 7 + 2 * dataLength;
+        const codeLength = 7 + dataTypeLength * dataLength;
 
         const buffer = Buffer.alloc(codeLength + 2);
         buffer.writeUInt8(this.slaveId, 0);
@@ -395,9 +398,13 @@ export class Solarman implements IAPI {
         if (Buffer.isBuffer(value)) {
             value.copy(buffer, 7);
         } else {
+            const buffers: Array<Buffer> = [];
             for (let i = 0; i < dataLength; i++) {
-                buffer.writeUInt16BE(value[i], 7 + 2 * i);
+                const valueBuffer = bufferForDataType(register.dataType, value[i]);
+                buffers.push(valueBuffer);
             }
+            const valueBuffers = Buffer.concat(buffers);
+            valueBuffers.copy(buffer, 7);
         }
 
         buffer.writeUInt16LE(calculateBufferCRC(buffer.subarray(0, -2)), codeLength);

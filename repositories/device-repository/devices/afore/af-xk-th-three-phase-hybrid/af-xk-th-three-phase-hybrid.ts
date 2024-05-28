@@ -9,6 +9,7 @@ import { IAPI } from '../../../../../api/iapi';
 import { IBaseLogger } from '../../../../../helpers/log';
 import { Device } from '../../../models/device';
 import { Brand } from '../../../models/enum/brand';
+import { bufferForDataType } from '../../../models/enum/register-datatype';
 import { RegisterType } from '../../../models/enum/register-type';
 import { holdingRegisters } from './holding-registers';
 import { inputRegisters } from './input-registers';
@@ -62,16 +63,14 @@ export class AforeAFXKTH extends Device {
         }
 
         const commandValue = charge_command === 'charge' ? '00aa' : '00bb';
-        const buffer = Buffer.from(commandValue, 'hex');
+        const commandBuffer = Buffer.from(commandValue, 'hex');
+        const powerBuffer = bufferForDataType(powerRegister.dataType, value);
 
-        const powerBuffer = Buffer.alloc(4);
-        powerBuffer.writeInt32BE(value);
-
-        origin.log('Setting charge command', buffer, 'and power', powerBuffer);
+        origin.log('Setting charge command', commandBuffer, 'and power', powerBuffer);
 
         try {
             const powerOutput = await client.writeBufferRegister(powerRegister, powerBuffer);
-            const commandOutput = await client.writeBufferRegister(commandRegister, buffer);
+            const commandOutput = await client.writeBufferRegister(commandRegister, commandBuffer);
             const emsModeOutput = await client.writeRegister(emsRegister, 4);
 
             origin.log('Command and power output', emsModeOutput, commandOutput, powerOutput);
