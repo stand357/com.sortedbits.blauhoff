@@ -64,6 +64,17 @@ export class BaseDevice extends Homey.Device {
         }
     };
 
+    private updateDeviceAvailability = async (value: boolean) => {
+        const current = await this.getCapabilityValue('readable_boolean.device_status');
+
+        if (value !== current) {
+            await capabilityChange(this, 'readable_boolean.device_status', value);
+
+            const trigger = value ? 'device_went_online' : 'device_went_offline';
+            this.homey.flow.getTriggerCard(trigger).trigger(this, {});
+        }
+    };
+
     /**
      * Handles the value received from a Modbus register.
      *
@@ -85,8 +96,9 @@ export class BaseDevice extends Homey.Device {
 
         if (!this.reachable) {
             this.reachable = true;
-            await capabilityChange(this, 'readable_boolean.device_status', true);
         }
+
+        await this.updateDeviceAvailability(true);
     };
 
     /**
@@ -100,7 +112,7 @@ export class BaseDevice extends Homey.Device {
     private onError = async (error: unknown, register: ModbusRegister) => {
         if (error && (error as any)['name'] && (error as any)['name'] === 'TransactionTimedOutError') {
             this.reachable = false;
-            await capabilityChange(this, 'readable_boolean.device_status', false);
+            await this.updateDeviceAvailability(false);
         } else {
             this.filteredError('Request failed', error);
         }
@@ -218,7 +230,7 @@ export class BaseDevice extends Homey.Device {
         const { refreshInterval } = this.getSettings();
 
         if (diff > Math.max(2, refreshInterval / 60)) {
-            await capabilityChange(this, 'readable_boolean.device_status', false);
+            await this.updateDeviceAvailability(false);
         }
 
         if (!this.enabled) {

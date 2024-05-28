@@ -1,0 +1,12 @@
+{
+    "triggers": [
+        {
+            "id": "device_went_offline",
+            "title": { "en": "Device went offline" }
+        },
+        {
+            "id": "device_went_online",
+            "title": { "en": "Device went online" }
+        }
+    ]
+}
