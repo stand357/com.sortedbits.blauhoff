@@ -163,5 +163,8 @@
   },
   "2.5.1": {
     "en": "Check if device is online"
+  },
+  "2.5.2": {
+    "en": "Fix some datatypes for Solarman"
   }
 }
