@@ -102,19 +102,19 @@ export class ModbusRegister {
     }
 
     addDefault = (capabilityId: string, options?: ModbusRegisterOptions): ModbusRegister => {
-        const configuration = new ModbusRegisterParseConfiguration(this, capabilityId);
+        const configuration = new ModbusRegisterParseConfiguration(this, capabilityId, undefined, undefined, options);
         this.parseConfigurations.push(configuration);
         return this;
     };
 
     addScale = (capabilityId: string, scale: number, options?: ModbusRegisterOptions): ModbusRegister => {
-        const configuration = new ModbusRegisterParseConfiguration(this, capabilityId, undefined, scale);
+        const configuration = new ModbusRegisterParseConfiguration(this, capabilityId, undefined, scale, options);
         this.parseConfigurations.push(configuration);
         return this;
     };
 
     addTransform = (capabilityId: string, transformation: Transformation, options?: ModbusRegisterOptions): ModbusRegister => {
-        const configuration = new ModbusRegisterParseConfiguration(this, capabilityId, transformation);
+        const configuration = new ModbusRegisterParseConfiguration(this, capabilityId, transformation, undefined, options);
         this.parseConfigurations.push(configuration);
         return this;
     };
@@ -149,8 +149,15 @@ export class ModbusRegister {
         return new ModbusRegister(address, length, dataType, accessMode).addTransform(capabilityId, transformation, options);
     }
 
-    static default(capabilityId: string, address: number, length: number, dataType: RegisterDataType, accessMode: AccessMode = AccessMode.ReadOnly) {
-        return new ModbusRegister(address, length, dataType, accessMode).addDefault(capabilityId);
+    static default(
+        capabilityId: string,
+        address: number,
+        length: number,
+        dataType: RegisterDataType,
+        accessMode: AccessMode = AccessMode.ReadOnly,
+        options: ModbusRegisterOptions = {},
+    ) {
+        return new ModbusRegister(address, length, dataType, accessMode).addDefault(capabilityId, options);
     }
 
     static scale(

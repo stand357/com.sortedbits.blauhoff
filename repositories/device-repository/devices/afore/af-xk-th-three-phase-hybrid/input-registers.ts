@@ -38,8 +38,14 @@ export const inputRegisters: ModbusRegister[] = [
                 return 'Unknown';
         }
     }),
-    ModbusRegister.scale('measure_temperature.battery1', 2001, 1, RegisterDataType.INT16, 0.1),
-    ModbusRegister.default('measure_percentage.bat_soc', 2002, 1, RegisterDataType.UINT16),
+    ModbusRegister.scale('measure_temperature.battery1', 2001, 1, RegisterDataType.INT16, 0.1, AccessMode.ReadOnly, {
+        validValueMin: -40,
+        validValueMax: 100,
+    }),
+    ModbusRegister.default('measure_percentage.bat_soc', 2002, 1, RegisterDataType.UINT16, AccessMode.ReadOnly, {
+        validValueMin: 0,
+        validValueMax: 100,
+    }),
     ModbusRegister.default('measure_power.battery', 2007, 2, RegisterDataType.INT32),
     ModbusRegister.scale('meter_power.daily_battery_charge', 2009, 1, RegisterDataType.UINT16, 0.1),
     ModbusRegister.scale('meter_power.daily_battery_discharge', 2010, 1, RegisterDataType.UINT16, 0.1),

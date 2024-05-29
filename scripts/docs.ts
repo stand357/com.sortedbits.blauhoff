@@ -10,6 +10,7 @@ import path from 'path';
 import { unitForCapability } from '../helpers/units';
 import { DeviceRepository } from '../repositories/device-repository/device-repository';
 import { orderModbusRegisters } from '../repositories/device-repository/helpers/order-modbus-registers';
+import { ModbusRegisterOptions } from '../repositories/device-repository/models/modbus-register';
 import { getSupportedFlowTypeKeys } from '../repositories/device-repository/models/supported-flows';
 import { findFile } from './modbus/helpers/fs-helpers';
 
@@ -90,6 +91,22 @@ const allFlowTypes = getSupportedFlowTypeKeys();
 
 const brands = DeviceRepository.getInstance().getBrands();
 
+const optionsToRange = (options: ModbusRegisterOptions) => {
+    if (options.validValueMin !== undefined && options.validValueMax !== undefined) {
+        return `${options.validValueMin} - ${options.validValueMax}`;
+    }
+
+    if (options.validValueMin !== undefined) {
+        return `>= ${options.validValueMin}`;
+    }
+
+    if (options.validValueMax !== undefined) {
+        return `<= ${options.validValueMax}`;
+    }
+
+    return '-';
+};
+
 brands.forEach((brand) => {
     const models = DeviceRepository.getInstance().getDevicesByBrand(brand);
 
@@ -103,8 +120,8 @@ brands.forEach((brand) => {
 
         if (model.inputRegisters.length > 0) {
             output += '### Input Registers\n';
-            output += '| Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |\n';
-            output += '| ------- | ------ | --------- | ---- | ----- | ------------- | ------------- | --------------- |\n';
+            output += '| Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name | Range |\n';
+            output += '| ------- | ------ | --------- | ---- | ----- | ------------- | ------------- | --------------- | ----- |\n';
             orderModbusRegisters(model.inputRegisters).forEach((register) => {
                 register.parseConfigurations.forEach((config) => {
                     const unit = unitForCapability(config.capabilityId);
@@ -115,15 +132,16 @@ brands.forEach((brand) => {
                     output += `| ${config.scale ?? '-'}`;
                     output += `| ${config.transformation ? 'Yes' : 'No'}`;
                     output += `| ${config.capabilityId}`;
-                    output += `| ${capabilitiesOptions[config.capabilityId]} |\n`;
+                    output += `| ${capabilitiesOptions[config.capabilityId]}`;
+                    output += `| ${optionsToRange(config.options)} |\n`;
                 });
             });
         }
 
         if (model.holdingRegisters.length > 0) {
             output += '\n### Holding Registers\n';
-            output += '| Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name |\n';
-            output += '| ------- | ------ | --------- | ---- |----- | -------------- | ------------- | --------------- |\n';
+            output += '| Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name | Range |\n';
+            output += '| ------- | ------ | --------- | ---- |----- | -------------- | ------------- | --------------- | ----- |\n';
             orderModbusRegisters(model.holdingRegisters).forEach((register) => {
                 register.parseConfigurations.forEach((config) => {
                     const unit = unitForCapability(config.capabilityId);
@@ -134,7 +152,8 @@ brands.forEach((brand) => {
                     output += `| ${config.scale ?? '-'}`;
                     output += `| ${config.transformation ? 'Yes' : 'No'}`;
                     output += `| ${config.capabilityId}`;
-                    output += `| ${capabilitiesOptions[config.capabilityId]} |\n`;
+                    output += `| ${capabilitiesOptions[config.capabilityId]}`;
+                    output += `| ${optionsToRange(config.options)} |\n`;
                 });
             });
         }
@@ -157,7 +176,6 @@ brands.forEach((brand) => {
                             output += `| ------------- | ----- | ------------- | --------------- |\n`;
 
                             for (const arg of flowInfo.args) {
-                                console.log(arg);
                                 output += `| ${arg.name} `;
                                 output += `| ${arg.title} `;
                                 output += `| ${arg.type} `;

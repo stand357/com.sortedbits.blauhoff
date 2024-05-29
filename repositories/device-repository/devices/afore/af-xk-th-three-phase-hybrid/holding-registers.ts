@@ -59,8 +59,14 @@ export const holdingRegisters: ModbusRegister[] = [
     }),
 
     ModbusRegister.default('measure_power.charge_instructions', 2502, 2, RegisterDataType.INT32, AccessMode.ReadWrite),
-    ModbusRegister.scale('measure_percentage.acpchgmax', 2504, 1, RegisterDataType.UINT16, 0.1, AccessMode.ReadWrite),
-    ModbusRegister.scale('measure_percentage.acsocmaxchg', 2505, 1, RegisterDataType.UINT16, 0.1, AccessMode.ReadWrite),
+    ModbusRegister.scale('measure_percentage.acpchgmax', 2504, 1, RegisterDataType.UINT16, 0.1, AccessMode.ReadWrite, {
+        validValueMin: 0,
+        validValueMax: 100,
+    }),
+    ModbusRegister.scale('measure_percentage.acsocmaxchg', 2505, 1, RegisterDataType.UINT16, 0.1, AccessMode.ReadWrite, {
+        validValueMin: 0,
+        validValueMax: 100,
+    }),
 
     ModbusRegister.transform(
         'timeslot.time',
