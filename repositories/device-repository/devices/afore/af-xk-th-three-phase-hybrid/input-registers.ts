@@ -6,15 +6,37 @@ export const inputRegisters: ModbusRegister[] = [
     ModbusRegister.default('status_text.inverter_name', 0, 6, RegisterDataType.STRING),
 
     ModbusRegister.default('status_text.hard_name', 11, 4, RegisterDataType.STRING),
-    ModbusRegister.default('measure_power.grid_active_power', 535, 2, RegisterDataType.INT32),
-    ModbusRegister.default('measure_power.grid_total_load', 547, 2, RegisterDataType.INT32),
+    ModbusRegister.default('measure_power.grid_active_power', 535, 2, RegisterDataType.INT32, AccessMode.ReadOnly, {
+        validValueMin: -24100,
+        validValueMax: 24100,
+    }),
+    ModbusRegister.default('measure_power.grid_total_load', 547, 2, RegisterDataType.INT32, AccessMode.ReadOnly, {
+        validValueMin: -24100,
+        validValueMax: 24100,
+    }),
 
-    ModbusRegister.default('measure_power.pv', 553, 2, RegisterDataType.UINT32),
+    ModbusRegister.default('measure_power.pv', 553, 2, RegisterDataType.UINT32, AccessMode.ReadOnly, {
+        validValueMin: 0,
+        validValueMax: 24100,
+    }),
 
-    ModbusRegister.scale('measure_voltage.pv1', 555, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.default('measure_power.pv1', 557, 1, RegisterDataType.UINT16),
-    ModbusRegister.scale('measure_voltage.pv2', 558, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.default('measure_power.pv2', 560, 1, RegisterDataType.UINT16),
+    ModbusRegister.scale('measure_voltage.pv1', 555, 1, RegisterDataType.UINT16, 0.1, AccessMode.ReadOnly, {
+        validValueMin: 0,
+        validValueMax: 800,
+    }),
+
+    ModbusRegister.default('measure_power.pv1', 557, 1, RegisterDataType.UINT16, AccessMode.ReadOnly, {
+        validValueMin: 0,
+        validValueMax: 15000,
+    }),
+    ModbusRegister.scale('measure_voltage.pv2', 558, 1, RegisterDataType.UINT16, 0.1, AccessMode.ReadOnly, {
+        validValueMin: 0,
+        validValueMax: 800,
+    }),
+    ModbusRegister.default('measure_power.pv2', 560, 1, RegisterDataType.UINT16, AccessMode.ReadOnly, {
+        validValueMin: 0,
+        validValueMax: 15000,
+    }),
 
     ModbusRegister.transform('status_text.battery_state', 2000, 1, RegisterDataType.UINT16, (value) => {
         switch (value) {
@@ -46,9 +68,18 @@ export const inputRegisters: ModbusRegister[] = [
         validValueMin: 0,
         validValueMax: 100,
     }),
-    ModbusRegister.default('measure_power.battery', 2007, 2, RegisterDataType.INT32),
-    ModbusRegister.scale('meter_power.daily_battery_charge', 2009, 1, RegisterDataType.UINT16, 0.1),
-    ModbusRegister.scale('meter_power.daily_battery_discharge', 2010, 1, RegisterDataType.UINT16, 0.1),
+    ModbusRegister.default('measure_power.battery', 2007, 2, RegisterDataType.INT32, AccessMode.ReadOnly, {
+        validValueMin: -24100,
+        validValueMax: 24100,
+    }),
+    ModbusRegister.scale('meter_power.daily_battery_charge', 2009, 1, RegisterDataType.UINT16, 0.1, AccessMode.ReadOnly, {
+        validValueMin: 0,
+        validValueMax: 250,
+    }),
+    ModbusRegister.scale('meter_power.daily_battery_discharge', 2010, 1, RegisterDataType.UINT16, 0.1, AccessMode.ReadOnly, {
+        validValueMin: 0,
+        validValueMax: 250,
+    }),
 
     ModbusRegister.default('status_code.running_state', 2500, 1, RegisterDataType.UINT16, AccessMode.ReadOnly),
 

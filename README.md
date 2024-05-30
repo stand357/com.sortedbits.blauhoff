@@ -11,6 +11,11 @@ The following devices are supported through both a Modbus connection or using a 
 1. [Deye Sun \*K SG01HP3 EU AM2 Series](repositories/device-repository/devices/deye/sun-xk-sg01hp3-eu-am2/README.md)
 2. [Afore AF XK-TH Three Phase Hybrid Inverter](repositories/device-repository/devices/afore/af-xk-th-three-phase-hybrid/README.md)
 
+Currently the app also supports two Growatt inverters **using Modbus**.
+
+1. [Growatt 1PH MIC TL-X series](repositories/device-repository/devices/growatt/growatt-tl/README.md)
+2. [Growatt 3PH MOD TL3-X series](repositories/device-repository/devices/growatt/growatt-tl3/README.md)
+
 ### Solarman
 
 A lot of inverters already come with some sort of Wifi-dongle. For the devices mentioned above, we made it possible to directly connect Homey to the Solarman Wifi dongle itself, using the internal IP address of the dongle.

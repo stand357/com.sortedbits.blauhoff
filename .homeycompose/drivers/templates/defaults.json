@@ -512,6 +512,11 @@
                 "en": "Daily PV"
             }
         },
+        "meter_power.today": {
+            "title": {
+                "en": "Today"
+            }
+        },
         "meter_power.daily": {
             "title": {
                 "en": "Daily Energy"

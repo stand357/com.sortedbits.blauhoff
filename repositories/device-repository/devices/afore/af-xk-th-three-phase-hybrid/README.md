@@ -6,19 +6,19 @@ Afore AF XK-TH Three Phase Hybrid Inverter Series with modbus interface
 | ------- | ------ | --------- | ---- | ----- | ------------- | ------------- | --------------- | ----- |
 | 0| 6| STRING| | -| No| status_text.inverter_name| Inverter name| - |
 | 11| 4| STRING| | -| No| status_text.hard_name| Hard name| - |
-| 535| 2| INT32| W| -| No| measure_power.grid_active_power| Grid active power| - |
-| 547| 2| INT32| W| -| No| measure_power.grid_total_load| Grid total load| - |
-| 553| 2| UINT32| W| -| No| measure_power.pv| PV power| - |
-| 555| 1| UINT16| V| 0.1| No| measure_voltage.pv1| PV 1 voltage| - |
-| 557| 1| UINT16| W| -| No| measure_power.pv1| PV 1 power| - |
-| 558| 1| UINT16| V| 0.1| No| measure_voltage.pv2| PV 2 voltage| - |
-| 560| 1| UINT16| W| -| No| measure_power.pv2| PV 2 power| - |
+| 535| 2| INT32| W| -| No| measure_power.grid_active_power| Grid active power| -24100 - 24100 |
+| 547| 2| INT32| W| -| No| measure_power.grid_total_load| Grid total load| -24100 - 24100 |
+| 553| 2| UINT32| W| -| No| measure_power.pv| PV power| 0 - 24100 |
+| 555| 1| UINT16| V| 0.1| No| measure_voltage.pv1| PV 1 voltage| 0 - 800 |
+| 557| 1| UINT16| W| -| No| measure_power.pv1| PV 1 power| 0 - 15000 |
+| 558| 1| UINT16| V| 0.1| No| measure_voltage.pv2| PV 2 voltage| 0 - 800 |
+| 560| 1| UINT16| W| -| No| measure_power.pv2| PV 2 power| 0 - 15000 |
 | 2000| 1| UINT16| | -| Yes| status_text.battery_state| Battery state| - |
 | 2001| 1| INT16| °C| 0.1| No| measure_temperature.battery1| Battery 1 temperature| -40 - 100 |
 | 2002| 1| UINT16| %| -| No| measure_percentage.bat_soc| Battery SOC| 0 - 100 |
-| 2007| 2| INT32| W| -| No| measure_power.battery| Battery power| - |
-| 2009| 1| UINT16| kWh| 0.1| No| meter_power.daily_battery_charge| Daily battery charge| - |
-| 2010| 1| UINT16| kWh| 0.1| No| meter_power.daily_battery_discharge| Daily battery discharge| - |
+| 2007| 2| INT32| W| -| No| measure_power.battery| Battery power| -24100 - 24100 |
+| 2009| 1| UINT16| kWh| 0.1| No| meter_power.daily_battery_charge| Daily battery charge| 0 - 250 |
+| 2010| 1| UINT16| kWh| 0.1| No| meter_power.daily_battery_discharge| Daily battery discharge| 0 - 250 |
 | 2011| 2| UINT32| kWh| 0.1| No| meter_power.total_battery_charge| Total battery charge| - |
 | 2013| 2| UINT32| kWh| 0.1| No| meter_power.total_battery_discharge| Total battery discharge| - |
 | 2500| 1| UINT16| | -| No| status_code.running_state| undefined| - |
