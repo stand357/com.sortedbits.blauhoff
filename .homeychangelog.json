@@ -169,5 +169,8 @@
   },
   "2.5.3": {
     "en": "Include trigger card"
+  },
+  "2.5.4": {
+    "en": "Min and maximum values for more capabilities, to filter out invalid values"
   }
 }
