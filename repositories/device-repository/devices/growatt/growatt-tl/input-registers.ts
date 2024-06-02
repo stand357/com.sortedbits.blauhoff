@@ -15,5 +15,5 @@ export const inputRegisters = [
 
     ModbusRegister.scale('measure_voltage.grid_l1', 38, 2, RegisterDataType.UINT16, 0.1, AccessMode.ReadOnly, { validValueMin: 0, validValueMax: 300 }),
     ModbusRegister.scale('meter_power.today', 53, 2, RegisterDataType.UINT32, 0.1, AccessMode.ReadOnly, { validValueMin: 0, validValueMax: 250 }),
-    ModbusRegister.scale('meter_power', 55, 2, RegisterDataType.UINT32, 0.1, AccessMode.ReadOnly, { validValueMin: 0 }),
+    ModbusRegister.scale('meter_power', 55, 2, RegisterDataType.UINT32, 0.1, AccessMode.ReadOnly, { validValueMin: 1 }),
 ];

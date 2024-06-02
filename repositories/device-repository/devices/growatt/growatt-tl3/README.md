@@ -15,7 +15,7 @@ Three phase Growatt string inverters with MODBUS interface.
 | 42| 2| UINT16| V| 0.1| No| measure_voltage.grid_l2| Grid L2 voltage| 0 - 300 |
 | 46| 2| UINT16| V| 0.1| No| measure_voltage.grid_l3| Grid L3 voltage| 0 - 300 |
 | 53| 2| UINT32| kWh| 0.1| No| meter_power.today| Today| 0 - 250 |
-| 55| 2| UINT32| kWh| 0.1| No| meter_power| Energy| >= 0 |
+| 55| 2| UINT32| kWh| 0.1| No| meter_power| Energy| >= 1 |
 
 ### Holding Registers
 | Address | Length | Data Type | Unit | Scale | Tranformation | Capability ID | Capability name | Range |

@@ -35,3 +35,16 @@ export const getDeviceModelName = (brandName: Brand, modelId: string): string =>
     const output = brandName.charAt(0).toUpperCase() + brandName.slice(1);
     return `Unknown ${output} device`;
 };
+
+export const brandToBrandName = (brand: Brand): string => {
+    switch (brand) {
+        case Brand.Afore:
+            return 'Afore';
+        case Brand.Growatt:
+            return 'Growatt';
+        case Brand.Deye:
+            return 'Deye';
+        default:
+            return 'Unknown';
+    }
+};

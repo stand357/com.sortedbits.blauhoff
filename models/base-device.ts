@@ -16,7 +16,6 @@ import { DeviceRepository } from '../repositories/device-repository/device-repos
 import { orderModbusRegisters } from '../repositories/device-repository/helpers/order-modbus-registers';
 import { Device } from '../repositories/device-repository/models/device';
 import { AccessMode } from '../repositories/device-repository/models/enum/access-mode';
-import { Brand } from '../repositories/device-repository/models/enum/brand';
 import { ModbusRegister, ModbusRegisterParseConfiguration } from '../repositories/device-repository/models/modbus-register';
 
 export class BaseDevice extends Homey.Device {
@@ -31,16 +30,25 @@ export class BaseDevice extends Homey.Device {
     private lastRequest?: DateTime;
     private lastValidRequest?: DateTime;
 
+    public logDeviceName = () => {
+        const { solarman, serial } = this.getSettings();
+        const connectionType = solarman ? 'Solarman' : 'Modbus';
+        //return brandToBrandName(this.device.brand) + ` (${connectionType})`;
+        return this.getName();
+    };
+
     public filteredLog(...args: any[]) {
-        if (this.device.brand === Brand.Deye || this.device.brand === Brand.Afore) {
-            this.log(...args);
-        }
+        const params = [this.logDeviceName(), ...args];
+        //        if (this.device.brand === Brand.Deye || this.device.brand === Brand.Afore) {
+        this.log(...params);
+        //        }
     }
 
     public filteredError(...args: any[]) {
-        if (this.device.brand === Brand.Afore || this.device.brand === Brand.Deye) {
-            this.error(...args);
-        }
+        const params = [this.logDeviceName(), ...args];
+        //        if (this.device.brand === Brand.Afore || this.device.brand === Brand.Deye) {
+        this.error(...params);
+        //        }
     }
 
     private onDisconnect = async () => {
