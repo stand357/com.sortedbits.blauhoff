@@ -172,5 +172,8 @@
   },
   "2.5.4": {
     "en": "Min and maximum values for more capabilities, to filter out invalid values"
+  },
+  "2.5.5": {
+    "en": "Filter bad values from Growatt inverter responses"
   }
 }
