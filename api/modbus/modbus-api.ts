@@ -111,6 +111,10 @@ export class ModbusAPI implements IAPI {
             this.client.setID(this.unitId);
             this.client.setTimeout(1000);
 
+            this.client.on('error', (error) => {
+                this.log.filteredError('Modbus error', error);
+            });
+
             this.client.on('close', () => {
                 this.log.filteredLog('Modbus connection closed');
 

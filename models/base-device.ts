@@ -31,9 +31,6 @@ export class BaseDevice extends Homey.Device {
     private lastValidRequest?: DateTime;
 
     public logDeviceName = () => {
-        const { solarman, serial } = this.getSettings();
-        const connectionType = solarman ? 'Solarman' : 'Modbus';
-        //return brandToBrandName(this.device.brand) + ` (${connectionType})`;
         return this.getName();
     };
 
@@ -79,7 +76,8 @@ export class BaseDevice extends Homey.Device {
             await capabilityChange(this, 'readable_boolean.device_status', value);
 
             const trigger = value ? 'device_went_online' : 'device_went_offline';
-            this.homey.flow.getTriggerCard(trigger).trigger(this, {});
+            const triggerCard = this.homey.flow.getTriggerCard(trigger);
+            await triggerCard.trigger(this, {});
         }
     };
 

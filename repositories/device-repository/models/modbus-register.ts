@@ -64,12 +64,12 @@ export class ModbusRegisterParseConfiguration {
             return true;
         }
 
-        if (this.options.validValueMax === undefined && this.options.validValueMin === undefined) {
-            return true;
+        if (!this.transformation && isNaN(parseFloat(value))) {
+            return false;
         }
 
-        if (isNaN(parseFloat(value))) {
-            return false;
+        if (this.options.validValueMax === undefined && this.options.validValueMin === undefined) {
+            return true;
         }
 
         if (this.options.validValueMax !== undefined && value > this.options.validValueMax) {

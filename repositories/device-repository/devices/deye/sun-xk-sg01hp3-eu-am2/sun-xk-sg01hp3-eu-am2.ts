@@ -4,6 +4,7 @@
  *
  * Non-commercial use only
  */
+
 import { IAPI } from '../../../../../api/iapi';
 import { logBits, writeBitsToBuffer } from '../../../../../helpers/bits';
 import { IBaseLogger } from '../../../../../helpers/log';
