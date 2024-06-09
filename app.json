@@ -998,783 +998,525 @@
       "capabilitiesOptions": {
         "date.record": {
           "title": {
-            "en": "Last status update"
+            "en": "Last status update",
+            "nl": "Laatste status update"
           }
         },
         "readable_boolean.device_status": {
           "title": {
-            "en": "Device online"
-          }
-        },
-        "status_code.device_type": {
-          "title": {
-            "en": "Device type"
-          }
-        },
-        "manufacturer": {
-          "title": {
-            "en": "Manufacturer"
+            "en": "Device online",
+            "nl": "Apparaat online"
           }
         },
         "serial": {
           "title": {
-            "en": "Serial number"
-          }
-        },
-        "version.dsp1": {
-          "title": {
-            "en": "DSP 1 version"
-          }
-        },
-        "version.dsp2": {
-          "title": {
-            "en": "DSP 2 version"
-          }
-        },
-        "version.bms": {
-          "title": {
-            "en": "BMS version"
-          }
-        },
-        "version.ems": {
-          "title": {
-            "en": "EMS version"
+            "en": "Serial number",
+            "nl": "Serienummer"
           }
         },
         "status_code.modbus_protocol": {
           "title": {
-            "en": "Modbus version"
+            "en": "Modbus version",
+            "nl": "Modbus versie"
           }
         },
         "status_code.modbus_address": {
           "title": {
-            "en": "Modbus address"
+            "en": "Modbus address",
+            "nl": "Modbus adres"
           }
         },
         "status_text.run_mode": {
           "title": {
-            "en": "Run mode"
-          }
-        },
-        "status_text.work_mode": {
-          "title": {
-            "en": "Work mode"
+            "en": "Run mode",
+            "nl": "Run modus"
           }
         },
         "status_code.run_mode": {
           "title": {
-            "en": "Run mode"
-          }
-        },
-        "status_code.work_mode": {
-          "title": {
-            "en": "Work mode"
+            "en": "Run mode",
+            "nl": "Run modus"
           }
         },
         "status_code.max_sell_power": {
           "title": {
-            "en": "Max selling power"
-          }
-        },
-        "status_code.selling_enable": {
-          "title": {
-            "en": "Selling enable"
-          }
-        },
-        "status_code.bat_basic_status": {
-          "title": {
-            "en": "Battery status"
-          }
-        },
-        "status_code.sys_error_code": {
-          "title": {
-            "en": "Error code"
-          }
-        },
-        "status_code.sys_bat_error_code": {
-          "title": {
-            "en": "Battery error code"
+            "en": "Max selling power",
+            "nl": "Max verkopende vermogen"
           }
         },
         "measure_voltage.grid_l1": {
           "title": {
-            "en": "Grid L1 voltage"
+            "en": "Grid L1 voltage",
+            "nl": "Grid L1 voltage"
           },
           "decimals": 0
         },
         "measure_voltage.grid_l2": {
           "title": {
-            "en": "Grid L2 voltage"
+            "en": "Grid L2 voltage",
+            "nl": "Grid L2 voltage"
           },
           "decimals": 0
         },
         "measure_voltage.grid_l3": {
           "title": {
-            "en": "Grid L3 voltage"
+            "en": "Grid L3 voltage",
+            "nl": "Grid L3 voltage"
           },
           "decimals": 0
         },
-        "measure_power.meter": {
-          "title": {
-            "en": "Meter power"
-          }
-        },
         "measure_power.grid": {
           "title": {
-            "en": "Grid output power"
-          }
-        },
-        "measure_power.grid_int_ctl1": {
-          "title": {
-            "en": "Grid power int CT L1"
-          }
-        },
-        "measure_power.grid_int_ctl2": {
-          "title": {
-            "en": "Grid power int CT L2"
-          }
-        },
-        "measure_power.grid_int_ctl3": {
-          "title": {
-            "en": "Grid power int CT L3"
-          }
-        },
-        "measure_power.grid_ext_ctl1": {
-          "title": {
-            "en": "Grid power ext CT L1"
-          }
-        },
-        "measure_power.grid_ext_ctl2": {
-          "title": {
-            "en": "Grid power ext CT L2"
-          }
-        },
-        "measure_power.grid_ext_ctl3": {
-          "title": {
-            "en": "Grid power ext CT L3"
-          }
-        },
-        "measure_power.total_active_in_power": {
-          "title": {
-            "en": "Meter power total active in"
+            "en": "Grid output power",
+            "nl": "Grid output vermogen"
           }
         },
         "measure_voltage.pv1": {
           "title": {
-            "en": "PV 1 voltage"
+            "en": "PV 1 voltage",
+            "nl": "PV 1 voltage"
           },
           "decimals": 0
-        },
-        "measure_current.pv1": {
-          "title": {
-            "en": "PV 1 current"
-          }
-        },
-        "measure_voltage.pv2": {
-          "title": {
-            "en": "PV 2 voltage"
-          },
-          "decimals": 0
-        },
-        "measure_current.pv2": {
-          "title": {
-            "en": "PV 2 current"
-          }
         },
         "measure_power.charge_instructions": {
           "title": {
-            "en": "Charge command power"
+            "en": "Charge command power",
+            "nl": "Charge command vermogen"
           }
         },
         "measure_power.pv1": {
           "title": {
-            "en": "PV 1 power"
+            "en": "PV 1 power",
+            "nl": "PV 1 vermogen"
           },
           "decimals": 0
         },
         "measure_power.pv2": {
           "title": {
-            "en": "PV 2 power"
+            "en": "PV 2 power",
+            "nl": "PV 2 vermogen"
           },
           "decimals": 0
         },
         "measure_power.pv": {
           "title": {
-            "en": "PV power"
+            "en": "PV power",
+            "nl": "PV vermogen"
           },
           "decimals": 0
-        },
-        "measure_voltage.ac": {
-          "title": {
-            "en": "AC voltage"
-          },
-          "decimals": 0
-        },
-        "measure_current.ac": {
-          "title": {
-            "en": "AC current"
-          }
-        },
-        "measure_frequency.ac": {
-          "title": {
-            "en": "AC frequency"
-          }
         },
         "measure_power.ac": {
           "title": {
-            "en": "AC power"
+            "en": "AC power",
+            "nl": "AC vermogen"
           },
           "decimals": 0
         },
-        "measure_voltamperage.ac": {
-          "title": {
-            "en": "AC voltamperage"
-          }
-        },
-        "measure_voltage.eps": {
-          "title": {
-            "en": "EPS voltage"
-          }
-        },
-        "measure_current.eps": {
-          "title": {
-            "en": "EPS current"
-          }
-        },
-        "measure_power.eps": {
-          "title": {
-            "en": "EPS power"
-          }
-        },
-        "measure_power.grid_output": {
-          "title": {
-            "en": "Grid output power"
-          }
-        },
-        "measure_power.dsp": {
-          "title": {
-            "en": "DSP power"
-          }
-        },
         "measure_temperature.ac": {
           "title": {
-            "en": "AC temperature"
+            "en": "AC temperature",
+            "nl": "AC temperatuur"
           }
         },
         "measure_temperature.dc": {
           "title": {
-            "en": "DC temperature"
+            "en": "DC temperature",
+            "nl": "DC temperatuur"
           }
         },
         "measure_power.load": {
           "title": {
-            "en": "load power"
-          }
-        },
-        "measure_power.load_l1": {
-          "title": {
-            "en": "Load L1 power"
-          }
-        },
-        "measure_power.load_l2": {
-          "title": {
-            "en": "Load L2 power"
-          }
-        },
-        "measure_power.load_l3": {
-          "title": {
-            "en": "Load L3 power"
-          }
-        },
-        "measure_voltage.load_l1": {
-          "title": {
-            "en": "Load L1 voltage"
-          }
-        },
-        "measure_voltage.load_l2": {
-          "title": {
-            "en": "Load L2 voltage"
-          }
-        },
-        "measure_voltage.load_l3": {
-          "title": {
-            "en": "Load L3 voltage"
+            "en": "Load power",
+            "nl": "Load vermogen"
           }
         },
         "measure_power.inverter": {
           "title": {
-            "en": "Inverter power"
-          }
-        },
-        "measure_power.inverter_l1": {
-          "title": {
-            "en": "Inverter L1 power"
-          }
-        },
-        "measure_power.inverter_l2": {
-          "title": {
-            "en": "Inverter L2 power"
-          }
-        },
-        "measure_power.inverter_l3": {
-          "title": {
-            "en": "Inverter L3 power"
-          }
-        },
-        "measure_current.inverter_l1": {
-          "title": {
-            "en": "Inverter L1 current"
-          }
-        },
-        "measure_current.inverter_l2": {
-          "title": {
-            "en": "Inverter L2 current"
-          }
-        },
-        "measure_current.inverter_l3": {
-          "title": {
-            "en": "Inverter L3 current"
-          }
-        },
-        "measure_voltage.inverter_l1": {
-          "title": {
-            "en": "Inverter L1 voltage"
-          }
-        },
-        "measure_voltage.inverter_l2": {
-          "title": {
-            "en": "Inverter L2 voltage"
-          }
-        },
-        "measure_voltage.inverter_l3": {
-          "title": {
-            "en": "Inverter L3 voltage"
-          }
-        },
-        "measure_voltamperage.eps": {
-          "title": {
-            "en": "EPS voltamperage"
-          }
-        },
-        "measure_voltage.meter": {
-          "title": {
-            "en": "Meter voltage"
-          }
-        },
-        "measure_current.meter": {
-          "title": {
-            "en": "Meter current"
-          }
-        },
-        "measure_frequency.meter": {
-          "title": {
-            "en": "Meter frequency"
-          }
-        },
-        "measure_voltamperage.meter": {
-          "title": {
-            "en": "Meter voltamperage"
-          }
-        },
-        "measure_voltage.battery": {
-          "title": {
-            "en": "Battery voltage"
+            "en": "Inverter power",
+            "nl": "Inverter vermogen"
           }
         },
         "measure_voltage.battery1": {
           "title": {
-            "en": "Battery 1 voltage"
-          }
-        },
-        "measure_voltage.battery2": {
-          "title": {
-            "en": "Battery 2 voltage"
-          }
-        },
-        "measure_current.battery": {
-          "title": {
-            "en": "Battery current"
+            "en": "Battery 1 voltage",
+            "nl": "Batterij 1 voltage"
           }
         },
         "measure_power.battery": {
           "title": {
-            "en": "Battery power"
+            "en": "Battery power",
+            "nl": "Batterij vermogen"
           }
         },
         "measure_power.battery1": {
           "title": {
-            "en": "Battery 1 power"
-          }
-        },
-        "measure_power.battery2": {
-          "title": {
-            "en": "Battery 2 power"
+            "en": "Battery 1 power",
+            "nl": "Batterij 1 vermogen"
           }
         },
         "measure_current.battery1": {
           "title": {
-            "en": "Battery 1 current"
-          }
-        },
-        "measure_current.battery2": {
-          "title": {
-            "en": "Battery 2 current"
+            "en": "Battery 1 current",
+            "nl": "Batterij 1 stroom"
           }
         },
         "measure_percentage.bat_soc": {
           "title": {
-            "en": "Battery SOC"
-          }
-        },
-        "measure_percentage.bat1_soc": {
-          "title": {
-            "en": "Battery 1 SOC"
-          }
-        },
-        "measure_percentage.bat2_soc": {
-          "title": {
-            "en": "Battery 2 SOC"
-          }
-        },
-        "measure_percentage.bat_soh": {
-          "title": {
-            "en": "State of health"
-          },
-          "icon": "/assets/capabilities/sharp-light-battery-three-quarters-circle-info.svg"
-        },
-        "measure_voltage.battery_high": {
-          "title": {
-            "en": "Battery voltage high"
-          }
-        },
-        "measure_voltage.battery_low": {
-          "title": {
-            "en": "Battery voltage low"
-          }
-        },
-        "measure_temperature.battery_high": {
-          "title": {
-            "en": "Battery temperature high"
-          }
-        },
-        "measure_temperature.battery_low": {
-          "title": {
-            "en": "Battery temperature low"
+            "en": "Battery SOC",
+            "nl": "Batterij SOC"
           }
         },
         "measure_temperature.battery1": {
           "title": {
-            "en": "Battery 1 temperature"
-          }
-        },
-        "measure_temperature.battery2": {
-          "title": {
-            "en": "Battery 2 temperature"
+            "en": "Battery 1 temperature",
+            "nl": "Batterij 1 temperatuur"
           }
         },
         "meter_power.total_battery_charge": {
           "title": {
-            "en": "Total battery charge"
+            "en": "Total battery charge",
+            "nl": "Totaal batterij opladen"
           }
         },
         "meter_power.daily_battery_charge": {
           "title": {
-            "en": "Daily battery charge"
+            "en": "Daily battery charge",
+            "nl": "Dagelijks batterij opladen"
           }
         },
         "meter_power.total_battery_discharge": {
           "title": {
-            "en": "Total battery discharge"
+            "en": "Total battery discharge",
+            "nl": "Totaal batterij ontladen"
           }
         },
         "meter_power.daily_battery_discharge": {
           "title": {
-            "en": "Daily battery discharge"
-          }
-        },
-        "meter_power.pv": {
-          "title": {
-            "en": "Total PV"
+            "en": "Daily battery discharge",
+            "nl": "Dagelijks batterij ontladen"
           }
         },
         "meter_power.total_pv": {
           "title": {
-            "en": "Total PV"
+            "en": "Total PV",
+            "nl": "Totaal PV"
           }
         },
         "meter_power.daily_pv": {
           "title": {
-            "en": "Daily PV"
+            "en": "Daily PV",
+            "nl": "Dagelijks PV"
           }
         },
         "meter_power.today": {
           "title": {
-            "en": "Today"
-          }
-        },
-        "meter_power.daily": {
-          "title": {
-            "en": "Daily Energy"
+            "en": "Today",
+            "nl": "Vandaag"
           }
         },
         "meter_power.total_to_load": {
           "title": {
-            "en": "Total to load"
+            "en": "Total to load",
+            "nl": "Totaal naar belasting"
           }
         },
         "meter_power.daily_to_load": {
           "title": {
-            "en": "Daily to load"
+            "en": "Daily to load",
+            "nl": "Dagelijks naar belasting"
           }
         },
         "meter_power.total_to_grid": {
           "title": {
-            "en": "Total to grid"
+            "en": "Total to grid",
+            "nl": "Totaal naar grid"
           }
         },
         "meter_power.daily_to_grid": {
           "title": {
-            "en": "Daily to grid"
+            "en": "Daily to grid",
+            "nl": "Dagelijks naar grid"
           }
         },
         "meter_power.total_from_grid": {
           "title": {
-            "en": "Total from grid"
+            "en": "Total from grid",
+            "nl": "Totaal van grid"
           }
         },
         "meter_power.daily_from_grid": {
           "title": {
-            "en": "Daily from grid"
-          }
-        },
-        "meter_power.total_to_grid_pv": {
-          "title": {
-            "en": "Total PV to grid"
+            "en": "Daily from grid",
+            "nl": "Dagelijks van grid"
           }
         },
         "status_text.sell_solar": {
           "title": {
-            "en": "Sell solar"
+            "en": "Sell solar",
+            "nl": "Verkoop zonne-energie"
           }
         },
         "status_text.grid_peak_shaving": {
           "title": {
-            "en": "Grid peak shaving"
+            "en": "Grid peak shaving",
+            "nl": "Grid peak shaving"
           }
         },
         "status_text.time_of_use": {
           "title": {
-            "en": "Grid peak shaving"
+            "en": "Time of use"
           }
         },
         "status_text.ac_timing_charge": {
           "title": {
-            "en": "AC timing charge"
+            "en": "AC timing charge",
+            "nl": "AC timing opladen"
           }
         },
         "status_text.timing_discharge": {
           "title": {
-            "en": "Timing discharge"
+            "en": "Timing discharge",
+            "nl": "Timing ontladen"
           }
         },
         "status_text.timing_charge": {
           "title": {
-            "en": "Timing charge"
+            "en": "Timing charge",
+            "nl": "Timing opladen"
           }
         },
         "status_text.ems_mode": {
           "title": {
-            "en": "EMS mode"
+            "en": "EMS mode",
+            "nl": "EMS mode"
           }
         },
         "status_text.inverter_name": {
           "title": {
-            "en": "Inverter name"
+            "en": "Inverter name",
+            "nl": "Inverter naam"
           }
         },
         "status_text.hard_name": {
           "title": {
-            "en": "Hard name"
+            "en": "Hard name",
+            "nl": "Hard naam"
           }
         },
         "status_text.charge_command": {
           "title": {
-            "en": "Charge command"
+            "en": "Charge command",
+            "nl": "Oplaad commando"
           }
         },
         "status_text.battery_state": {
           "title": {
-            "en": "Battery state"
+            "en": "Battery state",
+            "nl": "Batterij status"
           }
         },
         "measure_power.grid_total_load": {
           "title": {
-            "en": "Grid total load"
+            "en": "Grid total load",
+            "nl": "Grid totale belasting"
           }
         },
         "measure_power.grid_active_power": {
           "title": {
-            "en": "Grid active power"
+            "en": "Grid active power",
+            "nl": "Grid actief vermogen"
           }
         },
         "measure_percentage.acpchgmax": {
           "title": {
-            "en": "AC charge max"
+            "en": "AC charge max",
+            "nl": "AC oplaad max"
           }
         },
         "measure_percentage.acsocmaxchg": {
           "title": {
-            "en": "AC SOC max charge"
+            "en": "AC SOC max charge",
+            "nl": "AC SOC max opladen"
           }
         },
         "status_text.grid_charging1": {
           "title": {
-            "en": "Grid charging 1"
+            "en": "Grid charging 1",
+            "nl": "Grid opladen 1"
           }
         },
         "status_text.generator_charging1": {
           "title": {
-            "en": "Generator charging 1"
+            "en": "Generator charging 1",
+            "nl": "Generator opladen 1"
           }
         },
         "status_text.grid_charging2": {
           "title": {
-            "en": "Grid charging 2"
+            "en": "Grid charging 2",
+            "nl": "Grid opladen 2"
           }
         },
         "status_text.generator_charging2": {
           "title": {
-            "en": "Generator charging 2"
+            "en": "Generator charging 2",
+            "nl": "Generator opladen 2"
           }
         },
         "status_text.grid_charging3": {
           "title": {
-            "en": "Grid charging 3"
+            "en": "Grid charging 3",
+            "nl": "Grid opladen 3"
           }
         },
         "status_text.generator_charging3": {
           "title": {
-            "en": "Generator charging 3"
+            "en": "Generator charging 3",
+            "nl": "Generator opladen 3"
           }
         },
         "status_text.grid_charging4": {
           "title": {
-            "en": "Grid charging 4"
+            "en": "Grid charging 4",
+            "nl": "Grid opladen 4"
           }
         },
         "status_text.generator_charging4": {
           "title": {
-            "en": "Generator charging 4"
+            "en": "Generator charging 4",
+            "nl": "Generator opladen 4"
           }
         },
         "status_text.grid_charging5": {
           "title": {
-            "en": "Grid charging 5"
+            "en": "Grid charging 5",
+            "nl": "Grid opladen 5"
           }
         },
         "status_text.generator_charging5": {
           "title": {
-            "en": "Generator charging 5"
+            "en": "Generator charging 5",
+            "nl": "Generator opladen 5"
           }
         },
         "status_text.grid_charging6": {
           "title": {
-            "en": "Grid charging 6"
+            "en": "Grid charging 6",
+            "nl": "Grid opladen 6"
           }
         },
         "status_text.generator_charging6": {
           "title": {
-            "en": "Generator charging 6"
+            "en": "Generator charging 6",
+            "nl": "Generator opladen 6"
           }
         },
         "measure_power.powerlimit1": {
           "title": {
-            "en": "Power limit 1"
+            "en": "Power limit 1",
+            "nl": "Vermogen limiet 1"
           }
         },
         "measure_power.powerlimit2": {
           "title": {
-            "en": "Power limit 2"
+            "en": "Power limit 2",
+            "nl": "Vermogen limiet 2"
           }
         },
         "measure_power.powerlimit3": {
           "title": {
-            "en": "Power limit 3"
+            "en": "Power limit 3",
+            "nl": "Vermogen limiet 3"
           }
         },
         "measure_power.powerlimit4": {
           "title": {
-            "en": "Power limit 4"
+            "en": "Power limit 4",
+            "nl": "Vermogen limiet 4"
           }
         },
         "measure_power.powerlimit5": {
           "title": {
-            "en": "Power limit 5"
+            "en": "Power limit 5",
+            "nl": "Vermogen limiet 5"
           }
         },
         "measure_power.powerlimit6": {
           "title": {
-            "en": "Power limit 6"
+            "en": "Power limit 6",
+            "nl": "Vermogen limiet 6"
           }
         },
         "measure_percentage.tou_battery1": {
           "title": {
-            "en": "ToU Battery 1"
+            "en": "ToU Battery 1",
+            "nl": "ToU Batterij 1"
           }
         },
         "measure_percentage.tou_battery2": {
           "title": {
-            "en": "ToU Battery 2"
+            "en": "ToU Battery 2",
+            "nl": "ToU Batterij 2"
           }
         },
         "measure_percentage.tou_battery3": {
           "title": {
-            "en": "ToU Battery 3"
+            "en": "ToU Battery 3",
+            "nl": "ToU Batterij 3"
           }
         },
         "measure_percentage.tou_battery4": {
           "title": {
-            "en": "ToU Battery 4"
+            "en": "ToU Battery 4",
+            "nl": "ToU Batterij 4"
           }
         },
         "measure_percentage.tou_battery5": {
           "title": {
-            "en": "ToU Battery 5"
+            "en": "ToU Battery 5",
+            "nl": "ToU Batterij 5"
           }
         },
         "measure_percentage.tou_battery6": {
           "title": {
-            "en": "ToU Battery 6"
+            "en": "ToU Battery 6",
+            "nl": "ToU Batterij 6"
           }
         },
         "status_text.tou_time1": {
           "title": {
-            "en": "ToU Time 1"
+            "en": "ToU Time 1",
+            "nl": "ToU Tijd 1"
           }
         },
         "status_text.tou_time2": {
           "title": {
-            "en": "ToU Time 2"
+            "en": "ToU Time 2",
+            "nl": "ToU Tijd 2"
           }
         },
         "status_text.tou_time3": {
           "title": {
-            "en": "ToU Time 3"
+            "en": "ToU Time 3",
+            "nl": "ToU Tijd 3"
           }
         },
         "status_text.tou_time4": {
           "title": {
-            "en": "ToU Time 4"
+            "en": "ToU Time 4",
+            "nl": "ToU Tijd 4"
           }
         },
         "status_text.tou_time5": {
           "title": {
-            "en": "ToU Time 5"
+            "en": "ToU Time 5",
+            "nl": "ToU Tijd 5"
           }
         },
         "status_text.tou_time6": {
           "title": {
-            "en": "ToU Time 6"
+            "en": "ToU Time 6",
+            "nl": "ToU Tijd 6"
           }
         }
       },

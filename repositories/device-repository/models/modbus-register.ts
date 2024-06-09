@@ -94,6 +94,10 @@ export class ModbusRegister {
 
     parseConfigurations: ModbusRegisterParseConfiguration[] = [];
 
+    hasCapability(capabilityId: string): boolean {
+        return this.parseConfigurations.some((config) => config.capabilityId === capabilityId);
+    }
+
     constructor(address: number, length: number, dataType: RegisterDataType, accessMode: AccessMode = AccessMode.ReadOnly) {
         this.address = address;
         this.length = length;

@@ -12,6 +12,7 @@
         "read-modbus": "ts-node scripts/modbus/read-registers.ts",
         "read-solarman": "ts-node scripts/solarman/read-registers.ts --env-file .env",
         "write-solarman": "ts-node scripts/solarman/write-afore.ts --env-file .env",
+        "check-capabilities": "ts-node scripts/check-capabilities.ts",
         "docs": "ts-node scripts/docs.ts",
         "lint": "eslint --ext .js,.ts --ignore-path .gitignore ."
     },

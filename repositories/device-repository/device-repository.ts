@@ -25,7 +25,7 @@ export class DeviceRepository {
         return this.instance;
     }
 
-    private devices: Device[] = [];
+    public devices: Device[] = [];
 
     constructor() {
         this.devices.push(new AforeAFXKTH());
