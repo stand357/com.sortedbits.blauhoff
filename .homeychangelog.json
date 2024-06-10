@@ -181,5 +181,8 @@
   },
   "2.5.7": {
     "en": "Removed some no longer needed translations"
+  },
+  "2.6.0": {
+    "en": "Naming updates"
   }
 }
