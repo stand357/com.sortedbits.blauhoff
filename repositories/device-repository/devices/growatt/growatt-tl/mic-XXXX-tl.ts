@@ -12,7 +12,7 @@ import { inputRegisters } from './input-registers';
 
 export class GrowattTLX extends Device {
     constructor() {
-        super('growatt-tl', Brand.Growatt, 'Growatt 1PH MIC TL-X series', 'Single phase Growatt string inverters with MODBUS interface.');
+        super('growatt-tl', Brand.Growatt, 'Growatt 1PH MIC TL-X series', 'Single phase Growatt string inverter.');
 
         this.supportsSolarman = true;
         this.deprecatedCapabilities = ['measure_power.l1', 'measure_power.l2', 'measure_power.l3'];
