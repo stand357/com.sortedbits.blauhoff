@@ -30,6 +30,8 @@ export class BaseDevice extends Homey.Device {
     private lastRequest?: DateTime;
     private lastValidRequest?: DateTime;
 
+    private isInInvalidState: { [id: string]: boolean } = {};
+
     public logDeviceName = () => {
         return this.getName();
     };
@@ -91,14 +93,26 @@ export class BaseDevice extends Homey.Device {
     private onDataReceived = async (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => {
         const result = parseConfiguration.calculateValue(value, buffer, this);
 
-        if (!parseConfiguration.validateValue(result)) {
-            this.filteredError('Received invalid value', result);
+        const validationResult = parseConfiguration.validateValue(result, this);
+        if (!validationResult.valid) {
+            this.filteredError('Received invalid value', parseConfiguration.capabilityId, result);
+
+            if (!this.isInInvalidState[parseConfiguration.capabilityId]) {
+                const c = this.homey.flow.getDeviceTriggerCard('invalid_value_received');
+                await c.trigger(this, { capability: parseConfiguration.capabilityId, value: result });
+
+                this.isInInvalidState[parseConfiguration.capabilityId] = true;
+            }
             return;
         }
+
+        delete this.isInInvalidState[parseConfiguration.capabilityId];
 
         this.lastValidRequest = DateTime.utc();
 
         await capabilityChange(this, parseConfiguration.capabilityId, result);
+
+        parseConfiguration.currentValue = result;
 
         if (!this.reachable) {
             this.reachable = true;

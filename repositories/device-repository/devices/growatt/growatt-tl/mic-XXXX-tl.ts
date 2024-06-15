@@ -15,7 +15,7 @@ export class GrowattTLX extends Device {
         super('growatt-tl', Brand.Growatt, 'Growatt 1PH MIC TL-X series', 'Single phase Growatt string inverter.');
 
         this.supportsSolarman = true;
-        this.deprecatedCapabilities = ['measure_power.l1', 'measure_power.l2', 'measure_power.l3'];
+        this.deprecatedCapabilities = ['measure_power.l1', 'measure_power.l2', 'measure_power.l3', 'meter_power.some_test'];
 
         this.addInputRegisters(inputRegisters);
         this.addHoldingRegisters(holdingRegisters);

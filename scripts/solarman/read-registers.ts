@@ -28,7 +28,7 @@ const unitId = process.env.UNIT_ID;
 const valueSolarmanResolved = async (value: any, buffer: Buffer, parseConfiguration: ModbusRegisterParseConfiguration) => {
     const result = parseConfiguration.calculateValue(value, buffer, log);
 
-    if (!parseConfiguration.validateValue(result)) {
+    if (!parseConfiguration.validateValue(result, log).valid) {
         log.error(parseConfiguration.capabilityId, ': INVALID', result);
     } else {
         log.log(parseConfiguration.capabilityId, ':', result);

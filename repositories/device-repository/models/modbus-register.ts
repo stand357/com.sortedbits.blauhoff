@@ -16,6 +16,13 @@ export type Transformation = (value: any, buffer: Buffer, log: IBaseLogger) => a
 export interface ModbusRegisterOptions {
     validValueMin?: number;
     validValueMax?: number;
+    maxAddDelta?: number;
+    maxSubDelta?: number;
+}
+
+export interface ValidationResult {
+    valid: boolean;
+    message?: string;
 }
 
 export class ModbusRegisterParseConfiguration {
@@ -25,6 +32,7 @@ export class ModbusRegisterParseConfiguration {
     scale?: number;
     guid: string;
     options: ModbusRegisterOptions;
+    currentValue: any;
 
     constructor(register: ModbusRegister, capabilityId: string, transformation?: Transformation, scale?: number, options: ModbusRegisterOptions = {}) {
         this.register = register;
@@ -41,7 +49,7 @@ export class ModbusRegisterParseConfiguration {
             const numberValue = parseFloat(value);
 
             if (isNaN(numberValue)) {
-                return value;
+                return undefined;
             }
 
             return numberValue * this.scale;
@@ -59,28 +67,43 @@ export class ModbusRegisterParseConfiguration {
         return result;
     }
 
-    validateValue(value: any): boolean {
+    validateValue(value: any, log: IBaseLogger): ValidationResult {
         if (this.register.dataType === RegisterDataType.STRING) {
-            return true;
+            return { valid: true };
         }
 
         if (!this.transformation && isNaN(parseFloat(value))) {
-            return false;
-        }
-
-        if (this.options.validValueMax === undefined && this.options.validValueMin === undefined) {
-            return true;
+            log.filteredError('Received value is not a number', value, this.register.address);
+            return { valid: false, message: 'Received value is not a number' };
         }
 
         if (this.options.validValueMax !== undefined && value > this.options.validValueMax) {
-            return false;
+            log.filteredError('Value is above defined max', value, '>', this.options.validValueMax);
+            return { valid: false, message: 'Value is above defined max' };
         }
 
         if (this.options.validValueMin !== undefined && value < this.options.validValueMin) {
-            return false;
+            log.filteredError('Value is below defined min', value, '<', this.options.validValueMin);
+            return { valid: false, message: 'Value is below defined min' };
         }
 
-        return true;
+        if (this.currentValue !== undefined && this.options.maxAddDelta !== undefined) {
+            const delta = value - this.currentValue;
+
+            if (delta > this.options.maxAddDelta) {
+                return { valid: false, message: 'Add delta is above defined max' };
+            }
+        }
+
+        if (this.currentValue !== undefined && this.options.maxSubDelta !== undefined) {
+            const delta = this.currentValue - value;
+
+            if (delta > this.options.maxSubDelta) {
+                return { valid: false, message: 'Sub delta is above defined max' };
+            }
+        }
+
+        return { valid: true };
     }
 }
 

@@ -953,6 +953,41 @@
             "filter": "driver_id=blauhoff-modbus"
           }
         ]
+      },
+      {
+        "id": "invalid_value_received",
+        "title": {
+          "en": "Invalid value received"
+        },
+        "tokens": [
+          {
+            "name": "capability",
+            "type": "string",
+            "title": {
+              "en": "Capability"
+            },
+            "example": {
+              "en": "meter_power"
+            }
+          },
+          {
+            "name": "value",
+            "type": "number",
+            "title": {
+              "en": "Value"
+            },
+            "example": {
+              "en": "100"
+            }
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=blauhoff-modbus"
+          }
+        ]
       }
     ]
   },
