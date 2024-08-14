@@ -133,11 +133,11 @@ export const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.scale('meter_power.total_battery_discharge', 518, 1, RegisterDataType.UINT16, 0.1), // total batt discharge
 
     // pv
-    ModbusRegister.scale('measure_power.pv1', 672, 1, RegisterDataType.UINT16, 10),
-    ModbusRegister.scale('measure_power.pv2', 673, 1, RegisterDataType.UINT16, 10),
+    ModbusRegister.scale('measure_power.pv1', 672, 1, RegisterDataType.UINT16, 1),
+    ModbusRegister.scale('measure_power.pv2', 673, 1, RegisterDataType.UINT16, 1),
 
     // grid
-    ModbusRegister.default('measure_power.grid', 625, 1, RegisterDataType.UINT16),
+    ModbusRegister.default('measure_power.grid', 625, 1, RegisterDataType.UINT16, 1),
 
     ModbusRegister.scale('measure_voltage.grid_l1', 598, 1, RegisterDataType.UINT16, 0.1),
     ModbusRegister.scale('measure_voltage.grid_l2', 599, 1, RegisterDataType.UINT16, 0.1),
@@ -148,10 +148,10 @@ export const holdingRegisters: ModbusRegister[] = [
     ModbusRegister.scale('measure_temperature.ac', 541, 1, RegisterDataType.UINT16, 0.01),
 
     // battery
-    ModbusRegister.scale('measure_power.battery1', 590, 1, RegisterDataType.INT16, 10),
+    ModbusRegister.scale('measure_power.battery1', 590, 1, RegisterDataType.INT16, 1),
 
     ModbusRegister.scale('measure_current.battery1', 591, 1, RegisterDataType.INT16, 0.01),
-    ModbusRegister.scale('measure_voltage.battery1', 587, 1, RegisterDataType.INT16, 0.1),
+    ModbusRegister.scale('measure_voltage.battery1', 587, 1, RegisterDataType.INT16, 0.01),
 
     ModbusRegister.default('measure_percentage.battery1', 588, 1, RegisterDataType.UINT16), // SOC
 
@@ -239,12 +239,12 @@ export const holdingRegisters: ModbusRegister[] = [
     /*
      * Powerlimit for this timeslot
      */
-    ModbusRegister.scale('measure_power.powerlimit1', 154, 1, RegisterDataType.UINT16, 10), //, AccessMode.WriteOnly),
-    ModbusRegister.scale('measure_power.powerlimit2', 155, 1, RegisterDataType.UINT16, 10), //, AccessMode.WriteOnly),
-    ModbusRegister.scale('measure_power.powerlimit3', 156, 1, RegisterDataType.UINT16, 10), //, AccessMode.WriteOnly),
-    ModbusRegister.scale('measure_power.powerlimit4', 157, 1, RegisterDataType.UINT16, 10), //, AccessMode.WriteOnly),
-    ModbusRegister.scale('measure_power.powerlimit5', 158, 1, RegisterDataType.UINT16, 10), //, AccessMode.WriteOnly),
-    ModbusRegister.scale('measure_power.powerlimit6', 159, 1, RegisterDataType.UINT16, 10), //, AccessMode.WriteOnly),
+    ModbusRegister.scale('measure_power.powerlimit1', 154, 1, RegisterDataType.UINT16, 1), //, AccessMode.WriteOnly),
+    ModbusRegister.scale('measure_power.powerlimit2', 155, 1, RegisterDataType.UINT16, 1), //, AccessMode.WriteOnly),
+    ModbusRegister.scale('measure_power.powerlimit3', 156, 1, RegisterDataType.UINT16, 1), //, AccessMode.WriteOnly),
+    ModbusRegister.scale('measure_power.powerlimit4', 157, 1, RegisterDataType.UINT16, 1), //, AccessMode.WriteOnly),
+    ModbusRegister.scale('measure_power.powerlimit5', 158, 1, RegisterDataType.UINT16, 1), //, AccessMode.WriteOnly),
+    ModbusRegister.scale('measure_power.powerlimit6', 159, 1, RegisterDataType.UINT16, 1), //, AccessMode.WriteOnly),
     /*
      * Minimum battery percentage for this timeslot
      */
